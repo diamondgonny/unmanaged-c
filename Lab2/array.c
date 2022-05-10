@@ -19,7 +19,7 @@ int get_last_index_of(const int numbers[], const size_t element_count, const int
 {
     int index_count = -1;
     int i = 0;
-    for (i = element_count - 1; i >= 0 ; i--) {
+    for (i = element_count - 1; i >= 0; i--) {
         if (numbers[i] == num) {
             index_count = i;
             break;
