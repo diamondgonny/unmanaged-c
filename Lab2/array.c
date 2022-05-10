@@ -1,5 +1,4 @@
 #include <limits.h>
-
 #include "array.h"
 
 
@@ -7,10 +6,8 @@ int get_index_of(const int numbers[], const size_t element_count, const int num)
 {
     int index_count = -1;
     int i = 0;
-    for(i = 0; i < element_count; i++)
-    {
-        if(numbers[i] == num)
-        {
+    for(i = 0; i < element_count; i++) {
+        if(numbers[i] == num) {
             index_count = i;
             break;
         }
@@ -22,10 +19,8 @@ int get_last_index_of(const int numbers[], const size_t element_count, const int
 {
     int index_count = -1;
     int i = 0;
-    for(i = element_count-1; i >= 0 ; i--)
-    {
-        if(numbers[i] == num)
-        {
+    for(i = element_count-1; i >= 0 ; i--) {
+        if(numbers[i] == num) {
             index_count = i;
             break;
         }
@@ -44,10 +39,8 @@ int get_max_index(const int numbers[], const size_t element_count)
         index_count = -1;
     }
     */
-    for(i = 0; i < element_count; i++)
-    {
-        if(numbers[i] > max)
-        {
+    for(i = 0; i < element_count; i++) {
+        if(numbers[i] > max) {
             index_count = i;
         }
     }
@@ -65,10 +58,8 @@ int get_min_index(const int numbers[], const size_t element_count)
         index_count = -1;
     }
     */
-    for(i = 0; i < element_count; i++)
-    {
-        if(numbers[i] < min)
-        {
+    for(i = 0; i < element_count; i++) {
+        if(numbers[i] < min) {
             index_count = i;
         }
     }
@@ -85,10 +76,8 @@ int is_all_positive(const int numbers[], const size_t element_count)
         all_positive = FALSE;
     }
     */
-    for(i = 0; i < element_count; i++)
-    {
-        if(numbers[i] <= 0)
-        {
+    for(i = 0; i < element_count; i++) {
+        if(numbers[i] <= 0) {
             all_positive = 0;
             break;
         }
@@ -100,10 +89,8 @@ int has_even(const int numbers[], const size_t element_count)
 {
     int even = 0;
     int i = 0;
-    for(i = 0; i < element_count; i++)
-    {
-        if(numbers[i] % 2 == 0)
-        {
+    for(i = 0; i < element_count; i++) {
+        if(numbers[i] % 2 == 0) {
             even = 1;
             break;
         }
@@ -122,15 +109,12 @@ int insert(int numbers[], const size_t element_count, const int num, const size_
         return remove_done;
     }
     */
-    for(i = element_count; i >= 0; i--)
-    {
-        if(i > pos)
-        {
+    for(i = element_count; i >= 0; i--) {
+        if(i > pos) {
             numbers[i] = numbers[i-1];
         }
 
-        else
-        {
+        else {
             numbers[i] = num;
             insert_done = 1;
             break;
@@ -150,10 +134,8 @@ int remove_at(int numbers[], const size_t element_count, const size_t index)
         return remove_done;  
     }
     */
-    for(i = 0; i < element_count; i++)
-    {
-        if(i >= index)
-        {
+    for(i = 0; i < element_count; i++) {
+        if(i >= index) {
             numbers[i] = numbers[i+1];
         }
     }
