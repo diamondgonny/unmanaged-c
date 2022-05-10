@@ -32,13 +32,16 @@ int get_max_index(const int numbers[], const size_t element_count)
 {
     int index_count = -1;
     int i = 0;
-    int max = 0;
+    int max = INT_MIN;
     /*
-    if(element_count = 0)
+    if(element_count == 0)
     {
         index_count = -1;
     }
     */
+    if(element_count == 0 || numbers[0] == INT_MIN) {
+    index_count = -1;
+    }
     for(i = 0; i < element_count; i++) {
         if(numbers[i] > max) {
             max = numbers[i];
@@ -59,6 +62,9 @@ int get_min_index(const int numbers[], const size_t element_count)
         index_count = -1;
     }
     */
+    if(numbers[0] == INT_MIN) {
+        index_count = -1;
+    }
     if(numbers[0] == INT_MAX) {
         index_count = 0;
     }
@@ -81,6 +87,9 @@ int is_all_positive(const int numbers[], const size_t element_count)
         all_positive = FALSE;
     }
     */
+    if(numbers[0] == INT_MIN) {
+        all_positive = 0;
+    }
     for(i = 0; i < element_count; i++) {
         if(numbers[i] <= 0) {
             all_positive = 0;
@@ -107,8 +116,8 @@ int insert(int numbers[], const size_t element_count, const int num, const size_
 {
     int insert_done = 0;
     int i = 0;
-    /* 오류 조건 더 생각해보기...
-    if(array is full, ele < pos)
+    /* 오류 조건...?
+    if(ele < pos, array is full)
     {
         insert_done = FALSE;
         return remove_done;
@@ -117,11 +126,13 @@ int insert(int numbers[], const size_t element_count, const int num, const size_
     if(element_count < pos) {
         return insert_done;
     }
+    if(element_count == INT_MIN) {
+        return insert_done;
+    }
     for(i = element_count; i >= 0; i--) {
         if(i > pos) {
             numbers[i] = numbers[i-1];
         }
-
         else {
             numbers[i] = num;
             insert_done = 1;
@@ -135,21 +146,22 @@ int remove_at(int numbers[], const size_t element_count, const size_t index)
 {
     int remove_done = 0;
     int i = 0;
-    /* 오류 조건 더 생각해보기...
+    /* 오류 조건...?
     if(...)
     {
         remove_done = FALSE;
         return remove_done;  
     }
     */
-    if(element_count < index) {
+    if(element_count <= index) {
         return remove_done;
     }
-    for(i = 0; i < element_count; i++) {
+    for(i = 0; i < element_count-1; i++) {
         if(i >= index) {
             numbers[i] = numbers[i+1];
         }
     }
+    numbers[element_count-1] = INT_MIN;
     remove_done = 1;
     return remove_done;
 } 

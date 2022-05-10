@@ -189,7 +189,6 @@ static void test_remove_at(void)
     }
 }
 
-
 void test_intsert_remove_at(void)
 {
     int arr[3] = {INT_MIN, INT_MIN, INT_MIN};
