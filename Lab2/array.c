@@ -1,3 +1,5 @@
+#include <limits.h>
+
 #include "array.h"
 
 
@@ -75,7 +77,7 @@ int get_min_index(const int numbers[], const size_t element_count)
 
 int is_all_positive(const int numbers[], const size_t element_count)
 {
-    bool all_positive = TRUE;
+    int all_positive = 1;
     int i = 0;
     /*
     if(array is empty)
@@ -87,7 +89,7 @@ int is_all_positive(const int numbers[], const size_t element_count)
     {
         if(numbers[i] <= 0)
         {
-            all_positive = FALSE;
+            all_positive = 0;
             break;
         }
     }
@@ -96,13 +98,13 @@ int is_all_positive(const int numbers[], const size_t element_count)
 
 int has_even(const int numbers[], const size_t element_count)
 {
-    bool even = FALSE;
+    int even = 0;
     int i = 0;
     for(i = 0; i < element_count; i++)
     {
         if(numbers[i] % 2 == 0)
         {
-            even = TRUE;
+            even = 1;
             break;
         }
     }
@@ -111,7 +113,7 @@ int has_even(const int numbers[], const size_t element_count)
 
 int insert(int numbers[], const size_t element_count, const int num, const size_t pos)
 {
-    bool insert_done = FALSE;
+    int insert_done = 0;
     int i = 0;
     /* 오류 조건 더 생각해보기...
     if(array is full, ele < pos)
@@ -130,7 +132,7 @@ int insert(int numbers[], const size_t element_count, const int num, const size_
         else
         {
             numbers[i] = num;
-            insert_done = TRUE;
+            insert_done = 1;
             break;
         }
     }
@@ -139,7 +141,7 @@ int insert(int numbers[], const size_t element_count, const int num, const size_
 
 int remove_at(int numbers[], const size_t element_count, const size_t index)
 {
-    bool remove_done = FALSE;
+    int remove_done = 0;
     int i = 0;
     /* 오류 조건 더 생각해보기...
     if(...)
@@ -155,6 +157,6 @@ int remove_at(int numbers[], const size_t element_count, const size_t index)
             numbers[i] = numbers[i+1];
         }
     }
-    insert_done = TRUE;
+    remove_done = 1;
     return remove_done;
 } 
