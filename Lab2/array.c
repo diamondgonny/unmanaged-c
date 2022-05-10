@@ -156,7 +156,7 @@ int remove_at(int numbers[], const size_t element_count, const size_t index)
     if (element_count <= index) {
         return remove_done;
     }
-    for (i = 0; i < element_count-1; i++) {
+    for (i = 0; i < element_count - 1; i++) {
         if (i >= index) {
             numbers[i] = numbers[i + 1];
         }
@@ -164,4 +164,4 @@ int remove_at(int numbers[], const size_t element_count, const size_t index)
     numbers[element_count - 1] = INT_MIN;
     remove_done = 1;
     return remove_done;
-} 
+}
