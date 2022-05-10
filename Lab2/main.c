@@ -45,7 +45,6 @@ void get_index_of_test()
     int ary[7] = { 1, 4, 5, 6, 6, INT_MIN, INT_MIN };
     assert(3 == get_index_of(ary, 5, 6));
     assert(-1 == get_index_of(ary, 5, 2));
-    assert(-1 == get_index_of(ary, 7, INT_MIN));
 }
 
 void get_last_index_of_test()

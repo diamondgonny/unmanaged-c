@@ -41,6 +41,7 @@ int get_max_index(const int numbers[], const size_t element_count)
     */
     for(i = 0; i < element_count; i++) {
         if(numbers[i] > max) {
+            max = numbers[i];
             index_count = i;
         }
     }
@@ -58,8 +59,12 @@ int get_min_index(const int numbers[], const size_t element_count)
         index_count = -1;
     }
     */
+    if(numbers[0] == INT_MAX) {
+        index_count = 0;
+    }
     for(i = 0; i < element_count; i++) {
         if(numbers[i] < min) {
+            min = numbers[i];
             index_count = i;
         }
     }
@@ -109,6 +114,9 @@ int insert(int numbers[], const size_t element_count, const int num, const size_
         return remove_done;
     }
     */
+    if(element_count < pos) {
+        return insert_done;
+    }
     for(i = element_count; i >= 0; i--) {
         if(i > pos) {
             numbers[i] = numbers[i-1];
@@ -134,6 +142,9 @@ int remove_at(int numbers[], const size_t element_count, const size_t index)
         return remove_done;  
     }
     */
+    if(element_count < index) {
+        return remove_done;
+    }
     for(i = 0; i < element_count; i++) {
         if(i >= index) {
             numbers[i] = numbers[i+1];
