@@ -79,15 +79,16 @@ int get_min_index(const int numbers[], const size_t element_count)
 
 int is_all_positive(const int numbers[], const size_t element_count)
 {
-    int all_positive = 0;
+    int all_positive = 1;
     int i = 0;
-    /*
+    /******
     if(array is empty)
     {
         all_positive = FALSE;
     }
     */
-    if (numbers[0] == INT_MIN) {
+    if (element_count == 0 || numbers[0] == INT_MIN) {
+        all_positive = 0;
         return all_positive;
     }
     all_positive = 1;
