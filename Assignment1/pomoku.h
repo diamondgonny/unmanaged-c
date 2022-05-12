@@ -1,7 +1,14 @@
 #ifndef POMOKU_H
 #define POMOKU_H
-#include "color.h"
+#include "color.h" /* learnt using "include guard" */
 
+
+/* custom function using into 'place_stone' */
+int calc_score(int color, int cnt);
+
+void count_stone(int color, const unsigned int row, const unsigned int col);
+
+/* basic funcs */
 void init_game(void);
 
 unsigned int get_row_count(void);
@@ -33,5 +40,4 @@ int copy_row(const color_t color, const unsigned int src, const unsigned int dst
 
 int copy_column(const color_t color, const unsigned int src, const unsigned int dst);
 
-/* learnt using "include guard" */
 #endif /* POMOKU_H */
