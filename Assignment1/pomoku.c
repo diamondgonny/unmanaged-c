@@ -2,6 +2,8 @@
 #include "pomoku.h"
 #include "color.h"
 
+#define COLOR_H
+#define POMOKU_H
 #define TRUE (1)
 #define FALSE (0)
 #define BOARD_MAX (20)
