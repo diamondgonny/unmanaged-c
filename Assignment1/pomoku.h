@@ -1,7 +1,7 @@
 #ifndef POMOKU_H
 #define POMOKU_H
-#include "color.h" /* learnt using "include guard" */
 
+#include "color.h" /* learnt using "include guard" */
 
 /* custom function using into 'place_stone' */
 int calc_score(int color, int cnt);
