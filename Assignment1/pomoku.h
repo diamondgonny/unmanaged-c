@@ -28,6 +28,10 @@ int is_placeable(const unsigned int row, const unsigned int col);
 int place_stone(const color_t color, const unsigned int row, const unsigned int col);
 
 /* special moves */
+int score_checker(const color_t color, int score_req);
+
+void score_activator(const color_t color, int score_req);
+
 int insert_row(const color_t color, const unsigned int row);
 
 int insert_column(const color_t color, const unsigned int col);
