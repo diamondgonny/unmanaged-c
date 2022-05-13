@@ -343,7 +343,7 @@ int place_stone(const color_t color, const unsigned int row, const unsigned int 
     case COLOR_BLACK:
         stone_color = 0;
         break;
-    case COLOR_WHITE:  
+    case COLOR_WHITE:
         stone_color = 1;
         break;
     default:
@@ -400,9 +400,9 @@ int insert_row(const color_t color, const unsigned int row)
 
     if (score_checker(color, score_required) == FALSE) {
         return FALSE;
+    } else {
+        score_activator(color, score_required);
     }
-
-    score_activator(color, score_required);
 
     for (i = g_row_count; i >= 0; --i) {
         for (j = 0; j < g_col_count; ++j) {
@@ -417,7 +417,7 @@ int insert_row(const color_t color, const unsigned int row)
     }
 
     g_row_count++;
-    
+
     return TRUE;
 }
 
@@ -431,14 +431,13 @@ int insert_column(const color_t color, const unsigned int col)
         return FALSE;
     } else if (g_col_count < col) {
         return FALSE;
-    } 
+    }
 
     if (score_checker(color, score_required) == FALSE) {
         return FALSE;
+    } else {
+        score_activator(color, score_required);
     }
-
-    score_activator(color, score_required);
-
 
     for (i = g_col_count; i >= 0; --i) {
         for (j = 0; j < g_row_count; ++j) {
@@ -453,7 +452,7 @@ int insert_column(const color_t color, const unsigned int col)
     }
 
     g_col_count++;
-    
+
     return TRUE;
 }
 
@@ -471,17 +470,16 @@ int remove_row(const color_t color, const unsigned int row)
 
     if (score_checker(color, score_required) == FALSE) {
         return FALSE;
+    } else {
+        score_activator(color, score_required);
     }
-
-    score_activator(color, score_required);
-
 
     for (i = 0; i < g_row_count - 1; ++i) {
         for (j = 0; j < g_col_count; ++j) {
             if (i >= row) {
                 g_pomoku_board[i][j] = g_pomoku_board[i + 1][j];
             }
-        } 
+        }
     }
 
     for (j = 0; j < g_col_count; ++j) {
@@ -507,17 +505,16 @@ int remove_column(const color_t color, const unsigned int col)
 
     if (score_checker(color, score_required) == FALSE) {
         return FALSE;
+    } else {
+        score_activator(color, score_required);
     }
-
-    score_activator(color, score_required);
-
 
     for (i = 0; i < g_col_count - 1; ++i) {
         for (j = 0; j < g_row_count; ++j) {
             if (i >= col) {
                 g_pomoku_board[j][i] = g_pomoku_board[j][i + 1];
             }
-        } 
+        }
     }
 
     for (j = 0; j < g_row_count; ++j) {
@@ -541,10 +538,9 @@ int swap_rows(const color_t color, const unsigned int row0, const unsigned int r
 
     if (score_checker(color, score_required) == FALSE) {
         return FALSE;
+    } else {
+        score_activator(color, score_required);
     }
-
-    score_activator(color, score_required);
-
 
     for (i = 0; i < g_col_count; ++i) {
         temp[i] = g_pomoku_board[row0][i];
@@ -573,10 +569,9 @@ int swap_columns(const color_t color, const unsigned int col0, const unsigned in
 
     if (score_checker(color, score_required) == FALSE) {
         return FALSE;
+    } else {
+        score_activator(color, score_required);
     }
-
-    score_activator(color, score_required);
-
 
     for (i = 0; i < g_row_count; ++i) {
         temp[i] = g_pomoku_board[i][col0];
@@ -604,10 +599,9 @@ int copy_row(const color_t color, const unsigned int src, const unsigned int dst
 
     if (score_checker(color, score_required) == FALSE) {
         return FALSE;
+    } else {
+        score_activator(color, score_required);
     }
-
-    score_activator(color, score_required);
-
 
     for (i = 0; i < g_col_count; ++i) {
         g_pomoku_board[dst][i] = g_pomoku_board[src][i];
@@ -627,10 +621,9 @@ int copy_column(const color_t color, const unsigned int src, const unsigned int 
 
     if (score_checker(color, score_required) == FALSE) {
         return FALSE;
+    } else {
+        score_activator(color, score_required);
     }
-
-    score_activator(color, score_required);
-
 
     for (i = 0; i < g_row_count; ++i) {
         g_pomoku_board[i][dst] = g_pomoku_board[i][src];
