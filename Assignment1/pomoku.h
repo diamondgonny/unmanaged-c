@@ -1,6 +1,10 @@
 #ifndef POMOKU_H
 #define POMOKU_H
 
+/* temp ********************* */
+#include <windows.h>
+/* temp ********************* */
+
 #include "color.h" /* learnt using "include guard" */
 
 /* custom function using into 'place_stone' */

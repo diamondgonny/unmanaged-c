@@ -2,8 +2,11 @@
 #include "color.h"
 #include "pomoku.h"
 
+/* temp *********************
 #define TRUE (1)
 #define FALSE (0)
+temp ********************* */
+
 #define BOARD_MAX (20)
 #define BOARD_MIN (10)
 
@@ -383,8 +386,9 @@ int insert_row(const color_t color, const unsigned int row)
         for (j = 0; j < g_col_count; ++j) {
             if (i > row) {
                 g_pomoku_board[i][j] = g_pomoku_board[i - 1][j];
-            } else {
+            } else if (i == row) {
                 g_pomoku_board[i][j] = INT_MIN;
+            } else {
                 break;
             }
         }
@@ -422,8 +426,9 @@ int insert_column(const color_t color, const unsigned int col)
         for (j = 0; j < g_row_count; ++j) {
             if (i > col) {
                 g_pomoku_board[j][i] = g_pomoku_board[j][i - 1];
-            } else {
+            } else if (i == col) {
                 g_pomoku_board[j][i] = INT_MIN;
+            } else {
                 break;
             }
         }
