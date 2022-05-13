@@ -533,7 +533,7 @@ int swap_rows(const color_t color, const unsigned int row0, const unsigned int r
 {
     int i = 0;
     int score_required = 2;
-    int temp[BOARD_MAX] = {INT_MIN, };
+    int temp[BOARD_MAX] = { INT_MIN, };
 
     if (g_row_count <= row0 || g_row_count <= row1) {
         return FALSE;
@@ -565,7 +565,7 @@ int swap_columns(const color_t color, const unsigned int col0, const unsigned in
 {
     int i = 0;
     int score_required = 2;
-    int temp[BOARD_MAX] = {INT_MIN, };
+    int temp[BOARD_MAX] = { INT_MIN, };
 
     if (g_col_count <= col0 || g_col_count <= col1) {
         return FALSE;
