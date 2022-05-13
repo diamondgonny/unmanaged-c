@@ -378,7 +378,7 @@ int score_checker(const color_t color, int score_req)
 
 void score_activator(const color_t color, int score_req)
 {
-    if(color == COLOR_BLACK) {
+    if (color == COLOR_BLACK) {
         g_black_score -= score_req;
     } else if (color == COLOR_WHITE) {
         g_white_score -= score_req;
