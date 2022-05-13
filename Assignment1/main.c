@@ -10,6 +10,8 @@ main.c는 게임 구현 관련 코드를 주석:처리 하거나
 기존에 쓰던 main.c를 써주세요.
 */
  
+/* temp***************
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
@@ -367,3 +369,4 @@ void update_state(const color_t color, const size_t x, const size_t y)
  
     goto_xy(x, y);
 }
+*/

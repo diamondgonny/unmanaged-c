@@ -2,10 +2,10 @@
 #include "color.h"
 #include "pomoku.h"
 
-/* temp *********************
+/* temp ********************* */
 #define TRUE (1)
 #define FALSE (0)
-temp ********************* */
+/* temp ********************* */
 
 #define BOARD_MAX (20)
 #define BOARD_MIN (10)

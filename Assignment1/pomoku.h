@@ -1,9 +1,9 @@
 #ifndef POMOKU_H
 #define POMOKU_H
 
-/* temp ********************* */
+/* temp *********************
 #include <windows.h>
-/* temp ********************* */
+temp ********************* */
 
 #include "color.h" /* learnt using "include guard" */
 
