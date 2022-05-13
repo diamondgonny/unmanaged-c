@@ -10,7 +10,7 @@ main.c는 게임 구현 관련 코드를 주석:처리 하거나
 기존에 쓰던 main.c를 써주세요.
 */
  
-/* temp***************
+/* temp****************
 
 #include <stdio.h>
 #include <stdlib.h>
