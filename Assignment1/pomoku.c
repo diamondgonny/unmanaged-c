@@ -122,39 +122,7 @@ void count_stone(int color, const unsigned int row, const unsigned int col)
             }
         }
     } else {
-        if (g_col_count < g_row_count) {
-            if (g_row_count - g_col_count > left_diag_indicator) {
-                for (i = col; i >= 0; --i) {
-                    if (g_pomoku_board[i + left_diag_indicator][i] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-                for (i = col; i < g_col_count; ++i) {
-                    if (g_pomoku_board[i + left_diag_indicator][i] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-            } else {
-                for (i = col; i >= 0; --i) {
-                    if (g_pomoku_board[i + left_diag_indicator][i] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-                for (i = row; i < g_row_count; ++i) {
-                    if (g_pomoku_board[i][i - left_diag_indicator] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-            }
-        } else {
+        if (g_col_count > g_row_count) {
             if (g_col_count - g_row_count > 0 - left_diag_indicator) {
                 for (i = row; i >= 0; --i) {
                     if (g_pomoku_board[i][i - left_diag_indicator] == color) {
@@ -180,6 +148,38 @@ void count_stone(int color, const unsigned int row, const unsigned int col)
                 }
                 for (i = col; i < g_col_count; ++i) {
                     if (g_pomoku_board[i + left_diag_indicator][i] == color) {
+                        stone_counter++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        } else {
+            if (g_row_count - g_col_count > left_diag_indicator) {
+                for (i = col; i >= 0; --i) {
+                    if (g_pomoku_board[i + left_diag_indicator][i] == color) {
+                        stone_counter++;
+                    } else {
+                        break;
+                    }
+                }
+                for (i = col; i < g_col_count; ++i) {
+                    if (g_pomoku_board[i + left_diag_indicator][i] == color) {
+                        stone_counter++;
+                    } else {
+                        break;
+                    }
+                }
+            } else {
+                for (i = col; i >= 0; --i) {
+                    if (g_pomoku_board[i + left_diag_indicator][i] == color) {
+                        stone_counter++;
+                    } else {
+                        break;
+                    }
+                }
+                for (i = row; i < g_row_count; ++i) {
+                    if (g_pomoku_board[i][i - left_diag_indicator] == color) {
                         stone_counter++;
                     } else {
                         break;
