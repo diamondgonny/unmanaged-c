@@ -11,7 +11,7 @@
 #define BOARD_MIN (10)
 
 /* how to initialize array anyways? */
-int g_pomoku_board[BOARD_MAX][BOARD_MAX];
+int g_pomoku_board[BOARD_MAX][BOARD_MAX] = { INT_MIN, };
 int g_row_count = 15;
 int g_col_count = 15;
 int g_black_score = 0;
