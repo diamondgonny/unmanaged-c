@@ -164,7 +164,7 @@ int place_stone(const color_t color, const unsigned int row, const unsigned int 
 
 /* special moves */
 /* 조건식(TRUE/FALSE) 손보기, 타입(signed/unsigned) 손보기 */
-int score_checker(const color_t color, int score_req)
+int check_score(const color_t color, int score_req)
 {
     if (!(color == COLOR_BLACK || color == COLOR_WHITE)) {
         return FALSE;
@@ -180,7 +180,7 @@ int score_checker(const color_t color, int score_req)
     return TRUE;
 }
 
-void score_activator(const color_t color, int score_req)
+void consume_score(const color_t color, int score_req)
 {
     if (color == COLOR_BLACK) {
         g_black_score -= score_req;
@@ -202,10 +202,10 @@ int insert_row(const color_t color, const unsigned int row)
         return FALSE;
     }
 
-    if (score_checker(color, score_required) == FALSE) {
+    if (check_score(color, score_required) == FALSE) {
         return FALSE;
     } else {
-        score_activator(color, score_required);
+        consume_score(color, score_required);
     }
 
     for (i = g_row_count; i >= 0; --i) {
@@ -237,10 +237,10 @@ int insert_column(const color_t color, const unsigned int col)
         return FALSE;
     }
 
-    if (score_checker(color, score_required) == FALSE) {
+    if (check_score(color, score_required) == FALSE) {
         return FALSE;
     } else {
-        score_activator(color, score_required);
+        consume_score(color, score_required);
     }
 
     for (i = g_col_count; i >= 0; --i) {
@@ -272,10 +272,10 @@ int remove_row(const color_t color, const unsigned int row)
         return FALSE;
     }
 
-    if (score_checker(color, score_required) == FALSE) {
+    if (check_score(color, score_required) == FALSE) {
         return FALSE;
     } else {
-        score_activator(color, score_required);
+        consume_score(color, score_required);
     }
 
     for (i = 0; i < g_row_count - 1; ++i) {
@@ -307,10 +307,10 @@ int remove_column(const color_t color, const unsigned int col)
         return FALSE;
     }
 
-    if (score_checker(color, score_required) == FALSE) {
+    if (check_score(color, score_required) == FALSE) {
         return FALSE;
     } else {
-        score_activator(color, score_required);
+        consume_score(color, score_required);
     }
 
     for (i = 0; i < g_col_count - 1; ++i) {
@@ -340,10 +340,10 @@ int swap_rows(const color_t color, const unsigned int row0, const unsigned int r
         return FALSE;
     }
 
-    if (score_checker(color, score_required) == FALSE) {
+    if (check_score(color, score_required) == FALSE) {
         return FALSE;
     } else {
-        score_activator(color, score_required);
+        consume_score(color, score_required);
     }
 
     for (i = 0; i < g_col_count; ++i) {
@@ -371,10 +371,10 @@ int swap_columns(const color_t color, const unsigned int col0, const unsigned in
         return FALSE;
     }
 
-    if (score_checker(color, score_required) == FALSE) {
+    if (check_score(color, score_required) == FALSE) {
         return FALSE;
     } else {
-        score_activator(color, score_required);
+        consume_score(color, score_required);
     }
 
     for (i = 0; i < g_row_count; ++i) {
@@ -401,10 +401,10 @@ int copy_row(const color_t color, const unsigned int src, const unsigned int dst
         return FALSE;
     }
 
-    if (score_checker(color, score_required) == FALSE) {
+    if (check_score(color, score_required) == FALSE) {
         return FALSE;
     } else {
-        score_activator(color, score_required);
+        consume_score(color, score_required);
     }
 
     for (i = 0; i < g_col_count; ++i) {
@@ -423,10 +423,10 @@ int copy_column(const color_t color, const unsigned int src, const unsigned int 
         return FALSE;
     }
 
-    if (score_checker(color, score_required) == FALSE) {
+    if (check_score(color, score_required) == FALSE) {
         return FALSE;
     } else {
-        score_activator(color, score_required);
+        consume_score(color, score_required);
     }
 
     for (i = 0; i < g_row_count; ++i) {
