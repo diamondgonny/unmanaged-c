@@ -78,7 +78,7 @@ int get_color(const unsigned int row, const unsigned int col)
 
 int is_placeable(const unsigned int row, const unsigned int col)
 {
-    if (g_row_count <= row || g_column_count <= col) { /* what if... < 0? */
+    if (g_row_count <= row || g_col_count <= col) { /* what if... < 0? */
         return FALSE;
     } else if (get_color(row, col) == 0 || get_color(row, col) == 1) {
         return FALSE;
@@ -89,7 +89,7 @@ int is_placeable(const unsigned int row, const unsigned int col)
 
 int count_stone_recursive(int color, const unsigned int y, const unsigned int x, int dy, int dx)
 {
-    if (y >= g_row_count || x >= g_column_count) { /* what if... < 0? */
+    if (y >= g_row_count || x >= g_col_count) { /* what if... < 0? */
         return 0;
     }
 
@@ -165,7 +165,7 @@ int place_stone(const color_t color, const unsigned int row, const unsigned int 
 
 
 /* special moves */
-/* 조건식(TRUE/FALSE) 손보기, 타입(signed/unsigned) 손보기 */
+/* 타입(signed/unsigned) 손보기 */
 int check_score(const color_t color, int score_req)
 {
     if (color == COLOR_BLACK) {
