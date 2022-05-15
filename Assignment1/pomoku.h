@@ -28,9 +28,9 @@ void obtain_score_algorithm(int color, int y, int x);
 int place_stone(const color_t color, const unsigned int row, const unsigned int col);
 
 /* special moves */
-int score_checker(const color_t color, int score_req);
+int check_score(const color_t color, int score_req);
 
-void score_activator(const color_t color, int score_req);
+void consume_score(const color_t color, int score_req);
 
 int insert_row(const color_t color, const unsigned int row);
 

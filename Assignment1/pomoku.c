@@ -168,18 +168,16 @@ int place_stone(const color_t color, const unsigned int row, const unsigned int 
 /* 조건식(TRUE/FALSE) 손보기, 타입(signed/unsigned) 손보기 */
 int check_score(const color_t color, int score_req)
 {
-    if (!(color == COLOR_BLACK || color == COLOR_WHITE)) {
-        return FALSE;
-    } else if (color == COLOR_BLACK) {
-        if (g_black_score < score_req) {
-            return FALSE;
+    if (color == COLOR_BLACK) {
+        if (g_black_score >= score_req) {
+            return TRUE;
         }
     } else if (color == COLOR_WHITE) {
-        if (g_white_score < score_req) {
-            return FALSE;
+        if (g_white_score >= score_req) {
+            return TRUE;
         }
     }
-    return TRUE;
+    return FALSE;
 }
 
 void consume_score(const color_t color, int score_req)
@@ -190,7 +188,6 @@ void consume_score(const color_t color, int score_req)
         g_white_score -= score_req;
     }
 }
-
 
 int insert_row(const color_t color, const unsigned int row)
 {
@@ -204,27 +201,22 @@ int insert_row(const color_t color, const unsigned int row)
         return FALSE;
     }
 
-    if (check_score(color, score_required) == FALSE) {
-        return FALSE;
-    } else {
+    if (check_score(color, score_required) == TRUE) {
         consume_score(color, score_required);
-    }
-
-    for (i = g_row_count; i >= 0; --i) {
-        for (j = 0; j < g_col_count; ++j) {
-            if (i > row) {
-                g_pomoku_board[i][j] = g_pomoku_board[i - 1][j];
-            } else if (i == row) {
-                g_pomoku_board[i][j] = INT_MIN;
-            } else {
-                break;
+        for (i = g_row_count; i >= 0; --i) {
+            for (j = 0; j < g_col_count; ++j) {
+                if (i > row) {
+                    g_pomoku_board[i][j] = g_pomoku_board[i - 1][j];
+                } else if (i == row) {
+                    g_pomoku_board[i][j] = INT_MIN;
+                } else {
+                    break;
+                }
             }
         }
+        g_row_count++;
     }
-
-    g_row_count++;
-
-    return TRUE;
+    return FALSE;
 }
 
 int insert_column(const color_t color, const unsigned int col)
@@ -239,27 +231,22 @@ int insert_column(const color_t color, const unsigned int col)
         return FALSE;
     }
 
-    if (check_score(color, score_required) == FALSE) {
-        return FALSE;
-    } else {
+    if (check_score(color, score_required) == TRUE) {
         consume_score(color, score_required);
-    }
-
-    for (i = g_col_count; i >= 0; --i) {
-        for (j = 0; j < g_row_count; ++j) {
-            if (i > col) {
-                g_pomoku_board[j][i] = g_pomoku_board[j][i - 1];
-            } else if (i == col) {
-                g_pomoku_board[j][i] = INT_MIN;
-            } else {
-                break;
+        for (i = g_col_count; i >= 0; --i) {
+            for (j = 0; j < g_row_count; ++j) {
+                if (i > col) {
+                    g_pomoku_board[j][i] = g_pomoku_board[j][i - 1];
+                } else if (i == col) {
+                    g_pomoku_board[j][i] = INT_MIN;
+                } else {
+                    break;
+                }
             }
         }
+        g_col_count++;
     }
-
-    g_col_count++;
-
-    return TRUE;
+    return FALSE;
 }
 
 int remove_row(const color_t color, const unsigned int row)
@@ -274,27 +261,21 @@ int remove_row(const color_t color, const unsigned int row)
         return FALSE;
     }
 
-    if (check_score(color, score_required) == FALSE) {
-        return FALSE;
-    } else {
+    if (check_score(color, score_required) == TRUE) {
         consume_score(color, score_required);
-    }
-
-    for (i = 0; i < g_row_count - 1; ++i) {
-        for (j = 0; j < g_col_count; ++j) {
-            if (i >= row) {
-                g_pomoku_board[i][j] = g_pomoku_board[i + 1][j];
+        for (i = 0; i < g_row_count - 1; ++i) {
+            for (j = 0; j < g_col_count; ++j) {
+                if (i >= row) {
+                    g_pomoku_board[i][j] = g_pomoku_board[i + 1][j];
+                }
             }
         }
+        for (j = 0; j < g_col_count; ++j) {
+            g_pomoku_board[g_row_count - 1][j] = INT_MIN;
+        }
+        g_row_count--;
     }
-
-    for (j = 0; j < g_col_count; ++j) {
-        g_pomoku_board[g_row_count - 1][j] = INT_MIN;
-    }
-
-    g_row_count--;
-
-    return TRUE;
+    return FALSE;
 }
 
 int remove_column(const color_t color, const unsigned int col)
@@ -309,27 +290,21 @@ int remove_column(const color_t color, const unsigned int col)
         return FALSE;
     }
 
-    if (check_score(color, score_required) == FALSE) {
-        return FALSE;
-    } else {
+    if (check_score(color, score_required) == TRUE) {
         consume_score(color, score_required);
-    }
-
-    for (i = 0; i < g_col_count - 1; ++i) {
-        for (j = 0; j < g_row_count; ++j) {
-            if (i >= col) {
-                g_pomoku_board[j][i] = g_pomoku_board[j][i + 1];
+        for (i = 0; i < g_col_count - 1; ++i) {
+            for (j = 0; j < g_row_count; ++j) {
+                if (i >= col) {
+                    g_pomoku_board[j][i] = g_pomoku_board[j][i + 1];
+                }
             }
         }
+        for (j = 0; j < g_row_count; ++j) {
+            g_pomoku_board[j][g_col_count - 1] = INT_MIN;
+        }
+        g_col_count--;
     }
-
-    for (j = 0; j < g_row_count; ++j) {
-        g_pomoku_board[j][g_col_count - 1] = INT_MIN;
-    }
-
-    g_col_count--;
-
-    return TRUE;
+    return FALSE;
 }
 
 int swap_rows(const color_t color, const unsigned int row0, const unsigned int row1)
@@ -342,25 +317,21 @@ int swap_rows(const color_t color, const unsigned int row0, const unsigned int r
         return FALSE;
     }
 
-    if (check_score(color, score_required) == FALSE) {
-        return FALSE;
-    } else {
+    if (check_score(color, score_required) == TRUE) {
         consume_score(color, score_required);
-    }
+        for (i = 0; i < g_col_count; ++i) {
+            temp[i] = g_pomoku_board[row0][i];
+        }
 
-    for (i = 0; i < g_col_count; ++i) {
-        temp[i] = g_pomoku_board[row0][i];
-    }
+        for (i = 0; i < g_col_count; ++i) {
+            g_pomoku_board[row0][i] = g_pomoku_board[row1][i];
+        }
 
-    for (i = 0; i < g_col_count; ++i) {
-        g_pomoku_board[row0][i] = g_pomoku_board[row1][i];
+        for (i = 0; i < g_col_count; ++i) {
+            g_pomoku_board[row1][i] = temp[i];
+        }
     }
-
-    for (i = 0; i < g_col_count; ++i) {
-        g_pomoku_board[row1][i] = temp[i];
-    }
-
-    return TRUE;
+    return FALSE;
 }
 
 int swap_columns(const color_t color, const unsigned int col0, const unsigned int col1)
@@ -373,25 +344,21 @@ int swap_columns(const color_t color, const unsigned int col0, const unsigned in
         return FALSE;
     }
 
-    if (check_score(color, score_required) == FALSE) {
-        return FALSE;
-    } else {
+    if (check_score(color, score_required) == TRUE) {
         consume_score(color, score_required);
-    }
+        for (i = 0; i < g_row_count; ++i) {
+            temp[i] = g_pomoku_board[i][col0];
+        }
 
-    for (i = 0; i < g_row_count; ++i) {
-        temp[i] = g_pomoku_board[i][col0];
-    }
+        for (i = 0; i < g_row_count; ++i) {
+            g_pomoku_board[i][col0] = g_pomoku_board[i][col1];
+        }
 
-    for (i = 0; i < g_row_count; ++i) {
-        g_pomoku_board[i][col0] = g_pomoku_board[i][col1];
+        for (i = 0; i < g_row_count; ++i) {
+            g_pomoku_board[i][col1] = temp[i];
+        }
     }
-
-    for (i = 0; i < g_row_count; ++i) {
-        g_pomoku_board[i][col1] = temp[i];
-    }
-
-    return TRUE;
+    return FALSE;
 }
 
 int copy_row(const color_t color, const unsigned int src, const unsigned int dst)
@@ -403,17 +370,13 @@ int copy_row(const color_t color, const unsigned int src, const unsigned int dst
         return FALSE;
     }
 
-    if (check_score(color, score_required) == FALSE) {
-        return FALSE;
-    } else {
+    if (check_score(color, score_required) == TRUE) {
         consume_score(color, score_required);
+        for (i = 0; i < g_col_count; ++i) {
+            g_pomoku_board[dst][i] = g_pomoku_board[src][i];
+        }
     }
-
-    for (i = 0; i < g_col_count; ++i) {
-        g_pomoku_board[dst][i] = g_pomoku_board[src][i];
-    }
-
-    return TRUE;
+    return FALSE;
 }
 
 int copy_column(const color_t color, const unsigned int src, const unsigned int dst)
@@ -425,15 +388,11 @@ int copy_column(const color_t color, const unsigned int src, const unsigned int 
         return FALSE;
     }
 
-    if (check_score(color, score_required) == FALSE) {
-        return FALSE;
-    } else {
+    if (check_score(color, score_required) == TRUE) {
         consume_score(color, score_required);
+        for (i = 0; i < g_row_count; ++i) {
+            g_pomoku_board[i][dst] = g_pomoku_board[i][src];
+        }
     }
-
-    for (i = 0; i < g_row_count; ++i) {
-        g_pomoku_board[i][dst] = g_pomoku_board[i][src];
-    }
-
-    return TRUE;
+    return FALSE;
 }
