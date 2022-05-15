@@ -7,11 +7,6 @@ temp ********************* */
 
 #include "color.h" /* learnt using "include guard" */
 
-/* custom function using into 'place_stone' */
-int calc_score(int color, int cnt);
-
-void count_stone(int color, const unsigned int row, const unsigned int col);
-
 /* basic funcs */
 void init_game(void);
 
@@ -24,6 +19,11 @@ int get_score(const color_t color);
 int get_color(const unsigned int row, const unsigned int col);
 
 int is_placeable(const unsigned int row, const unsigned int col);
+
+/* custom function using into 'place_stone' */
+int count_stone_recursive(int color, const unsigned int y, const unsigned int x, int dy, int dx);
+
+void obtain_score_algorithm(int color, int y, int x);
 
 int place_stone(const color_t color, const unsigned int row, const unsigned int col);
 

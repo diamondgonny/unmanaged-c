@@ -10,254 +10,12 @@
 #define BOARD_MAX (20)
 #define BOARD_MIN (10)
 
-/* how to initialize array anyways? */
 int g_pomoku_board[BOARD_MAX][BOARD_MAX] = { INT_MIN, };
 int g_row_count = 15;
 int g_col_count = 15;
 int g_black_score = 0;
 int g_white_score = 0;
 
-
-int calc_score(int color, int cnt)
-{
-    if (cnt > 4) {
-        switch (color) {
-        case 0:
-            g_black_score += cnt - 4;
-            break;
-        case 1:
-            g_white_score += cnt - 4;
-            break;
-        default:
-            break;
-        }
-    }
-    return 0;
-}
-
-void count_stone(int color, const unsigned int row, const unsigned int col)
-{
-    int i = 0;
-    int stone_counter = 0;
-    /* the value that calculates left(right) diag */
-    int left_diag_indicator = (int)row - (int)col;
-    int right_diag_indicator = (int)row + (int)col;
-    /* to know which one is abolutely longer to calculate right diag */
-    int longer_line_index = 0;
-    int shorter_line_index = 0;
-
-    if (g_row_count < g_col_count) {
-        longer_line_index = g_col_count - 1;
-        shorter_line_index = g_row_count - 1;
-    } else {
-        longer_line_index = g_row_count - 1;
-        shorter_line_index = g_col_count - 1;
-    }
-
-    /* hori */
-    for (i = col; i < g_col_count; ++i) {
-        if (g_pomoku_board[row][i] == color) {
-            stone_counter++;
-        } else {
-            break;
-        }
-    }
-    for (i = col; i >= 0; --i) {
-        if (g_pomoku_board[row][i] == color) {
-            stone_counter++;
-        } else {
-            break;
-        }
-    }
-    stone_counter -= 1;
-    stone_counter = calc_score(color, stone_counter);
-
-    /* verti */
-    for (i = row; i < g_row_count; ++i) {
-        if (g_pomoku_board[i][col] == color) {
-            stone_counter++;
-        } else {
-            break;
-        }
-    }
-    for (i = row; i >= 0; --i) {
-        if (g_pomoku_board[i][col] == color) {
-            stone_counter++;
-        } else {
-            break;
-        }
-    }
-    stone_counter -= 1;
-    stone_counter = calc_score(color, stone_counter);
-
-    /* left-diag (bottom, top, middle) */
-    if (left_diag_indicator > 10) {
-        for (i = col; i >= 0; --i) {
-            if (g_pomoku_board[i + left_diag_indicator][i] == color) {
-                stone_counter++;
-            } else {
-                break;
-            }
-        }
-        for (i = row; i < g_row_count; ++i) {
-            if (g_pomoku_board[i][i - left_diag_indicator] == color) {
-                stone_counter++;
-            } else {
-                break;
-            }
-        }
-    } else if (left_diag_indicator < -10) {
-        for (i = row; i >= 0; --i) {
-            if (g_pomoku_board[i][i - left_diag_indicator] == color) {
-                stone_counter++;
-            } else {
-                break;
-            }
-        }
-        for (i = col; i < g_col_count; ++i) {
-            if (g_pomoku_board[i + left_diag_indicator][i] == color) {
-                stone_counter++;
-            } else {
-                break;
-            }
-        }
-    } else {
-        if (g_col_count > g_row_count) {
-            if (g_col_count - g_row_count > 0 - left_diag_indicator) {
-                for (i = row; i >= 0; --i) {
-                    if (g_pomoku_board[i][i - left_diag_indicator] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-                for (i = row; i < g_row_count; ++i) {
-                    if (g_pomoku_board[i][i - left_diag_indicator] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-            } else {
-                for (i = row; i >= 0; --i) {
-                    if (g_pomoku_board[i][i - left_diag_indicator] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-                for (i = col; i < g_col_count; ++i) {
-                    if (g_pomoku_board[i + left_diag_indicator][i] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-            }
-        } else {
-            if (g_row_count - g_col_count > left_diag_indicator) {
-                for (i = col; i >= 0; --i) {
-                    if (g_pomoku_board[i + left_diag_indicator][i] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-                for (i = col; i < g_col_count; ++i) {
-                    if (g_pomoku_board[i + left_diag_indicator][i] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-            } else {
-                for (i = col; i >= 0; --i) {
-                    if (g_pomoku_board[i + left_diag_indicator][i] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-                for (i = row; i < g_row_count; ++i) {
-                    if (g_pomoku_board[i][i - left_diag_indicator] == color) {
-                        stone_counter++;
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    stone_counter -= 1;
-    stone_counter = calc_score(color, stone_counter);
-
-    /* right-diag (0 < s < l < M) */
-    if (right_diag_indicator < shorter_line_index) {
-        for (i = col; i >= 0; --i) {
-            if (g_pomoku_board[right_diag_indicator - i][i] == color) {
-                stone_counter++;
-            } else {
-                break;
-            }
-        }
-        for (i = row; i >= 0; --i) {
-            if (g_pomoku_board[i][right_diag_indicator - i] == color) {
-                stone_counter++;
-            } else {
-                break;
-            }
-        }
-    } else if (right_diag_indicator > longer_line_index) {
-        for (i = col; i < g_col_count; ++i) {
-            if (g_pomoku_board[right_diag_indicator - i][i] == color) {
-                stone_counter++;
-            } else {
-                break;
-            }
-        }
-        for (i = row; i < g_row_count; ++i) {
-            if (g_pomoku_board[i][right_diag_indicator - i] == color) {
-                stone_counter++;
-            } else {
-                break;
-            }
-        }
-    } else {
-        if (g_col_count < g_row_count) {
-            for (i = col; i >= 0; --i) {
-                if (g_pomoku_board[right_diag_indicator - i][i] == color) {
-                    stone_counter++;
-                } else {
-                    break;
-                }
-            }
-            for (i = col; i < g_col_count; ++i) {
-                if (g_pomoku_board[right_diag_indicator - i][i] == color) {
-                    stone_counter++;
-                } else {
-                    break;
-                }
-            }
-        } else {
-            for (i = row; i >= 0; --i) {
-                if (g_pomoku_board[i][right_diag_indicator - i] == color) {
-                    stone_counter++;
-                } else {
-                    break;
-                }
-            }
-            for (i = row; i < g_row_count; ++i) {
-                if (g_pomoku_board[i][right_diag_indicator - i] == color) {
-                    stone_counter++;
-                } else {
-                    break;
-                }
-            }
-        }
-    }
-    stone_counter -= 1;
-    stone_counter = calc_score(color, stone_counter);
-}
 
 void init_game(void)
 {
@@ -318,27 +76,67 @@ int get_color(const unsigned int row, const unsigned int col)
 
 int is_placeable(const unsigned int row, const unsigned int col)
 {
-    if (g_row_count <= row || g_col_count <= col) {
-        /* should consider "out of range" as well */
+    if (get_row_count <= row || get_column_count <= col) { /* what if... < 0? */
         return FALSE;
-    } else if (g_pomoku_board[row][col] == 0 || g_pomoku_board[row][col] == 1) {
+    } else if (get_color(row, col) == 0 || get_color(row, col) == 1) {
         return FALSE;
     } else {
         return TRUE;
     }
 }
 
-int place_stone(const color_t color, const unsigned int row, const unsigned int col)
+int count_stone_recursive(int color, const unsigned int y, const unsigned int x, int dy, int dx)
 {
-    int stone_color = -1;
-
-    if (g_row_count <= row || g_col_count <= col) {
-        /* should consider "out of range" as well */
-        return FALSE;
-    } else if (g_pomoku_board[row][col] == 0 || g_pomoku_board[row][col] == 1) {
-        return FALSE;
+    if (y >= get_row_count || x >= get_column_count) { /* what if... < 0? */
+        return 0;
     }
 
+    if (get_color(y, x) == color) {
+        return 1 + count_stone_recursive(color, y + dy, x + dx, dy, dx);
+    }
+    return 0;
+}
+
+void obtain_score_algorithm(int color, int y, int x)
+{
+    int i = 0;
+
+    /* hori, verti, left-diag, right-diag */
+    int direction_indicator[4][2] = {
+        {0, 1}, {1, 0}, {-1, 1}, {1, 1}
+    };
+
+    for (i = 0; i < 4; ++i) {
+        int dy = direction_indicator[i][0];
+        int dx = direction_indicator[0][i];
+        int stone_counter = count_stone_recursive(color, y + dy, x + dx, dy, dx);
+        stone_counter += count_stone_recursive(color, y - dy, x - dx, -dy, -dx);
+        stone_counter++; /* also should count the placed stone itself */
+
+        if (stone_counter > 4) {
+            switch (color) {
+            case 0:
+                g_black_score += stone_counter - 4;
+                break;
+            case 1:
+                g_white_score += stone_counter - 4;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+}
+
+int place_stone(const color_t color, const unsigned int row, const unsigned int col)
+{
+    int stone_placeable = FALSE;
+    int stone_color = -1;
+
+    /* is_placeable 판정 */
+    stone_placeable = is_placeable(row, col);
+
+    /* 들어올 color 판정 */
     switch (color) {
     case COLOR_BLACK:
         stone_color = 0;
@@ -347,23 +145,29 @@ int place_stone(const color_t color, const unsigned int row, const unsigned int 
         stone_color = 1;
         break;
     default:
-        return FALSE; /* invalid color */
         break;
     }
 
-    /* score algorithm activates with counting after placement */
+    if (stone_placeable == FALSE || stone_color == -1) {
+        return FALSE;
+    }
+
+    /* 돌 놓기 */
     g_pomoku_board[row][col] = stone_color;
-    count_stone(stone_color, row, col);
+
+    /* 점수 판정 */
+    obtain_score_algorithm(stone_color, row, col);
 
     return TRUE;
 }
 
+
 /* special moves */
-/* add function, add score_req-- */
+/* 조건식(TRUE/FALSE) 손보기, 타입(signed/unsigned) 손보기 */
 int score_checker(const color_t color, int score_req)
 {
     if (!(color == COLOR_BLACK || color == COLOR_WHITE)) {
-        return FALSE; /* invalid color */
+        return FALSE;
     } else if (color == COLOR_BLACK) {
         if (g_black_score < score_req) {
             return FALSE;
