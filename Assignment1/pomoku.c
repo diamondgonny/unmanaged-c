@@ -10,9 +10,7 @@
 #define BOARD_MAX (20)
 #define BOARD_MIN (10)
 
-int g_pomoku_board[BOARD_MAX][BOARD_MAX] = {
-    { INT_MIN, }
-};
+int g_pomoku_board[BOARD_MAX][BOARD_MAX] = { INT_MIN, };
 int g_row_count = 15;
 int g_col_count = 15;
 int g_black_score = 0;
@@ -105,7 +103,7 @@ void obtain_score_algorithm(int color, int y, int x)
 
     /* hori, verti, left-diag, right-diag */
     int direction_indicator[4][2] = {
-        {0, 1}, {1, 0}, {-1, 1}, {1, 1}
+        { 0, 1 }, { 1, 0 }, { -1, 1 }, { 1, 1 }
     };
 
     for (i = 0; i < 4; ++i) {
