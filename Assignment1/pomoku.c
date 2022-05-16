@@ -102,11 +102,11 @@ int count_stone_recursive(int color, int y, int x, int dy, int dx)
 
 void obtain_score_algorithm(int color, int y, int x)
 {
+    int i = 0;
     /* hori, verti, left-diag, right-diag */
     int direction_indicator[4][2] = {
         { 0, 1 }, { 1, 0 }, { -1, 1 }, { 1, 1 }
     };
-    int i = 0;
 
     for (i = 0; i < 4; ++i) {
         int dy = direction_indicator[i][0];
@@ -135,7 +135,7 @@ int place_stone(const color_t color, const unsigned int row, const unsigned int 
     int stone_placeable = FALSE;
     int stone_color = -1;
 
-    /* is_placeable? valid color? */
+    /* is placeable? valid color? */
     stone_placeable = is_placeable(row, col);
     switch (color) {
     case COLOR_BLACK:
@@ -186,9 +186,9 @@ void consume_score(const color_t color, const unsigned int score_req)
 
 int insert_row(const color_t color, const unsigned int row)
 {
-    const unsigned int score_required = 3;
     int i = 0;
     int j = 0;
+    int score_required = 3;
 
     if (BOARD_MAX <= g_row_count) {
         return FALSE;
@@ -217,9 +217,9 @@ int insert_row(const color_t color, const unsigned int row)
 
 int insert_column(const color_t color, const unsigned int col)
 {
-    const unsigned int score_required = 3;
     int i = 0;
     int j = 0;
+    int score_required = 3;
 
     if (BOARD_MAX <= g_col_count) {
         return FALSE;
@@ -248,9 +248,9 @@ int insert_column(const color_t color, const unsigned int col)
 
 int remove_row(const color_t color, const unsigned int row)
 {
-    const unsigned int score_required = 3;
     int i = 0;
     int j = 0;
+    int score_required = 3;
 
     if (g_row_count <= BOARD_MIN) {
         return FALSE;
@@ -278,9 +278,9 @@ int remove_row(const color_t color, const unsigned int row)
 
 int remove_column(const color_t color, const unsigned int col)
 {
-    const unsigned int score_required = 3;
     int i = 0;
     int j = 0;
+    int score_required = 3;
 
     if (g_col_count <= BOARD_MIN) {
         return FALSE;
@@ -308,9 +308,9 @@ int remove_column(const color_t color, const unsigned int col)
 
 int swap_rows(const color_t color, const unsigned int row0, const unsigned int row1)
 {
-    const unsigned int score_required = 2;
-    int temp[BOARD_MAX] = { INT_MIN, };
     int i = 0;
+    int score_required = 2;
+    int temp[BOARD_MAX] = { INT_MIN, };
 
     if (g_row_count <= row0 || g_row_count <= row1) {
         return FALSE;
@@ -336,9 +336,9 @@ int swap_rows(const color_t color, const unsigned int row0, const unsigned int r
 
 int swap_columns(const color_t color, const unsigned int col0, const unsigned int col1)
 {
-    const unsigned int score_required = 2;
-    int temp[BOARD_MAX] = { INT_MIN, };
     int i = 0;
+    int score_required = 2;
+    int temp[BOARD_MAX] = { INT_MIN, };
 
     if (g_col_count <= col0 || g_col_count <= col1) {
         return FALSE;
@@ -364,8 +364,8 @@ int swap_columns(const color_t color, const unsigned int col0, const unsigned in
 
 int copy_row(const color_t color, const unsigned int src, const unsigned int dst)
 {
-    const unsigned int score_required = 4;
     int i = 0;
+    int score_required = 4;
 
     if (g_row_count <= src || g_row_count <= dst) {
         return FALSE;
@@ -383,8 +383,8 @@ int copy_row(const color_t color, const unsigned int src, const unsigned int dst
 
 int copy_column(const color_t color, const unsigned int src, const unsigned int dst)
 {
-    const unsigned int score_required = 4;
     int i = 0;
+    int score_required = 4;
 
     if (g_col_count <= src || g_col_count <= dst) {
         return FALSE;
