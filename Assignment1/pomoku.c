@@ -90,7 +90,7 @@ int is_placeable(const unsigned int row, const unsigned int col)
 int count_stone_recursive(int color, int y, int x, int dy, int dx)
 {
     /* because of type int, also check if (y or x) < 0 */
-    if (y >= (int)g_row_count || x >= (int)g_col_count || y < 0 || x < 0 ) {
+    if (y >= (int)g_row_count || x >= (int)g_col_count || y < 0 || x < 0) {
         return 0;
     }
 
