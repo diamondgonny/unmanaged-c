@@ -110,7 +110,7 @@ void obtain_score_algorithm(int color, int y, int x)
 
     for (i = 0; i < 4; ++i) {
         int dy = direction_indicator[i][0];
-        int dx = direction_indicator[0][i];
+        int dx = direction_indicator[i][1];
         int stone_counter = count_stone_recursive(color, y + dy, x + dx, dy, dx);
         stone_counter += count_stone_recursive(color, y - dy, x - dx, -dy, -dx);
         stone_counter++; /* also should count the placed stone itself */
