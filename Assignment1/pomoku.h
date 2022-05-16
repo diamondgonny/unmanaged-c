@@ -21,7 +21,7 @@ int get_color(const unsigned int row, const unsigned int col);
 int is_placeable(const unsigned int row, const unsigned int col);
 
 /* custom function using into 'place_stone' */
-int count_stone_recursive(int color, const unsigned int y, const unsigned int x, int dy, int dx);
+int count_stone_recursive(int color, int y, int x, int dy, int dx);
 
 void obtain_score_algorithm(int color, int y, int x);
 
