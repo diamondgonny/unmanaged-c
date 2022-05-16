@@ -89,7 +89,7 @@ int is_placeable(const unsigned int row, const unsigned int col)
 
 int count_stone_recursive(int color, int y, int x, int dy, int dx)
 {
-    /* because of type int, check if y,x are negative */
+    /* because of type int, also check if (y or x) < 0 */
     if (y >= (int)g_row_count || x >= (int)g_col_count || y < 0 || x < 0 ) {
         return 0;
     }
@@ -102,12 +102,11 @@ int count_stone_recursive(int color, int y, int x, int dy, int dx)
 
 void obtain_score_algorithm(int color, int y, int x)
 {
-    int i = 0;
-
     /* hori, verti, left-diag, right-diag */
     int direction_indicator[4][2] = {
         { 0, 1 }, { 1, 0 }, { -1, 1 }, { 1, 1 }
     };
+    int i = 0;
 
     for (i = 0; i < 4; ++i) {
         int dy = direction_indicator[i][0];
@@ -136,10 +135,8 @@ int place_stone(const color_t color, const unsigned int row, const unsigned int 
     int stone_placeable = FALSE;
     int stone_color = -1;
 
-    /* is_placeable 판정 */
+    /* is_placeable? valid color? */
     stone_placeable = is_placeable(row, col);
-
-    /* 들어올 color 판정 */
     switch (color) {
     case COLOR_BLACK:
         stone_color = 0;
@@ -155,10 +152,8 @@ int place_stone(const color_t color, const unsigned int row, const unsigned int 
         return FALSE;
     }
 
-    /* 돌 놓기 */
+    /* place stone, obtain score */
     g_pomoku_board[row][col] = stone_color;
-
-    /* 점수 판정 */
     obtain_score_algorithm(stone_color, row, col);
 
     return TRUE;
@@ -166,7 +161,6 @@ int place_stone(const color_t color, const unsigned int row, const unsigned int 
 
 
 /* special moves */
-/* 타입(signed/unsigned) 손보기 */
 int check_score(const color_t color, const unsigned int score_req)
 {
     if (color == COLOR_BLACK) {
