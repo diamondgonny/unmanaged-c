@@ -215,6 +215,7 @@ int insert_row(const color_t color, const unsigned int row)
             }
         }
         g_row_count++;
+        return TRUE;
     }
     return FALSE;
 }
@@ -245,6 +246,7 @@ int insert_column(const color_t color, const unsigned int col)
             }
         }
         g_col_count++;
+        return TRUE;
     }
     return FALSE;
 }
@@ -274,6 +276,7 @@ int remove_row(const color_t color, const unsigned int row)
             g_pomoku_board[g_row_count - 1][j] = INT_MIN;
         }
         g_row_count--;
+        return TRUE;
     }
     return FALSE;
 }
@@ -303,6 +306,7 @@ int remove_column(const color_t color, const unsigned int col)
             g_pomoku_board[j][g_col_count - 1] = INT_MIN;
         }
         g_col_count--;
+        return TRUE;
     }
     return FALSE;
 }
@@ -330,6 +334,7 @@ int swap_rows(const color_t color, const unsigned int row0, const unsigned int r
         for (i = 0; i < g_col_count; ++i) {
             g_pomoku_board[row1][i] = temp[i];
         }
+        return TRUE;
     }
     return FALSE;
 }
@@ -357,6 +362,7 @@ int swap_columns(const color_t color, const unsigned int col0, const unsigned in
         for (i = 0; i < g_row_count; ++i) {
             g_pomoku_board[i][col1] = temp[i];
         }
+        return TRUE;
     }
     return FALSE;
 }
@@ -375,6 +381,7 @@ int copy_row(const color_t color, const unsigned int src, const unsigned int dst
         for (i = 0; i < g_col_count; ++i) {
             g_pomoku_board[dst][i] = g_pomoku_board[src][i];
         }
+        return TRUE;
     }
     return FALSE;
 }
@@ -393,6 +400,7 @@ int copy_column(const color_t color, const unsigned int src, const unsigned int 
         for (i = 0; i < g_row_count; ++i) {
             g_pomoku_board[i][dst] = g_pomoku_board[i][src];
         }
+        return TRUE;
     }
     return FALSE;
 }
