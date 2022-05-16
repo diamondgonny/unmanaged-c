@@ -10,7 +10,9 @@
 #define BOARD_MAX (20)
 #define BOARD_MIN (10)
 
-int g_pomoku_board[BOARD_MAX][BOARD_MAX] = { INT_MIN, };
+int g_pomoku_board[BOARD_MAX][BOARD_MAX] = {
+    { INT_MIN, }
+};
 int g_row_count = 15;
 int g_col_count = 15;
 int g_black_score = 0;
@@ -78,7 +80,7 @@ int is_placeable(const unsigned int row, const unsigned int col)
 {
     if (g_row_count <= row || g_col_count <= col) { /* what if... < 0? */
         return FALSE;
-    } else if (get_color(row, col) == 0 || get_color(row, col) == 1) {
+    } else if (g_pomoku_board[row][col] == 0 || g_pomoku_board[row][col] == 1) {
         return FALSE;
     } else {
         return TRUE;
@@ -91,7 +93,7 @@ int count_stone_recursive(int color, const unsigned int y, const unsigned int x,
         return 0;
     }
 
-    if (get_color(y, x) == color) {
+    if (g_pomoku_board[y][x] == color) {
         return 1 + count_stone_recursive(color, y + dy, x + dx, dy, dx);
     }
     return 0;
