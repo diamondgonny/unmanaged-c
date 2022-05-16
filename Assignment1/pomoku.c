@@ -13,10 +13,10 @@
 int g_pomoku_board[BOARD_MAX][BOARD_MAX] = {
     { INT_MIN, }
 };
-int g_row_count = 15;
-int g_col_count = 15;
-int g_black_score = 0;
-int g_white_score = 0;
+unsigned int g_row_count = 15;
+unsigned int g_col_count = 15;
+unsigned int g_black_score = 0;
+unsigned int g_white_score = 0;
 
 
 void init_game(void)
@@ -78,7 +78,7 @@ int get_color(const unsigned int row, const unsigned int col)
 
 int is_placeable(const unsigned int row, const unsigned int col)
 {
-    if (g_row_count <= row || g_col_count <= col) { /* what if... < 0? */
+    if (g_row_count <= row || g_col_count <= col) {
         return FALSE;
     } else if (g_pomoku_board[row][col] == 0 || g_pomoku_board[row][col] == 1) {
         return FALSE;
@@ -87,9 +87,10 @@ int is_placeable(const unsigned int row, const unsigned int col)
     }
 }
 
-int count_stone_recursive(int color, const unsigned int y, const unsigned int x, int dy, int dx)
+int count_stone_recursive(int color, int y, int x, int dy, int dx)
 {
-    if (y >= g_row_count || x >= g_col_count) { /* what if... < 0? */
+    /* because of type int, check if y,x are negative */
+    if (y >= (int)g_row_count || x >= (int)g_col_count || y < 0 || x < 0 ) {
         return 0;
     }
 
@@ -166,7 +167,7 @@ int place_stone(const color_t color, const unsigned int row, const unsigned int 
 
 /* special moves */
 /* 타입(signed/unsigned) 손보기 */
-int check_score(const color_t color, int score_req)
+int check_score(const color_t color, const unsigned int score_req)
 {
     if (color == COLOR_BLACK) {
         if (g_black_score >= score_req) {
@@ -180,7 +181,7 @@ int check_score(const color_t color, int score_req)
     return FALSE;
 }
 
-void consume_score(const color_t color, int score_req)
+void consume_score(const color_t color, const unsigned int score_req)
 {
     if (color == COLOR_BLACK) {
         g_black_score -= score_req;
@@ -191,9 +192,9 @@ void consume_score(const color_t color, int score_req)
 
 int insert_row(const color_t color, const unsigned int row)
 {
-    int i = 0;
-    int j = 0;
-    int score_required = 3;
+    unsigned int i = 0;
+    unsigned int j = 0;
+    const unsigned int score_required = 3;
 
     if (BOARD_MAX <= g_row_count) {
         return FALSE;
@@ -222,9 +223,9 @@ int insert_row(const color_t color, const unsigned int row)
 
 int insert_column(const color_t color, const unsigned int col)
 {
-    int i = 0;
-    int j = 0;
-    int score_required = 3;
+    unsigned int i = 0;
+    unsigned int j = 0;
+    const unsigned int score_required = 3;
 
     if (BOARD_MAX <= g_col_count) {
         return FALSE;
@@ -253,9 +254,9 @@ int insert_column(const color_t color, const unsigned int col)
 
 int remove_row(const color_t color, const unsigned int row)
 {
-    int i = 0;
-    int j = 0;
-    int score_required = 3;
+    unsigned int i = 0;
+    unsigned int j = 0;
+    const unsigned int score_required = 3;
 
     if (g_row_count <= BOARD_MIN) {
         return FALSE;
@@ -283,9 +284,9 @@ int remove_row(const color_t color, const unsigned int row)
 
 int remove_column(const color_t color, const unsigned int col)
 {
-    int i = 0;
-    int j = 0;
-    int score_required = 3;
+    unsigned int i = 0;
+    unsigned int j = 0;
+    const unsigned int score_required = 3;
 
     if (g_col_count <= BOARD_MIN) {
         return FALSE;
@@ -313,8 +314,8 @@ int remove_column(const color_t color, const unsigned int col)
 
 int swap_rows(const color_t color, const unsigned int row0, const unsigned int row1)
 {
-    int i = 0;
-    int score_required = 2;
+    unsigned int i = 0;
+    const unsigned int score_required = 2;
     int temp[BOARD_MAX] = { INT_MIN, };
 
     if (g_row_count <= row0 || g_row_count <= row1) {
@@ -341,8 +342,8 @@ int swap_rows(const color_t color, const unsigned int row0, const unsigned int r
 
 int swap_columns(const color_t color, const unsigned int col0, const unsigned int col1)
 {
-    int i = 0;
-    int score_required = 2;
+    unsigned int i = 0;
+    const unsigned int score_required = 2;
     int temp[BOARD_MAX] = { INT_MIN, };
 
     if (g_col_count <= col0 || g_col_count <= col1) {
@@ -369,8 +370,8 @@ int swap_columns(const color_t color, const unsigned int col0, const unsigned in
 
 int copy_row(const color_t color, const unsigned int src, const unsigned int dst)
 {
-    int i = 0;
-    int score_required = 4;
+    unsigned int i = 0;
+    const unsigned int score_required = 4;
 
     if (g_row_count <= src || g_row_count <= dst) {
         return FALSE;
@@ -388,8 +389,8 @@ int copy_row(const color_t color, const unsigned int src, const unsigned int dst
 
 int copy_column(const color_t color, const unsigned int src, const unsigned int dst)
 {
-    int i = 0;
-    int score_required = 4;
+    unsigned int i = 0;
+    const unsigned int score_required = 4;
 
     if (g_col_count <= src || g_col_count <= dst) {
         return FALSE;
