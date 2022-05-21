@@ -50,6 +50,7 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
             safe_score = 0;
         } else {
             safe_score = 0;
+        }
     }
 
     /* 정답 반환 */
@@ -59,4 +60,32 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
 int get_travel_time(const char* const cab_start_location, const size_t cab_length, const char* const cluster_start_locations[], const size_t cluster_lengths[], const size_t cluster_count)
 {
 
+    size_t i;
+    size_t j;
+    size_t danger_zone = 0;
+    size_t safe_zone = 0;
+    double travel_time = 0;
+    char cab[CAB_LENGTH] = { 0, };
+
+    /* 예외 */
+    if (cluster_count == 0) {
+        cluster_start_locations = NULL;
+        cluster_lengths = NULL;
+    }
+
+    /* 클러스터 (주소값) 계산, 숫자 주입 */
+    for (i = 0; i < cluster_count; ++i) {
+        for (j = cluster_start_locations[i] - cab_start_location; j < cluster_lengths[i] + cluster_start_locations[i] - cab_start_location; ++j) {
+            cab[j]++;
+        }
+    }
+
+    /* 안전지역 판정 알고리즘 */
+    for (i = 0; i < CAB_LENGTH; ++i) {
+        cab[i] % 2 == 0 ? safe_zone++ : danger_zone++;
+    }
+
+    /* zone별 시간 연산, 정답 반환 */
+    travel_time = 0.1 * danger_zone + 0.2 * safe_zone;
+    return (int) (travel_time + 0.5);
 }
