@@ -43,10 +43,6 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
             }
         }
     }
-
-    for (i = 0; i < cab_length; ++i) {
-        printf("%d %d\n", i,cab[i] % 2);
-    }
     
     /* 안전지역 판정 알고리즘 (Highscore, 끝-시작주소) */
     for (i = 0; i < cab_length; ++i) {
