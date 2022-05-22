@@ -48,8 +48,7 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     for (i = 0; i < cab_length; ++i) {
         if (cab[i] % 2 != 0) {
             safe_score = 0;
-        }
-        else {
+        } else {
             safe_score++;
             if (*(out_longest_safe_area_length) <= safe_score) {
                 *(out_longest_safe_area_length) = safe_score;
