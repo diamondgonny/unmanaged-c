@@ -21,6 +21,7 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     size_t j;
     size_t safe_score = 0;
     size_t rel_address = 0;
+    const char* longest_safe_cluster_start_address;
     char cab[CAB_LENGTHY] = { 0, };
     *(out_longest_safe_area_length) = 0;
 
@@ -33,6 +34,8 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     if (cluster_count == 0) {
         cluster_start_locations = NULL;
         cluster_lengths = NULL;
+        *(out_longest_safe_area_length) = cab_length;
+        return cab_start_location;
     }
 
     /* 클러스터 (주소값) 계산, 숫자 주입 */
@@ -59,11 +62,8 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     }
 
     /* 정답 반환 */
-    {
-        const char* longest_safe_cluster_start_address = cab_start_location + rel_address;
-        return longest_safe_cluster_start_address;
-    }
-    return NULL;
+    longest_safe_cluster_start_address = cab_start_location + rel_address;
+    return longest_safe_cluster_start_address;
 }
 
 int get_travel_time(const char* const cab_start_location, const size_t cab_length, const char* const cluster_start_locations[], const size_t cluster_lengths[], const size_t cluster_count)
@@ -80,6 +80,8 @@ int get_travel_time(const char* const cab_start_location, const size_t cab_lengt
     if (cluster_count == 0) {
         cluster_start_locations = NULL;
         cluster_lengths = NULL;
+        travel_time = 0.1 * cab_length;
+        return (int)(travel_time + 0.5);
     }
 
     /* 클러스터 (주소값) 계산, 숫자 주입 */
