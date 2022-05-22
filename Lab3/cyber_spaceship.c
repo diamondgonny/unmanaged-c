@@ -12,6 +12,8 @@
 */
 
 #include "cyber_spaceship.h"
+#define CAB_LENGTHY (3000)
+
 
 const char* get_longest_safe_zone_or_null(const char* const cab_start_location, const size_t cab_length, const char* const cluster_start_locations[], const size_t cluster_lengths[], const size_t cluster_count, size_t* out_longest_safe_area_length)
 {
@@ -19,7 +21,7 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     int j;
     size_t safe_score = 0;
     size_t rel_address = 0;
-    char cab[CAB_LENGTH] = { 0, };
+    char cab[CAB_LENGTHY] = { 0, };
 
     /* 예외 */
     if (cluster_count == 0) {
@@ -40,7 +42,7 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     }
 
     /* 안전지역 판정 알고리즘 (Highscore, 끝-시작주소) */
-    for (i = 0; i < CAB_LENGTH; ++i) {
+    for (i = 0; i < cab_length; ++i) {
         if (cab[i] % 2 == 0) {
             safe_score++;
         }
@@ -70,7 +72,7 @@ int get_travel_time(const char* const cab_start_location, const size_t cab_lengt
     size_t danger_zone = 0;
     size_t safe_zone = 0;
     double travel_time = 0;
-    char cab[CAB_LENGTH] = { 0, };
+    char cab[CAB_LENGTHY] = { 0, };
 
     /* 예외 */
     if (cluster_count == 0) {
@@ -86,7 +88,7 @@ int get_travel_time(const char* const cab_start_location, const size_t cab_lengt
     }
 
     /* 안전지역 판정 알고리즘 */
-    for (i = 0; i < CAB_LENGTH; ++i) {
+    for (i = 0; i < cab_length; ++i) {
         cab[i] % 2 == 0 ? safe_zone++ : danger_zone++;
     }
 
