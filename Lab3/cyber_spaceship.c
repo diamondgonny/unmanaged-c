@@ -17,9 +17,9 @@
     {
         size_t i;
         size_t j;
-        size_t a = 0;
+        size_t cluster_amounts = 0;
         size_t safe_score = 0;
-        const char* p = cab_start_location;
+        const char* ptr = cab_start_location;
         const char* longest_safe_zone_start_address = NULL;
         *(out_longest_safe_area_length) = 0;
 
@@ -40,17 +40,17 @@
         /* 만약에, 현위치에서 qn이 있는지? 있으면 a++, 없으면 x*/
         for (i = 0; i < cab_length; ++i) {
             for(j = 0; j < cluster_count; ++j) {
-                if (p >= cluster_start_locations[j] && p - cluster_start_locations[j] < cluster_lengths[j]) {
-                    a++;
+                if (ptr >= cluster_start_locations[j] && ptr - cluster_start_locations[j] < cluster_lengths[j]) {
+                    cluster_amounts++;
                 } 
             }
-            a % 2 != 0 ? safe_score = 0 : safe_score++;
+            cluster_amounts % 2 != 0 ? safe_score = 0 : safe_score++;
             if(safe_score >= *(out_longest_safe_area_length)) {
                 *(out_longest_safe_area_length) = safe_score;
-                longest_safe_zone_start_address = p - safe_score + 1;
+                longest_safe_zone_start_address = ptr - safe_score + 1;
             }
-            p++;
-            a = 0;
+            ptr++;
+            cluster_amounts = 0;
         }
 
         /* 정답 반환 */
@@ -62,10 +62,10 @@
 
         size_t i;
         size_t j;
-        size_t a = 0;
+        size_t cluster_amounts = 0;
         size_t danger_zone = 0;
         size_t safe_zone = 0;
-        const char* p = cab_start_location;
+        const char* ptr = cab_start_location;
         double travel_time = 0;
 
         /* 예외 */
@@ -80,13 +80,13 @@
         /* 만약에, 현위치에서 qn이 있는지? 있으면 a++, 없으면 x*/
         for (i = 0; i < cab_length; ++i) {
             for(j = 0; j < cluster_count; ++j) {
-                if (p >= cluster_start_locations[j] && p - cluster_start_locations[j] < cluster_lengths[j]) {
-                    a++;
+                if (ptr >= cluster_start_locations[j] && ptr - cluster_start_locations[j] < cluster_lengths[j]) {
+                    cluster_amounts++;
                 } 
             }
-            a % 2 != 0 ? danger_zone++ : safe_zone++;
-            p++;
-            a = 0;
+            cluster_amounts % 2 != 0 ? danger_zone++ : safe_zone++;
+            ptr++;
+            cluster_amounts = 0;
         }
 
         /* zone별 시간 연산, 정답 반환 */
