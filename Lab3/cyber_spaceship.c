@@ -5,7 +5,7 @@
 - CAB 안에 있는 각 소행성 클러스터의 시작 위치(16진수)와 길이
 - CAB 안에 있는 소행성 클러스터의 총 개수
 - 어떤 위치에서 겹치는(overlap) 소행성 클러스터의 수가 짝수인 경우, 클러스터들이 서로를 상쇄시킴. 따라서 이 위치는 안전한 지역. 소행성 클러스터가 아예 없는 곳도 역시 안전 지역임.
--겹치는 소행성 클러스터의 수가 홀수라면 이 지역은 위험 지역. 어떤 일이 생길지 모르니 조심해야 함. 
+-겹치는 소행성 클러스터의 수가 홀수라면 이 지역은 위험 지역. 어떤 일이 생길지 모르니 조심해야 함.
 - 위험 지역은 1분에 5바이트만 항해 가능. 안전 지역은 1분에 10바이트 항해 가능.
 
 이제 엔터프라이즈 호의 뛰어난 승무원들과 함께 여러분이 할 일은 1) CAB 안에 있는 안전 지역 중 가장 긴 것의 위치와 길이, 그리고 2) CAB 전체를 통과할 때 걸리는 시간을 구하는 것입니다.
@@ -15,10 +15,10 @@
 
 const char* get_longest_safe_zone_or_null(const char* const cab_start_location, const size_t cab_length, const char* const cluster_start_locations[], const size_t cluster_lengths[], const size_t cluster_count, size_t* out_longest_safe_area_length)
 {
-    size_t i;
-    size_t j;
-    size_t safe_score;
-    char* longest_safe_cluster_start_address;
+    int i;
+    int j;
+    size_t safe_score = 0;
+    size_t rel_address = 0;
     char cab[CAB_LENGTH] = { 0, };
 
     /* 예외 */
@@ -43,25 +43,30 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     for (i = 0; i < CAB_LENGTH; ++i) {
         if (cab[i] % 2 == 0) {
             safe_score++;
-        } else if (out_longest_safe_area_length <= safe_score) {
-            out_longest_safe_area_length = safe_score;
+        }
+        else if (*(out_longest_safe_area_length) <= safe_score) {
+            *(out_longest_safe_area_length) = safe_score;
             /* 처음주소로부터의 offset을 고려하자 (p + i - s_length) */
-            longest_safe_cluster_start_address = cab_start_location + i - safe_score;
+            rel_address = (i - safe_score);
             safe_score = 0;
-        } else {
+        }
+        else {
             safe_score = 0;
         }
     }
-
     /* 정답 반환 */
-    return longest_safe_cluster_start_address;
+    {
+        const char* longest_safe_cluster_start_address = cab_start_location + rel_address;
+        return longest_safe_cluster_start_address;
+    }
+    return NULL;
 }
 
 int get_travel_time(const char* const cab_start_location, const size_t cab_length, const char* const cluster_start_locations[], const size_t cluster_lengths[], const size_t cluster_count)
 {
 
-    size_t i;
-    size_t j;
+    int i;
+    int j;
     size_t danger_zone = 0;
     size_t safe_zone = 0;
     double travel_time = 0;
@@ -86,6 +91,6 @@ int get_travel_time(const char* const cab_start_location, const size_t cab_lengt
     }
 
     /* zone별 시간 연산, 정답 반환 */
-    travel_time = 0.1 * danger_zone + 0.2 * safe_zone;
-    return (int) (travel_time + 0.5);
+    travel_time = 0.2 * danger_zone + 0.1 * safe_zone;
+    return (int)(travel_time + 0.5);
 }
