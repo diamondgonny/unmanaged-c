@@ -22,17 +22,17 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     size_t safe_score = 0;
     size_t rel_address = 0;
     char cab[CAB_LENGTHY] = { 0, };
+    *(out_longest_safe_area_length) = 0;
 
     /* 예외 */
-    if (cluster_count == 0) {
-        cluster_start_locations = NULL;
-        cluster_lengths = NULL;
-        return NULL;
-    }
-
     if (cab_length == 0) {
         *(out_longest_safe_area_length) = 0;
         return NULL;
+    }
+
+    if (cluster_count == 0) {
+        cluster_start_locations = NULL;
+        cluster_lengths = NULL;
     }
 
     /* 클러스터 (주소값) 계산, 숫자 주입 */
@@ -41,25 +41,28 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
             if (cab_length > j) {
                 cab[j]++;
             }
-            printf("%d, %d\n", j, cab[j]);
         }
     }
 
+    for (i = 0; i < cab_length; ++i) {
+        printf("%d %d\n", i,cab[i] % 2);
+    }
+    
     /* 안전지역 판정 알고리즘 (Highscore, 끝-시작주소) */
     for (i = 0; i < cab_length; ++i) {
-        if (cab[i] % 2 == 0) {
-            safe_score++;
-        }
-        else if (*(out_longest_safe_area_length) <= safe_score) {
-            *(out_longest_safe_area_length) = safe_score;
-            /* 처음주소로부터의 offset을 고려하자 (p + i - s_length) */
-            rel_address = (i - safe_score);
+        if (cab[i] % 2 != 0) {
             safe_score = 0;
         }
         else {
-            safe_score = 0;
+            safe_score++;
+            if (*(out_longest_safe_area_length) <= safe_score) {
+                *(out_longest_safe_area_length) = safe_score;
+                /* 처음주소로부터의 offset을 고려하자 (p + i - s_length) */
+                rel_address = (i - safe_score + 1);
+            }
         }
     }
+
     /* 정답 반환 */
     {
         const char* longest_safe_cluster_start_address = cab_start_location + rel_address;
@@ -90,7 +93,6 @@ int get_travel_time(const char* const cab_start_location, const size_t cab_lengt
             if (cab_length > j) {
                 cab[j]++;
             }
-            printf("%d, %d\n", j, cab[j]);
         }
     }
 
