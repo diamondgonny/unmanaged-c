@@ -17,8 +17,8 @@
 
 const char* get_longest_safe_zone_or_null(const char* const cab_start_location, const size_t cab_length, const char* const cluster_start_locations[], const size_t cluster_lengths[], const size_t cluster_count, size_t* out_longest_safe_area_length)
 {
-    int i;
-    int j;
+    size_t i;
+    size_t j;
     size_t safe_score = 0;
     size_t rel_address = 0;
     char cab[CAB_LENGTHY] = { 0, };
@@ -74,8 +74,8 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
 int get_travel_time(const char* const cab_start_location, const size_t cab_length, const char* const cluster_start_locations[], const size_t cluster_lengths[], const size_t cluster_count)
 {
 
-    int i;
-    int j;
+    size_t i;
+    size_t j;
     size_t danger_zone = 0;
     size_t safe_zone = 0;
     double travel_time = 0;
