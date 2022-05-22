@@ -10,7 +10,7 @@
 
 이제 엔터프라이즈 호의 뛰어난 승무원들과 함께 여러분이 할 일은 1) CAB 안에 있는 안전 지역 중 가장 긴 것의 위치와 길이, 그리고 2) CAB 전체를 통과할 때 걸리는 시간을 구하는 것입니다.
 */
-
+#include <stdio.h>
 #include "cyber_spaceship.h"
 #define CAB_LENGTHY (3000)
 
@@ -27,6 +27,7 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     if (cluster_count == 0) {
         cluster_start_locations = NULL;
         cluster_lengths = NULL;
+        return NULL;
     }
 
     if (cab_length == 0) {
@@ -37,7 +38,10 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     /* 클러스터 (주소값) 계산, 숫자 주입 */
     for (i = 0; i < cluster_count; ++i) {
         for (j = cluster_start_locations[i] - cab_start_location; j < cluster_lengths[i] + cluster_start_locations[i] - cab_start_location; ++j) {
-            cab[j]++;
+            if (cab_length > j) {
+                cab[j]++;
+            }
+            printf("%d, %d\n", j, cab[j]);
         }
     }
 
@@ -83,7 +87,10 @@ int get_travel_time(const char* const cab_start_location, const size_t cab_lengt
     /* 클러스터 (주소값) 계산, 숫자 주입 */
     for (i = 0; i < cluster_count; ++i) {
         for (j = cluster_start_locations[i] - cab_start_location; j < cluster_lengths[i] + cluster_start_locations[i] - cab_start_location; ++j) {
-            cab[j]++;
+            if (cab_length > j) {
+                cab[j]++;
+            }
+            printf("%d, %d\n", j, cab[j]);
         }
     }
 
