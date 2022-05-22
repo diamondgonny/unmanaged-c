@@ -27,13 +27,13 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     /* 가리키는 포인터 p를 기준으로, 클러스터가 존재하는가? */
     /* 만약에, 현위치에서 qn이 있는지? 있으면 a++, 없으면 x*/
     for (i = 0; i < cab_length; ++i) {
-        for(j = 0; j < cluster_count; ++j) {
+        for (j = 0; j < cluster_count; ++j) {
             if (ptr >= cluster_start_locations[j] && ptr - cluster_start_locations[j] < cluster_lengths[j]) {
                 cluster_amounts++;
             } 
         }
         cluster_amounts % 2 != 0 ? safe_score = 0 : safe_score++;
-        if(safe_score >= *(out_longest_safe_area_length)) {
+        if (safe_score >= *(out_longest_safe_area_length)) {
             *(out_longest_safe_area_length) = safe_score;
             longest_safe_zone_start_address = ptr - safe_score + 1;
         }
@@ -67,7 +67,7 @@ int get_travel_time(const char* const cab_start_location, const size_t cab_lengt
     /* 가리키는 포인터 p를 기준으로, 클러스터가 존재하는가? */
     /* 만약에, 현위치에서 qn이 있는지? 있으면 a++, 없으면 x*/
     for (i = 0; i < cab_length; ++i) {
-        for(j = 0; j < cluster_count; ++j) {
+        for (j = 0; j < cluster_count; ++j) {
             if (ptr >= cluster_start_locations[j] && ptr - cluster_start_locations[j] < cluster_lengths[j]) {
                 cluster_amounts++;
             } 
