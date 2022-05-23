@@ -3,9 +3,10 @@
 
 const char* get_longest_safe_zone_or_null(const char* const cab_start_location, const size_t cab_length, const char* const cluster_start_locations[], const size_t cluster_lengths[], const size_t cluster_count, size_t* out_longest_safe_area_length)
 {
+    /* CAB의 시작주소를 const char 포인터형의 ptr가 빌려와서 알고리즘에 활용할 것임 */
     size_t i;
     size_t j;
-    size_t cluster_amounts = 0;
+    size_t cluster_overlap = 0;
     size_t safe_score = 0;
     const char* ptr = cab_start_location;
     const char* longest_safe_zone_start_address = NULL;
@@ -24,21 +25,25 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
         return cab_start_location;
     }
 
-    /* 가리키는 포인터 p를 기준으로, 클러스터가 존재하는가? */
-    /* 만약에, 현위치에서 qn이 있는지? 있으면 a++, 없으면 x*/
+    /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
+    /* ↑                                                                        */
+    /* 가리키는 포인터 ptr를 한칸씩 이동, 거기엔 클러스터가 얼마나 있는지 조사 */
+    /* 만약, 해당 ptr 위치에 클러스터 있으면 그 갯수만큼 ++cluster_overlap */
+    /* 그 위치 safe 판정 -> 만약 누적된 (연속) safe_score가 최고점수이면... */
+    /* *(out_longest_safe_area_length)와 longest_safe_zone_start_address는 갱신함 */
     for (i = 0; i < cab_length; ++i) {
         for (j = 0; j < cluster_count; ++j) {
-            if (ptr >= cluster_start_locations[j] && ptr - cluster_start_locations[j] < cluster_lengths[j]) {
-                cluster_amounts++;
+            if (cluster_start_locations[j] <= ptr && ptr < cluster_start_locations[j] + cluster_lengths[j]) {
+                ++cluster_overlap;
             } 
         }
-        cluster_amounts % 2 != 0 ? safe_score = 0 : safe_score++;
+        cluster_overlap % 2 != 0 ? safe_score = 0 : ++safe_score;
         if (safe_score >= *(out_longest_safe_area_length)) {
             *(out_longest_safe_area_length) = safe_score;
             longest_safe_zone_start_address = ptr - safe_score + 1;
         }
-        ptr++;
-        cluster_amounts = 0;
+        ++ptr;
+        cluster_overlap = 0;
     }
 
     /* 정답 반환 */
@@ -47,10 +52,10 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
 
 int get_travel_time(const char* const cab_start_location, const size_t cab_length, const char* const cluster_start_locations[], const size_t cluster_lengths[], const size_t cluster_count)
 {
-
+    /* CAB의 시작주소를 const char 포인터형의 ptr가 빌려와서 알고리즘에 활용할 것임 */
     size_t i;
     size_t j;
-    size_t cluster_amounts = 0;
+    size_t cluster_overlap = 0;
     size_t danger_zone = 0;
     size_t safe_zone = 0;
     const char* ptr = cab_start_location;
@@ -64,20 +69,23 @@ int get_travel_time(const char* const cab_start_location, const size_t cab_lengt
         return (int)(travel_time + 0.5);
     }
 
-    /* 가리키는 포인터 p를 기준으로, 클러스터가 존재하는가? */
-    /* 만약에, 현위치에서 qn이 있는지? 있으면 a++, 없으면 x*/
+    /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
+    /* ↑                                                                        */
+    /* 가리키는 포인터 ptr를 한칸씩 이동, 거기엔 클러스터가 얼마나 있는지 조사 */
+    /* 만약, 해당 ptr 위치에 클러스터 있으면 그 갯수만큼 ++cluster_overlap */
+    /* 그 위치 safe 혹은 danger 판정 -> (끝날 때까지 반복...) -> 총 예상 소요시간 계산 */
     for (i = 0; i < cab_length; ++i) {
         for (j = 0; j < cluster_count; ++j) {
-            if (ptr >= cluster_start_locations[j] && ptr - cluster_start_locations[j] < cluster_lengths[j]) {
-                cluster_amounts++;
-            } 
+            if (cluster_start_locations[j] <= ptr && ptr < cluster_start_locations[j] + cluster_lengths[j]) {
+                ++cluster_overlap;
+            }
         }
-        cluster_amounts % 2 != 0 ? danger_zone++ : safe_zone++;
-        ptr++;
-        cluster_amounts = 0;
+        cluster_overlap % 2 != 0 ? ++danger_zone : ++safe_zone;
+        ++ptr;
+        cluster_overlap = 0;
     }
 
-    /* zone별 시간 연산, 정답 반환 */
+    /* 정답 반환 */
     travel_time = 0.2 * danger_zone + 0.1 * safe_zone;
     return (int)(travel_time + 0.5);
 }
