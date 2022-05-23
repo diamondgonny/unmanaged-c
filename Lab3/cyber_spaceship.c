@@ -26,7 +26,7 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     }
 
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
-    /* ↑                                                                        */
+    /* ↑                                                    */
     /* 가리키는 포인터 ptr를 한칸씩 이동, 거기엔 클러스터가 얼마나 있는지 조사 */
     /* 만약, 해당 ptr 위치에 클러스터 있으면 그 갯수만큼 ++cluster_overlap */
     /* 그 위치 safe 판정 -> 만약 누적된 (연속) safe_score가 최고점수이면... */
@@ -70,7 +70,7 @@ int get_travel_time(const char* const cab_start_location, const size_t cab_lengt
     }
 
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
-    /* ↑                                                                        */
+    /* ↑                                                    */
     /* 가리키는 포인터 ptr를 한칸씩 이동, 거기엔 클러스터가 얼마나 있는지 조사 */
     /* 만약, 해당 ptr 위치에 클러스터 있으면 그 갯수만큼 ++cluster_overlap */
     /* 그 위치 safe 혹은 danger 판정 -> (끝날 때까지 반복...) -> 총 예상 소요시간 계산 */
