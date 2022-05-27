@@ -68,7 +68,8 @@ void reverse_by_words(char* str)
         if (*p_ongoing == ' ') {
             for (i = 0; i < (p_ongoing - str) / 2; ++i) {
                 swap(str + i, p_ongoing - 1 - i);
-            }/*
+            }
+            /*
             while (*(p_ongoing + 1) == ' ') {
                 ++p_ongoing;
             } */
@@ -87,40 +88,40 @@ void reverse_by_words(char* str)
 
 char* tokenize(char* str_or_null, const char* delims)
 {
-    static char* p_ongoing;
+    static char* s_p_ongoing;
     const char* p_delims = delims;
 
     /* [반환값] 스타또 포인트 (동기화 : 새로하기 vs 이어하기) */
-    str_or_null != NULL ? (p_ongoing = str_or_null) : (str_or_null = p_ongoing);
+    str_or_null != NULL ? (s_p_ongoing = str_or_null) : (str_or_null = s_p_ongoing);
 
     /* 현재위치 NULL 이거나 현재값 '\0'? NULL을 반환 */
-    if (p_ongoing == NULL || *p_ongoing == '\0') {
+    if (s_p_ongoing == NULL || *s_p_ongoing == '\0') {
         return NULL;
     }
 
     /* 현재값 구분자? 구분자이면 루프돌고(좌항), 비구분자이면 탈출(우항). */
     /* 예시)  ...'g'g..................,,,0  */
-    while (*p_ongoing != '\0') {
+    while (*s_p_ongoing != '\0') {
         while (*p_delims != '\0') {
-            if (*p_ongoing == *p_delims) {
+            if (*s_p_ongoing == *p_delims) {
                 break;
             } else {
                 ++p_delims;
             }
         }
         if (*p_delims != '\0') {
-            ++p_ongoing;
+            ++s_p_ongoing;
         } else {
             break;
         }
     }
 
     /* 유효한 토큰 반환을 위한 구분자 감지 알고리즘 */
-    str_or_null = p_ongoing;
-    for (p_ongoing = str_or_null; *p_ongoing != '\0'; ++p_ongoing) {
+    str_or_null = s_p_ongoing;
+    for (s_p_ongoing = str_or_null; *s_p_ongoing != '\0'; ++s_p_ongoing) {
         for (p_delims = delims; *p_delims != '\0'; ++p_delims) {
-            if (*p_ongoing == *p_delims) {
-                *p_ongoing++ = '\0';
+            if (*s_p_ongoing == *p_delims) {
+                *s_p_ongoing++ = '\0';
                 return str_or_null;
             }
         }
@@ -128,7 +129,8 @@ char* tokenize(char* str_or_null, const char* delims)
     return str_or_null;
 }
 
-char* reverse_tokenize(char* str_or_null, const char* delims) {
+char* reverse_tokenize(char* str_or_null, const char* delims)
+{
     char* p_reverse_token;
     p_reverse_token = tokenize(str_or_null, delims);
     reverse(p_reverse_token);
