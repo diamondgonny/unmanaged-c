@@ -129,7 +129,7 @@ char* reverse_tokenize(char* str_or_null, const char* delims)
 {
     char* p_reverse_token;
     p_reverse_token = tokenize(str_or_null, delims);
-    if(p_reverse_token == NULL) {
+    if (p_reverse_token == NULL) {
         return NULL;
     }
     reverse(p_reverse_token);
