@@ -28,7 +28,7 @@ size_t cmp_str(const char* str, const char* word)
         ++str;
         ++word;
     }
-    return *word == '\0' && *str == *word ? TRUE : FALSE;
+    return *word == '\0' ? TRUE : FALSE;
 }
 
 void reverse(char* str)
@@ -37,7 +37,7 @@ void reverse(char* str)
     size_t str_length = get_str_length(str);
 
     for (i = 0; i < (str_length / 2); ++i) {
-        swap(str + i, str - 1 - i);
+        swap(str + i, str + str_length - 1 - i);
     }
 }
 
@@ -59,14 +59,28 @@ int index_of(const char* str, const char* word)
     return -1;
 }
 
-void reverse_by_words(char* str) {
+void reverse_by_words(char* str)
+{
+    size_t i;
     char* p_ongoing = str;
 
-    while (p_ongoing - 1 != '\0') {
-        if(*p_ongoing == ' ' || *p_ongoing == '\0') {
-            *p_ongoing++ = '\0';
-            reverse(str);
-            str = p_ongoing;
+    while (*p_ongoing != '\0') {
+        if (*p_ongoing == ' ') {
+            for (i = 0; i < (p_ongoing - str) / 2; ++i) {
+                swap(str + i, p_ongoing - 1 - i);
+            }/*
+            while (*(p_ongoing + 1) == ' ') {
+                ++p_ongoing;
+            } */
+            str = p_ongoing + 1;
+        }
+        ++p_ongoing;
+    }
+
+    if (*p_ongoing == '\0') {
+        --p_ongoing;
+        for (i = 0; i < (p_ongoing - str) / 2; ++i) {
+            swap(str + i, p_ongoing - i);
         }
     }
 }
@@ -79,12 +93,12 @@ char* tokenize(char* str_or_null, const char* delims)
     /* [반환값] 스타또 포인트 (동기화 : 새로하기 vs 이어하기) */
     str_or_null != NULL ? (p_ongoing = str_or_null) : (str_or_null = p_ongoing);
 
-    /* 현재 위치 '\0'? NULL을 반환 */
-    if (*p_ongoing == '\0') {
+    /* 현재위치 NULL 이거나 현재값 '\0'? NULL을 반환 */
+    if (p_ongoing == NULL || *p_ongoing == '\0') {
         return NULL;
     }
 
-    /* 현재 위치 구분자? 구분자이면 루프돌고(좌항), 비구분자이면 탈출(우항). */
+    /* 현재값 구분자? 구분자이면 루프돌고(좌항), 비구분자이면 탈출(우항). */
     /* 예시)  ...'g'g..................,,,0  */
     while (*p_ongoing != '\0') {
         while (*p_delims != '\0') {
