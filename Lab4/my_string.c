@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include "my_string.h"
 #define TRUE (1)
 #define FALSE (0)
@@ -11,7 +12,7 @@ void swap(char* a, char* b)
     *b = temp;
 }
 
-size_t get_str_length(char* str) /* const? */
+size_t get_str_length(char* str)
 {
     char* p = str;
 
@@ -53,7 +54,17 @@ int index_of(const char* str, const char* word)
     return -1;
 }
 
-void reverse_by_words(char* str);
+void reverse_by_words(char* str) {
+    char* p_ongoing = str;
+
+    while (p_ongoing - 1 != '\0') {
+        if(*p_ongoing == ' ' || *p_ongoing == '\0') {
+            *p_ongoing++ = '\0';
+            reverse(str);
+            str = p_ongoing;
+        }
+    }
+}
 
 char* tokenize(char* str_or_null, const char* delims)
 {
@@ -61,7 +72,7 @@ char* tokenize(char* str_or_null, const char* delims)
     const char* p_delims = delims;
 
     /* [반환값] 스타또 포인트 (동기화 : 새로하기 vs 이어하기) */
-    str_or_null != NULL ? p_ongoing = str_or_null : str_or_null = p_ongoing;
+    str_or_null != NULL ? (p_ongoing = str_or_null) : (str_or_null = p_ongoing);
 
     /* 현재 위치 '\0'? NULL을 반환 */
     if (*p_ongoing == '\0') {
@@ -90,4 +101,9 @@ char* tokenize(char* str_or_null, const char* delims)
     return str_or_null;
 }
 
-char* reverse_tokenize(char* str_or_null, const char* delims);
+char* reverse_tokenize(char* str_or_null, const char* delims) {
+    char* p_reverse_token;
+    p_reverse_token = tokenize(str_or_null, delims);
+    reverse(p_reverse_token);
+    return p_reverse_token;
+}
