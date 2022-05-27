@@ -79,9 +79,8 @@ void reverse_by_words(char* str)
     }
 
     if (*p_ongoing == '\0') {
-        --p_ongoing;
         for (i = 0; i < (p_ongoing - str) / 2; ++i) {
-            swap(str + i, p_ongoing - i);
+            swap(str + i, p_ongoing - 1 - i);
         }
     }
 }
