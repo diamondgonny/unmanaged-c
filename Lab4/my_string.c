@@ -28,7 +28,7 @@ size_t cmp_str(const char* str, const char* word)
         ++str;
         ++word;
     }
-    *word == '\0' ? return TRUE : return FALSE;
+    return *word == '\0' && *str == *word ? TRUE : FALSE;
 }
 
 void reverse(char* str)
@@ -50,7 +50,11 @@ int index_of(const char* str, const char* word)
 
     for (i = 0; i < str_length - word_length + 1; ++i) {
         result = cmp_str(str, word);
-        result == TRUE ? return i : ++str;
+        if (result == TRUE) {
+            return i;
+        } else {
+            ++str;
+        }
     }
     return -1;
 }
@@ -84,9 +88,17 @@ char* tokenize(char* str_or_null, const char* delims)
     /* 예시)  ...'g'g..................,,,0  */
     while (*p_ongoing != '\0') {
         while (*p_delims != '\0') {
-            *p_ongoing == *p_delims ? break : ++p_delims;
+            if (*p_ongoing == *p_delims) {
+                break;
+            } else {
+                ++p_delims;
+            }
         }
-        *p_delims != '\0' ? ++p_ongoing : break;
+        if (*p_delims != '\0') {
+            ++p_ongoing;
+        } else {
+            break;
+        }
     }
 
     /* 유효한 토큰 반환을 위한 구분자 감지 알고리즘 */
