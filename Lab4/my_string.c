@@ -101,17 +101,13 @@ char* tokenize(char* str_or_null, const char* delims)
 
     /* 현재값 구분자? 구분자이면 루프돌고(좌항), 비구분자이면 탈출(우항). */
     /* 예시)  ...'g'g..................,,,0  */
-    while (*s_p_ongoing != '\0') {
-        while (*p_delims != '\0') {
+    for (s_p_ongoing = str_or_null; *s_p_ongoing != '\0'; ++s_p_ongoing) {
+        for (p_delims = delims; *p_delims != '\0'; ++p_delims) {
             if (*s_p_ongoing == *p_delims) {
                 break;
-            } else {
-                ++p_delims;
             }
         }
-        if (*p_delims != '\0') {
-            ++s_p_ongoing;
-        } else {
+        if (*p_delims == '\0') {
             break;
         }
     }
