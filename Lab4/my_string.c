@@ -12,9 +12,10 @@ void swap(char* a, char* b)
     *b = temp;
 }
 
-size_t get_str_length(char* str)
+/* str, p를 char*에서 const char*로 변경 (why?) */
+size_t get_str_length(const char* str)
 {
-    char* p = str;
+    const char* p = str;
 
     while (*p++ != '\0') {
     }
@@ -36,7 +37,7 @@ void reverse(char* str)
     size_t str_length = get_str_length(str);
 
     for (i = 0; i < (str_length / 2); ++i) {
-        swap(str + i, str_length - 1 - i);
+        swap(str + i, str - 1 - i);
     }
 }
 
@@ -90,8 +91,8 @@ char* tokenize(char* str_or_null, const char* delims)
 
     /* 유효한 토큰 반환을 위한 구분자 감지 알고리즘 */
     str_or_null = p_ongoing;
-    for (p_ongoing = str_or_null; *p_ongoing != NULL; ++p_ongoing) {
-        for (p_delims = delims; *p_delims != NULL; ++p_delims) {
+    for (p_ongoing = str_or_null; *p_ongoing != '\0'; ++p_ongoing) {
+        for (p_delims = delims; *p_delims != '\0'; ++p_delims) {
             if (*p_ongoing == *p_delims) {
                 *p_ongoing++ = '\0';
                 return str_or_null;

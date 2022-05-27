@@ -4,7 +4,7 @@
 
 void swap(char* a, char* b);
 
-size_t get_str_length(char* str);
+size_t get_str_length(const char* str);
 
 size_t cmp_str(const char* str, const char* word);
 
