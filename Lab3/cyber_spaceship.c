@@ -6,8 +6,8 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     /* CAB의 시작주소를 const char 포인터형의 ptr가 빌려와서 알고리즘에 활용할 것임 */
     size_t i;
     size_t j;
-    size_t cluster_overlap = 0u;
-    size_t safe_score = 0u;
+    size_t cluster_overlap = 0;
+    size_t safe_score = 0;
     const char* ptr = cab_start_location;
     const char* longest_safe_zone_start_address = NULL;
     *(out_longest_safe_area_length) = 0;
@@ -55,9 +55,9 @@ int get_travel_time(const char* const cab_start_location, const size_t cab_lengt
     /* CAB의 시작주소를 const char 포인터형의 ptr가 빌려와서 알고리즘에 활용할 것임 */
     size_t i;
     size_t j;
-    size_t cluster_overlap = 0u;
-    size_t danger_zone = 0u;
-    size_t safe_zone = 0u;
+    size_t cluster_overlap = 0;
+    size_t danger_zone = 0;
+    size_t safe_zone = 0;
     const char* ptr = cab_start_location;
     double travel_time = 0;
 
