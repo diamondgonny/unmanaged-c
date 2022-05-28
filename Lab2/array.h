@@ -1,6 +1,8 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
+#include <stddef.h>
+
 #define TRUE (1)
 #define FALSE (0)
 
