@@ -1,6 +1,5 @@
 #include "cyber_spaceship.h"
 
-
 const char* get_longest_safe_zone_or_null(const char* const cab_start_location, const size_t cab_length, const char* const cluster_start_locations[], const size_t cluster_lengths[], const size_t cluster_count, size_t* out_longest_safe_area_length)
 {
     /* CAB의 시작주소를 const char 포인터형의 ptr가 빌려와서 알고리즘에 활용할 것임 */
