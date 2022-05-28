@@ -1,168 +1,114 @@
 #include <limits.h>
+#include <stddef.h>
 #include "array.h"
-
 
 int get_index_of(const int numbers[], const size_t element_count, const int num)
 {
-    int index_count = -1;
-    int i = 0;
-    for (i = 0; i < element_count; i++) {
-        if (numbers[i] == num) {
-            index_count = i;
-            break;
-        }
+    const int* p = numbers;
+
+    while (p < numbers + element_count && *p++ != num) {
     }
-    return index_count;
+
+    return *--p == num ? p - numbers : -1;
 }
 
 int get_last_index_of(const int numbers[], const size_t element_count, const int num)
 {
-    int index_count = -1;
-    int i = 0;
-    for (i = element_count - 1; i >= 0; i--) {
-        if (numbers[i] == num) {
-            index_count = i;
-            break;
-        }
+    const int* p = numbers + element_count - 1;
+
+    while (numbers <= p && *p-- != num) {
     }
-    return index_count;
+
+    return *++p == num ? p - numbers : -1;
 }
 
 int get_max_index(const int numbers[], const size_t element_count)
 {
-    int index_count = -1;
-    int i = 0;
-    int max = INT_MIN;
-    /*
-    if(element_count == 0)
-    {
-        index_count = -1;
+    const int* p = numbers;
+    const int* p_max = numbers;
+
+    if(element_count == 0) {
+        return -1;
     }
-    */
-    if (element_count == 0 || numbers[0] == INT_MIN) {
-        index_count = -1;
-    }
-    for (i = 0; i < element_count; i++) {
-        if (numbers[i] > max) {
-            max = numbers[i];
-            index_count = i;
+
+    while (p < numbers + element_count) {
+        if (*p > *p_max) {
+            p_max = p;
         }
+        ++p;
     }
-    return index_count;
+
+    return *p_max != INT_MIN ? p_max - numbers : -1;
 }
 
 int get_min_index(const int numbers[], const size_t element_count)
 {
-    int index_count = -1;
-    int i = 0;
-    int min = INT_MAX;
-    /*
-    if(array is empty)
-    {
-        index_count = -1;
+    const int* p = numbers;
+    const int* p_min = numbers;
+
+    if(element_count == 0) {
+        return -1;
     }
-    */
-    if (numbers[0] == INT_MIN) {
-        index_count = -1;
-    }
-    if (numbers[0] == INT_MAX) {
-        index_count = 0;
-    }
-    for (i = 0; i < element_count; i++) {
-        if (numbers[i] < min) {
-            min = numbers[i];
-            index_count = i;
+
+    while (p < numbers + element_count) {
+        if (*p < *p_min) {
+            p_min = p;
         }
+        ++p;
     }
-    return index_count;
+
+    return *p_min != INT_MIN ? p_min - numbers : -1;
 }
 
 int is_all_positive(const int numbers[], const size_t element_count)
 {
-    int all_positive = 1;
-    int i = 0;
-    /******
-    if(array is empty)
-    {
-        all_positive = FALSE;
+    const int* p = numbers;
+
+    while (p < numbers + element_count && *p++ > 0) {
     }
-    */
-    if (element_count == 0 || numbers[0] == INT_MIN) {
-        all_positive = 0;
-        return all_positive;
-    }
-    all_positive = 1;
-    for (i = 0; i < element_count; i++) {
-        if (numbers[i] <= 0) {
-            all_positive = 0;
-            break;
-        }
-    }
-    return all_positive;
+
+    return *--p > 0 ? TRUE : FALSE;
 }
 
 int has_even(const int numbers[], const size_t element_count)
 {
-    int even = 0;
-    int i = 0;
-    for (i = 0; i < element_count; i++) {
-        if (numbers[i] % 2 == 0) {
-            even = 1;
-            break;
-        }
+    const int* p = numbers;
+
+    while (p < numbers + element_count && *p++ % 2 != 0) {
     }
-    return even;    
+
+    return *--p % 2 == 0 ? TRUE : FALSE;
 }
 
 int insert(int numbers[], const size_t element_count, const int num, const size_t pos)
 {
-    int insert_done = 0;
-    int i = 0;
-    /* 오류 조건...?
-    if(ele < pos, array is full)
-    {
-        insert_done = FALSE;
-        return remove_done;
-    }
-    */
+    int* p = numbers + element_count;
+
     if (element_count < pos) {
-        return insert_done;
+        return FALSE;
     }
-    if (element_count == INT_MIN) {
-        return insert_done;
+
+    while (numbers + pos <= p) {
+        numbers + pos < p ? (*p = *(p - 1)) : (*p = num);
+        --p;
     }
-    for (i = element_count; i >= 0; i--) {
-        if (i > pos) {
-            numbers[i] = numbers[i - 1];
-        } else {
-            numbers[i] = num;
-            insert_done = 1;
-            break;
-        }
-    }
-    return insert_done;
+
+    return TRUE;
 }
 
 int remove_at(int numbers[], const size_t element_count, const size_t index)
 {
-    int remove_done = 0;
-    int i = 0;
-    /* 오류 조건...?
-    if(...)
-    {
-        remove_done = FALSE;
-        return remove_done;  
+    int* p = numbers + index;
+
+    if (element_count == 0 || element_count <= index) {
+        return FALSE;
     }
-    */
-    if (element_count <= index) {
-        return remove_done;
+
+    while (p < numbers + element_count - 1) {
+        *p = *(p + 1);
+        ++p;
     }
-    for (i = 0; i < element_count - 1; i++) {
-        if (i >= index) {
-            numbers[i] = numbers[i + 1];
-        }
-    }
-    numbers[element_count - 1] = INT_MIN;
-    remove_done = 1;
-    return remove_done;
+    *p = INT_MIN;
+
+    return TRUE;
 }
