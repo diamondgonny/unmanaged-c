@@ -10,18 +10,18 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     size_t safe_score = 0;
     const char* ptr = cab_start_location;
     const char* longest_safe_zone_start_address = NULL;
-    *(out_longest_safe_area_length) = 0;
+    *out_longest_safe_area_length = 0;
 
     /* 예외 */
     if (cab_length == 0) {
-        *(out_longest_safe_area_length) = 0;
+        *out_longest_safe_area_length = 0;
         return NULL;
     }
 
     if (cluster_count == 0) {
         cluster_start_locations = NULL;
         cluster_lengths = NULL;
-        *(out_longest_safe_area_length) = cab_length;
+        *out_longest_safe_area_length = cab_length;
         return cab_start_location;
     }
 
@@ -30,7 +30,7 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
     /* 가리키는 포인터 ptr를 한칸씩 이동, 거기엔 클러스터가 얼마나 있는지 조사 */
     /* 만약, 해당 ptr 위치에 클러스터 있으면 그 갯수만큼 ++cluster_overlap */
     /* 그 위치 safe 판정 -> 만약 누적된 (연속) safe_score가 최고점수이면... */
-    /* *(out_longest_safe_area_length)와 longest_safe_zone_start_address는 갱신함 */
+    /* *out_longest_safe_area_length와 longest_safe_zone_start_address는 갱신함 */
     for (i = 0; i < cab_length; ++i) {
         for (j = 0; j < cluster_count; ++j) {
             if (cluster_start_locations[j] <= ptr && ptr < cluster_start_locations[j] + cluster_lengths[j]) {
@@ -38,8 +38,8 @@ const char* get_longest_safe_zone_or_null(const char* const cab_start_location, 
             } 
         }
         cluster_overlap % 2 != 0 ? safe_score = 0 : ++safe_score;
-        if (safe_score >= *(out_longest_safe_area_length)) {
-            *(out_longest_safe_area_length) = safe_score;
+        if (safe_score >= *out_longest_safe_area_length) {
+            *out_longest_safe_area_length = safe_score;
             longest_safe_zone_start_address = ptr - safe_score + 1;
         }
         ++ptr;
