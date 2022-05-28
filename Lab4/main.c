@@ -6,7 +6,7 @@
 
 int main(void)
 {
-    const char* str = "We all live in a yellow,. submarine!!";
+    const char* str = "We all live in a yellow    submarine ";
     char str_cpy[38];
     const char* token;
 
@@ -23,16 +23,18 @@ int main(void)
     assert(index_of(str, "marinett") == -1);
 
     reverse(str_cpy);
-
-    assert(strcmp(str_cpy, str) == 0);
-
-    reverse_by_words(str_cpy);
-
-    assert(strcmp("eW lla evil ni a wolley enirambus", str_cpy) == 0);
-    reverse_by_words(str_cpy);
-
-    assert(strcmp(str_cpy, str) == 0);
 */
+    assert(strcmp(str_cpy, str) == 0);
+
+    reverse_by_words(str_cpy);
+    printf("'%s'\n", str_cpy);
+
+    /* assert(strcmp("eW lla evil ni a wolley enirambus", str_cpy) == 0); */
+    reverse_by_words(str_cpy);
+    printf("'%s'\n", str_cpy);
+
+    assert(strcmp(str_cpy, str) == 0);
+/*
     assert(tokenize(NULL, " ,.!") == NULL);
 
     token = tokenize(str_cpy, " ,.!");
@@ -62,6 +64,6 @@ int main(void)
     printf("'%s'\n", token);
     assert(strcmp(token, "submarine") == 0);
     printf("'%s'\n", token);
-
+*/
     return 0;
 }

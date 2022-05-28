@@ -1,6 +1,7 @@
 #ifndef MY_STRING_H
 #define MY_STRING_H
 
+#include <stddef.h>
 
 void swap(char* a, char* b);
 
