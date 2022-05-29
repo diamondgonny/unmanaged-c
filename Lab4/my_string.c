@@ -21,14 +21,14 @@ size_t get_str_length(const char* str)
     return p - str - 1;
 }
 
-/* index_of 함수에서 word문자열이 더 길면 안됨을 이미 가정했음 */
+/* index_of 함수에서 사용, 거기서 word문자열이 더 길면 작동않게 가정함 */
 size_t cmp_str(const char* str, const char* word)
 {
     while (*word != '\0' && *str == *word) {
         ++str;
         ++word;
     }
-    return *word == '\0' ? TRUE : FALSE; /* word가 먼저 끝남 */
+    return *word == '\0' ? TRUE : FALSE;
 }
 
 void reverse(char* str)
@@ -70,8 +70,8 @@ void reverse_by_words(char* str)
 
     while (*p_ongoing != '\0') {
         if (*p_ongoing == ' ') {
-            /* 빈칸이 연속적으로 나열되었다면, p_ongoing은 지나감 (for문 패쓰) */
             /* 아래의 반복문이 돌 때, p_ongoing - str >= 0이게끔 설계됨 */
+            /* 빈칸이 연속적으로 나열되었다면, p_ongoing은 지나감(i < 0, for문 패쓰) */
             for (i = 0; i < (size_t)(p_ongoing - str) / 2; ++i) {
                 swap(str + i, p_ongoing - 1 - i);
             }
@@ -92,7 +92,7 @@ char* tokenize(char* str_or_null, const char* delims)
     static char* s_p_ongoing;
     const char* p_delims = delims;
 
-    /* s_p_ongoing이 주소를 가리키는 위치를 '새로쓰거나', '이어하거나'.  */
+    /* s_p_ongoing이 주소를 포인팅하는 위치를 '새로쓰거나', '이어하거나'.  */
     str_or_null != NULL ? (s_p_ongoing = str_or_null) : (str_or_null = s_p_ongoing);
 
     /* s_p_ongoing 포인팅이 NULL(무효)이거나 '\0'(문자열의끝)? NULL을 반환 */
@@ -112,7 +112,7 @@ char* tokenize(char* str_or_null, const char* delims)
         }
     }
 
-    /* 시작점 세팅, 실질적인 토큰화 알고리즘 (s_p_ongoing의 행보에 주목) */
+    /* 시작주소값 세팅, 실질적인 토큰화 알고리즘 가동 */
     str_or_null = s_p_ongoing;
     for (s_p_ongoing = str_or_null; *s_p_ongoing != '\0'; ++s_p_ongoing) {
         for (p_delims = delims; *p_delims != '\0'; ++p_delims) {
