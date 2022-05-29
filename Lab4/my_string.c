@@ -11,7 +11,7 @@ void swap(char* a, char* b)
     *b = temp;
 }
 
-/* str, p를 char*에서 const char*로 바꿈 (길이구할땐 값접근X) */
+/* NOTE : str, p를 char*에서 const char*로 바꿈 (길이구할땐 값접근X) */
 size_t get_str_length(const char* str)
 {
     const char* p = str;
@@ -21,7 +21,6 @@ size_t get_str_length(const char* str)
     return p - str - 1;
 }
 
-/* index_of 함수에서 사용, 거기서 word문자열이 더 길면 작동않게 가정함 */
 size_t cmp_str(const char* str, const char* word)
 {
     while (*word != '\0' && *str == *word) {
@@ -47,7 +46,7 @@ int index_of(const char* str, const char* word)
     size_t result = 0;
     size_t str_length = get_str_length(str);
     size_t word_length = get_str_length(word);
-
+    /* word 문자열이 더 길면, 문자열 비교않고 -1 반환 */
     if (str_length < word_length) {
         return -1;
     }
