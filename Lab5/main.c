@@ -23,23 +23,27 @@ int main(void)
 
     set_message("Thanks for dining with us!");
 
-    assert(TRUE == print_receipt("receipt0.txt", time));
+    /* assert(TRUE == print_receipt("receipt0.txt", time)); */
+    assert(TRUE == print_receipt(time));
 
     assert(TRUE == add_item("Raw sea cucumber", 34.26));
     assert(TRUE == add_item("Pan fried Mackerel", 16.58));
     assert(TRUE == add_item("Pepsi", 5.99));
 
-    assert(TRUE == print_receipt("receipt1.txt", time));
+    /* assert(TRUE == print_receipt("receipt1.txt", time)); */
+    assert(TRUE == print_receipt(time));
 
     set_message("My message");
 
-    assert(FALSE == print_receipt("receipt2.txt", time));
+    /* assert(FALSE == print_receipt("receipt2.txt", time)); */
+    assert(FALSE == print_receipt(time));
 
     assert(TRUE == add_item("Strawberry Shortcake", 15));
 
     set_tip(5);
 
-    assert(TRUE == print_receipt("receipt3.txt", time));
+    /* assert(TRUE == print_receipt("receipt3.txt", time)); */
+    assert(TRUE == print_receipt(time));
 
 	return 0;
 }
