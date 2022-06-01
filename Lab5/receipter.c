@@ -15,16 +15,17 @@ void my_strncpy(char* str, const char* input, int length)
     int cnt = 0;
 
     /* 이거 길이제한 안두면, 버퍼가 선을 넘어버리는 수가 있다... */
-    while (*input != '\0' && cnt < length) {
+    /* length - 1 ? '\0' 넣을 마지막 남은 한 자리는 반복문이 안감 */
+    while (*input != '\0' && cnt < length - 1) {
         if (cnt == 50) {
             *str = '\n';
-            ++str;
             ++cnt;
+            ++str;
         }
         *str = *input;
+        ++cnt;
         ++str;
         ++input;
-        ++cnt;
     }
     *str = '\0';
 }
@@ -120,7 +121,7 @@ int print_receipt(const char* filename, time_t timestamp)
     fprintf(fp, "\n");
     /* 메시지를 한 줄씩 쓴다는 것(~50칸)? */
     if (*s_message_buffer != '\0') {
-        fprintf(fp, "%.50s\n", s_message_buffer);
+        fprintf(fp, "%s\n", s_message_buffer);
     }
     fprintf(fp, "==================================================\n");
     fprintf(fp, "%50s", "Tax#-51234");

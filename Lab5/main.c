@@ -32,13 +32,15 @@ int main(void)
 
     assert(TRUE == print_receipt("receipt1.txt", time));
 
-    set_message("My message My message My message My message My message My message My message My message My message My message My message My message My message My message ");
+    set_message("Thank you for dining with us today! We will wait for your next visit!");
 
     assert(FALSE == print_receipt("receipt2.txt", time));
 
     assert(TRUE == add_item("Strawberry Shortcake", 15));
 
     set_tip(5);
+
+    set_message("Thank you for dining with us today! We will wait for your next visit!");
 
     assert(TRUE == print_receipt("receipt3.txt", time));
 
