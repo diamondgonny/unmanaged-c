@@ -1,12 +1,9 @@
-#include <stdio.h>
-#include <time.h>
 #include "receipter.h"
 
 #define FOODAMOUNT_MAX (10)
 #define FOODNAME_LENGTH (25)
 #define MESSAGE_LENGTH (75)
 
-static size_t order_number = 0;
 static char foodname[FOODAMOUNT_MAX][FOODNAME_LENGTH + 1]; /* '\0' */
 static double foodprice[FOODAMOUNT_MAX];
 static size_t food_counter = 0;
@@ -69,6 +66,7 @@ void set_message(const char* message)
 int print_receipt(const char* filename, time_t timestamp)
 {
     FILE* fp;
+    static int order_number = 0;
     double subtotal = 0;
     struct tm t;
     size_t i;
@@ -101,7 +99,7 @@ int print_receipt(const char* filename, time_t timestamp)
     fprintf(fp, "--------------------------------------------------\n");
     fprintf(fp, "%04d-%02d-%02d %02d:%02d:%02d", t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec);
     fprintf(fp, "                          ");
-    fprintf(fp, "%05lu\n", order_number);
+    fprintf(fp, "%05d\n", order_number);
     fprintf(fp, "--------------------------------------------------\n");
     for (i = 0; i < food_counter; ++i) {
         /* 배열과 포인터 다시보기 */
