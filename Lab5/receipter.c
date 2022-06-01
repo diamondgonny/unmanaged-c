@@ -123,8 +123,7 @@ int print_receipt(const char* filename, time_t timestamp)
         fprintf(fp, "%.50s\n", s_message_buffer);
     }
     fprintf(fp, "==================================================\n");
-    fprintf(fp, "%50s\n", "Tax#-51234");
-    fprintf(fp, "\n");
+    fprintf(fp, "%50s", "Tax#-51234");
 
     s_order_number += 1;
     s_food_counter = 0;
