@@ -8,7 +8,7 @@ static char s_foodname[FOODAMOUNT_MAX][FOODNAME_LENGTH + 1]; /* '\0' */
 static double s_foodprice[FOODAMOUNT_MAX];
 static size_t s_food_counter = 0;
 static double s_tip_buffer = 0;
-static char s_message_buffer[MESSAGE_LENGTH + 2];  /* '\n' '\0' */
+static char s_message_buffer[MESSAGE_LENGTH + 2];  /* '\n', '\0' */
 
 void my_strncpy(char* str, const char* input, int length)
 {
@@ -111,7 +111,7 @@ int print_receipt(const char* filename, time_t timestamp)
     fprintf(fp, "%33s", "Subtotal");
     fprintf(fp, "%17.2f\n", subtotal);
     if (s_tip_buffer > 0) {
-            fprintf (fp, "%33s", "Tip");
+            fprintf(fp, "%33s", "Tip");
         fprintf(fp, "%17.2f\n", s_tip_buffer);
     }
     fprintf(fp, "%33s", "Tax");
