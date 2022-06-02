@@ -11,9 +11,9 @@ static size_t s_food_counter = 0;
 static double s_tip_buffer = 0;
 static char s_message_buffer[MESSAGE_LENGTH + 2];
 
-void my_strncpy(char* str, const char* input, int length)
+void my_strncpy(char* str, const char* input, size_t length)
 {
-    int cnt = 0;
+    size_t cnt = 0;
 
     /* 이거 길이제한 안두면, 버퍼가 선을 넘어버리는 수가 있다... */
     /* length - 1 ? '\0' 넣을 마지막 남은 한 자리는 반복문이 안감 */
@@ -68,7 +68,7 @@ void set_message(const char* message)
 int print_receipt(const char* filename, time_t timestamp)
 {
     FILE* fp;
-    static int s_order_number = 0;
+    static size_t s_order_number = 0;
     double subtotal = 0;
     struct tm t;
     size_t i;
@@ -101,7 +101,7 @@ int print_receipt(const char* filename, time_t timestamp)
     fprintf(fp, "--------------------------------------------------\n");
     fprintf(fp, "%04d-%02d-%02d %02d:%02d:%02d", t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec);
     fprintf(fp, "                          ");
-    fprintf(fp, "%05d\n", s_order_number);
+    fprintf(fp, "%05zd\n", s_order_number);
     fprintf(fp, "--------------------------------------------------\n");
     for (i = 0; i < s_food_counter; ++i) {
         /* 배열과 포인터 다시보기 */

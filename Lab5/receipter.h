@@ -7,7 +7,7 @@
 #define TRUE (1)
 #define FALSE (0)
 
-void my_strncpy(char* str, const char* input, int length);
+void my_strncpy(char* str, const char* input, size_t length);
 
 int add_item(const char* name, double price);
 
