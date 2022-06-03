@@ -121,60 +121,90 @@ void substitute_cap(char* ptr_tr, char* set1, char* set2)
 
 void escape_sequence(char* set1)
 {
-    char* ptr1 = set1;
-    while (*ptr1 != '\0') {
-        if (*ptr1 == 92) {
-            char* comeback_ptr = ptr1;
+    char* ptr = set1;
+    while (*ptr != '\0') {
+        if (*ptr == 92) {
+            char* comeback_ptr = ptr;
             switch (*(ptr1 + 1)) {
             case 92: /* backslash */
-                *ptr1 = '\x5c';
+                *ptr = '\x5c';
                 break;
             case 'a':
-                *ptr1 = '\x07';
+                *ptr = '\x07';
                 break;
             case 'b':
-                *ptr1 = '\x08';
+                *ptr = '\x08';
                 break;
             case 'f':
-                *ptr1 = '\x0c';
+                *ptr = '\x0c';
                 break;
             case 'n':
-                *ptr1 = '\x0a';
+                *ptr = '\x0a';
                 break;
             case 'r':
-                *ptr1 = '\x0d';
+                *ptr = '\x0d';
                 break;
             case 't':
-                *ptr1 = '\x09';
+                *ptr = '\x09';
                 break;
             case 'v':
-                *ptr1 = '\x0b';
+                *ptr = '\x0b';
                 break;
             case 39:   /* quote */
-                *ptr1 = '\x27';
+                *ptr = '\x27';
                 break;
             case 34:   /* dubquotes */
-                *ptr1 = '\x22';
+                *ptr = '\x22';
                 break;
             default:
                 fprintf(stderr, "ERROR_CODE_INVALID_FORMAT")
                 /************** 매듭짓는 방안 다시 확인할 것 */
             }
-            ++ptr1;
+            ++ptr;
 
-            while (*ptr1 != '\0' && ptr1 - set1 < MAX_LENGTH) {
-                *ptr1 = *(ptr1 + 1);
-                ++ptr1;
+            while (*ptr != '\0' && ptr - set1 < MAX_LENGTH - 1) {
+                *ptr = *(ptr + 1);
+                ++ptr;
             }
-            *ptr1 = '\0';
-            ptr1 = comeback_ptr;
+            *ptr = '\0';
+            ptr = comeback_ptr;
         }
-        ++ptr1;
+        ++ptr;
     }
 }
 
+void set_range(set1)
+{
+    size_t i;
+    char* ptr = set1;
+    char temp[MAX_LENGTH];
 
-
+    /* 이스케이프 문자 관련 일단 제외 */
+    /* 입력 가능한 선에서(33이상), 범위 알고리즘 가동... */
+    ++ptr;
+    while(*ptr != '\0') {
+        if (*ptr == '-' && *(ptr - 1) > 32 && *(ptr + 1) > 32) {
+            if (*(ptr - 1) == *(ptr + 1)) {
+                strcpy(temp, ptr + 2);
+                strcat(ptr, temp);
+            } else if (*(ptr - 1) < *(ptr + 1)) {
+                size_t a = *(ptr + 1) - *(ptr - 1);
+                strcpy(temp, ptr + 2);
+                while (a == 0) {
+                    *ptr = *(ptr - 1) + 1;
+                    ++ptr;
+                    --a;
+                }
+                strcat(ptr, temp);
+            } else {
+                fprintf(stderr, "ERROR_CODE_INVALID_RANGE");
+                break;
+                /************** 매듭짓는 방안 다시 확인할 것 */
+            }
+        }
+        ++ptr;
+    }
+}
 
 
 int translate(int argc, const char** argv)
@@ -210,11 +240,13 @@ int translate(int argc, const char** argv)
     /* 이스케이프 시퀀스 처리 */
     escape_sequence(set1);
 
+    /* 범위 */
+    set_range(set1);
+
     /* 기초 동작 : argv (source, repl)의 재구성 */
     /* length of i/o string should be restricted */
     trim_argv(set1, set2);
     /* fprintf(stderr, "%s %s\n", set1, set2); */
-
 
     while (1) {
         ptr = fgets(buf, sizeof(buf), stdin);
