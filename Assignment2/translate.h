@@ -12,6 +12,18 @@ typedef enum error_code {
     ERROR_CODE_INVALID_RANGE
 } error_code_t;
 
+void trim_argv(char* set1, char* set2);
+
+void decapitalize(char* set1);
+
+void substitute(char* ptr_tr, char* set1, char* set2);
+
+void substitute_cap(char* ptr_tr, char* set1, char* set2);
+
+void escape_sequence(char* set1);
+
+void set_range(char* set1);
+
 int translate(int argc, const char** argv);
 
 #endif /* TRANSLATE_H */

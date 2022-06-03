@@ -54,7 +54,7 @@ void trim_argv(char* set1, char* set2)
         }
         --target_ptr1;
     }
-    fprintf(stderr, "%zd\n", overlap_count);
+    /* fprintf(stderr, "%zd\n", overlap_count); */
 
     /* 이제 중첩된 칸 수 만큼을 정리해 줄 시간이다 */
     trim_ptr1 = set1;
@@ -125,7 +125,7 @@ void escape_sequence(char* set1)
     while (*ptr != '\0') {
         if (*ptr == 92) {
             char* comeback_ptr = ptr;
-            switch (*(ptr1 + 1)) {
+            switch (*(ptr + 1)) {
             case 92: /* backslash */
                 *ptr = '\x5c';
                 break;
@@ -157,7 +157,7 @@ void escape_sequence(char* set1)
                 *ptr = '\x22';
                 break;
             default:
-                fprintf(stderr, "ERROR_CODE_INVALID_FORMAT")
+                fprintf(stderr, "ERROR_CODE_INVALID_FORMAT");
                 /************** 매듭짓는 방안 다시 확인할 것 */
             }
             ++ptr;
@@ -173,9 +173,8 @@ void escape_sequence(char* set1)
     }
 }
 
-void set_range(set1)
+void set_range(char* set1)
 {
-    size_t i;
     char* ptr = set1;
     char temp[MAX_LENGTH];
 
@@ -249,8 +248,8 @@ int translate(int argc, const char** argv)
     /* fprintf(stderr, "%s %s\n", set1, set2); */
 
     while (1) {
-        ptr = fgets(buf, sizeof(buf), stdin);
-        if (ptr == NULL) {
+        ptr_tr = fgets(buf, sizeof(buf), stdin);
+        if (ptr_tr == NULL) {
             break;
         }
 
@@ -260,7 +259,7 @@ int translate(int argc, const char** argv)
             substitute_cap(ptr_tr, set1, set2);
         }
 
-        fprintf(stdout, "%s", str);
+        fprintf(stdout, "%s", buf);
     }
 
     return 0;
