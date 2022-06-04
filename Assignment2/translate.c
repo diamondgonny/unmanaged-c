@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include "translate.h"
@@ -21,6 +22,9 @@ void print_error_code(error_code_t err)
         break;
     case 5:
         fprintf(stderr, "ERROR_CODE_INVALID_RANGE\n");
+        break;
+    default:
+        assert(0);
         break;
     }
 }
@@ -203,9 +207,10 @@ int set_range(char* set)
 
     /* 이스케이프 문자 관련 일단 제외 */
     /* 입력 가능한 선에서(33이상), 범위 알고리즘 가동...(길이통제?) */
+    /* if (*ptr == '-' && *(ptr - 1) > 32 && *(ptr + 1) > 32), fail? */
     ++ptr;
     while (*ptr != '\0') {
-        if (*ptr == '-' && *(ptr - 1) > 32 && *(ptr + 1) > 32) {
+        if (*ptr == '-') {
             if (*(ptr - 1) == *(ptr + 1)) {
                 strcpy(temp, ptr + 2);
                 strcpy(ptr, temp); /* 처음에 strcat 시도했으나, 덮어쓰는 strcpy가 맞음 */
@@ -262,7 +267,7 @@ int translate(int argc, const char** argv)
     }
 
     for (j = 1; j < argc; ++j) {
-        if (strlen(argv[i]) > MAX_LENGTH) {
+        if (strlen(argv[j]) > MAX_LENGTH) {
             err = ERROR_CODE_ARGUMENT_TOO_LONG;
             print_error_code(err);
             return err;
