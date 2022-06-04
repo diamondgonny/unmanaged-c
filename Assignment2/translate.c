@@ -12,14 +12,14 @@ void trim_argv(char* set1, char* set2)
     size_t overlap_count = 0u;
 
     if (strlen(set1) < strlen(set2)) {
-        while(*trim_ptr1 != '\0' && trim_ptr1 - set1 < MAX_LENGTH - 1) { /* '\0' */
+        while (*trim_ptr1 != '\0' && trim_ptr1 - set1 < MAX_LENGTH - 1) { /* '\0' */
             ++trim_ptr1;
             ++trim_ptr2;
         }
         *trim_ptr2 = '\0';
     } else {
-        while(*trim_ptr1 != '\0' && trim_ptr1 - set1 < MAX_LENGTH - 1) { /* '\0' */
-            if(*trim_ptr2 == '\0') {
+        while (*trim_ptr1 != '\0' && trim_ptr1 - set1 < MAX_LENGTH - 1) { /* '\0' */
+            if (*trim_ptr2 == '\0') {
                 *(trim_ptr2 + 1) = *trim_ptr2;
                 *trim_ptr2 = *(trim_ptr2 - 1);
             }
@@ -113,11 +113,11 @@ void substitute_cap(char* ptr_tr, char* set1, char* set2)
                 *ptr_tr = *ptr2;
                 break;
             }
-        ++ptr1;
-        ++ptr2;
+            ++ptr1;
+            ++ptr2;
         }
-    ++ptr_tr;
-    /* fprintf(stderr,"%c\n", *ptr_tr); */
+        ++ptr_tr;
+        /* fprintf(stderr,"%c\n", *ptr_tr); */
     }
 }
 
@@ -152,10 +152,10 @@ void escape_sequence(char* set1)
             case 'v':
                 *ptr = '\x0b';
                 break;
-            case 39:   /* quote */
+            case 39: /* quote */
                 *ptr = '\x27';
                 break;
-            case 34:   /* dubquotes */
+            case 34: /* dubquotes */
                 *ptr = '\x22';
                 break;
             default:
@@ -183,7 +183,7 @@ void set_range(char* set1)
     /* 이스케이프 문자 관련 일단 제외 */
     /* 입력 가능한 선에서(33이상), 범위 알고리즘 가동...(길이통제?) */
     ++ptr;
-    while(*ptr != '\0') {
+    while (*ptr != '\0') {
         if (*ptr == '-' && *(ptr - 1) > 32 && *(ptr + 1) > 32) {
             if (*(ptr - 1) == *(ptr + 1)) {
                 strcpy(temp, ptr + 2);
@@ -214,7 +214,7 @@ int translate(int argc, const char** argv)
     char buf[512];
     char set1[MAX_LENGTH] = { '\0', };
     char set2[MAX_LENGTH] = { '\0', };
-    char *ptr_tr;
+    char* ptr_tr;
 
     /*
     ERROR_CODE_WRONG_ARGUMENTS_NUMBER: translate 프로그램을 호출할 때 전달 된 인자 수가 틀림
@@ -255,15 +255,15 @@ int translate(int argc, const char** argv)
             clearerr(stdin);
             break;
         }
-
+        /* else : 대소문자 무시 플래그 (2) */
         if (strncmp(argv[1], "-i", 2) != 0) {
             substitute(ptr_tr, set1, set2);
-        } else {    /* 대소문자 무시 플래그 (2) */
+        } else {
             substitute_cap(ptr_tr, set1, set2);
         }
 
-        fprintf(stdout, "%s", buf);
         /* BOF 문제없이 문자열 읽기? */
+        fprintf(stdout, "%s", buf);
     }
 
     return 0;
