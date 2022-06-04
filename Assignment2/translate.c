@@ -185,21 +185,18 @@ void set_range(char* set1)
     ++ptr;
     while(*ptr != '\0') {
         if (*ptr == '-' && *(ptr - 1) > 32 && *(ptr + 1) > 32) {
-            fprintf(stderr, "%c %c %c\n",*(ptr - 1), *ptr, *(ptr + 1));
             if (*(ptr - 1) == *(ptr + 1)) {
                 strcpy(temp, ptr + 2);
                 strcpy(ptr, temp); /* 처음에 strcat 시도했으나, 덮어쓰는 strcpy가 맞음 */
             } else if (*(ptr - 1) < *(ptr + 1)) {
                 size_t a = *(ptr + 1) - *(ptr - 1);
                 strcpy(temp, ptr + 2);
-                fprintf(stderr, "%zd\n", a);
                 while (a > 0) {
                     *ptr = *(ptr - 1) + 1;
                     ++ptr;
                     --a;
                 }
                 strcpy(ptr, temp);
-                fprintf(stderr, "sample : %s\n", set1);
             } else {
                 fprintf(stderr, "ERROR_CODE_INVALID_RANGE\n");
                 break;
@@ -227,8 +224,8 @@ int translate(int argc, const char** argv)
     ERROR_CODE_INVALID_RANGE: 올바르지 않은 문자열 범위를 사용함
     */
 
-    /* 플래그 판별을 위한 조건식 */
-    if (*argv[1] == '-') {
+    /* 플래그 판별을 위한 조건식 : if (*argv[1] == '-') 로 첫 시도, seg-err... */
+    if (strncmp(argv[1], "-i", 2) == 0) {
         ++i;
     }
 
@@ -243,13 +240,9 @@ int translate(int argc, const char** argv)
 
     /* 이스케이프 시퀀스 처리 */
     escape_sequence(set1);
-    fprintf(stderr, "%s\n", set1);
-    fprintf(stderr, "%zd\n", strlen(set1));
 
     /* 범위 */
     set_range(set1);
-    fprintf(stderr, "%s\n", set1);
-    fprintf(stderr, "%zd\n", strlen(set1));
 
     /* 기초 동작 : argv (source, repl)의 재구성 */
     /* length of i/o string should be restricted */
@@ -265,7 +258,6 @@ int translate(int argc, const char** argv)
 
         if (strncmp(argv[1], "-i", 2) != 0) {
             substitute(ptr_tr, set1, set2);
-            fprintf(stderr, "%s", ptr_tr);
         } else {    /* 대소문자 무시 플래그 (2) */
             substitute_cap(ptr_tr, set1, set2);
         }
