@@ -211,7 +211,9 @@ int set_range(char* set)
     ++ptr;
     while (*ptr != '\0') {
         if (*ptr == '-') {
-            if (*(ptr - 1) == *(ptr + 1)) {
+            if(*(ptr + 1) == '\0') {
+                break;
+            } else if (*(ptr - 1) == *(ptr + 1)) {
                 strcpy(temp, ptr + 2);
                 strcpy(ptr, temp); /* 처음에 strcat 시도했으나, 덮어쓰는 strcpy가 맞음 */
             } else if (*(ptr - 1) < *(ptr + 1)) {
@@ -223,7 +225,7 @@ int set_range(char* set)
                     --letters_count;
                 }
                 strcpy(ptr, temp);
-            } else {
+            } else if (*(ptr - 1) > *(ptr + 1)) {
                 return FALSE;
             }
         }
@@ -267,7 +269,9 @@ int translate(int argc, const char** argv)
     }
 
     for (j = 1; j < argc; ++j) {
-        if (strlen(argv[j]) > MAX_LENGTH) {
+        /* SET1 혹은 SET2의 문자수가 최대 버퍼 크기보다 클 경우... */
+        /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+        if (strlen(argv[j]) > MAX_LENGTH - 1) {
             err = ERROR_CODE_ARGUMENT_TOO_LONG;
             print_error_code(err);
             return err;
@@ -275,9 +279,9 @@ int translate(int argc, const char** argv)
     }
 
     /* i/o 문자열 복사 */
-    /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
     strncpy(set1, argv[1 + i], MAX_LENGTH - 1);
     strncpy(set2, argv[2 + i], MAX_LENGTH - 1);
+    fprintf(stderr, "%s %s\n", set1, set2);
 
     /* 대소문자 무시 플래그 (1) */
     if (strncmp(argv[1], "-i", 2) == 0) {
@@ -304,6 +308,7 @@ int translate(int argc, const char** argv)
     /* length of i/o string should be restricted */
     trim_argv(set1, set2);
     fprintf(stderr, "%s %s\n", set1, set2);
+    fprintf(stderr, "%zd %zd\n", strlen(set1), strlen(set2));
 
     while (1) {
         ptr_tr = fgets(buf, sizeof(buf), stdin);
