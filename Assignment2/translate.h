@@ -12,7 +12,6 @@ typedef enum error_code {
     ERROR_CODE_INVALID_RANGE
 } error_code_t;
 
-
 void trim_argv(char* set1, char* set2);
 
 void decapitalize(char* set1);
