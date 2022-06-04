@@ -142,9 +142,9 @@ void substitute_cap(char* ptr_tr, char* set1, char* set2)
     }
 }
 
-int escape_sequence(char* set1)
+int escape_sequence(char* set)
 {
-    char* ptr = set1;
+    char* ptr = set;
     while (*ptr != '\0') {
         if (*ptr == 92) {
             char* comeback_ptr = ptr;
@@ -184,7 +184,7 @@ int escape_sequence(char* set1)
             }
             ++ptr;
 
-            while (*ptr != '\0' && ptr - set1 < MAX_LENGTH - 1) {
+            while (*ptr != '\0' && ptr - set < MAX_LENGTH - 1) {
                 *ptr = *(ptr + 1);
                 ++ptr;
             }
@@ -196,9 +196,9 @@ int escape_sequence(char* set1)
     return TRUE;
 }
 
-int set_range(char* set1)
+int set_range(char* set)
 {
-    char* ptr = set1;
+    char* ptr = set;
     char temp[MAX_LENGTH];
 
     /* 이스케이프 문자 관련 일단 제외 */
@@ -210,12 +210,12 @@ int set_range(char* set1)
                 strcpy(temp, ptr + 2);
                 strcpy(ptr, temp); /* 처음에 strcat 시도했으나, 덮어쓰는 strcpy가 맞음 */
             } else if (*(ptr - 1) < *(ptr + 1)) {
-                size_t a = *(ptr + 1) - *(ptr - 1);
+                size_t letters_count = *(ptr + 1) - *(ptr - 1);
                 strcpy(temp, ptr + 2);
-                while (a > 0) {
+                while (letters_count > 0) {
                     *ptr = *(ptr - 1) + 1;
                     ++ptr;
-                    --a;
+                    --letters_count;
                 }
                 strcpy(ptr, temp);
             } else {
@@ -280,7 +280,7 @@ int translate(int argc, const char** argv)
     }
 
     /* 이스케이프 시퀀스 처리 */
-    format = escape_sequence(set1);
+    format = escape_sequence(set1) & escape_sequence(set2);
     if (format != TRUE) {
         err = ERROR_CODE_INVALID_FORMAT;
         print_error_code(err);
@@ -288,7 +288,7 @@ int translate(int argc, const char** argv)
     }
 
     /* 범위 */
-    range = set_range(set1);
+    range = set_range(set1) & set_range(set2);
     if (range != TRUE) {
         err = ERROR_CODE_INVALID_RANGE;
         print_error_code(err);
@@ -298,7 +298,7 @@ int translate(int argc, const char** argv)
     /* 기초 동작 : argv (source, repl)의 재구성 */
     /* length of i/o string should be restricted */
     trim_argv(set1, set2);
-    /* fprintf(stderr, "%s %s\n", set1, set2); */
+    fprintf(stderr, "%s %s\n", set1, set2);
 
     while (1) {
         ptr_tr = fgets(buf, sizeof(buf), stdin);

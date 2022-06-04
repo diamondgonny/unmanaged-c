@@ -30,9 +30,9 @@ void substitute(char* ptr_tr, char* set1, char* set2);
 
 void substitute_cap(char* ptr_tr, char* set1, char* set2);
 
-int escape_sequence(char* set1);
+int escape_sequence(char* set);
 
-int set_range(char* set1);
+int set_range(char* set);
 
 int translate(int argc, const char** argv);
 
