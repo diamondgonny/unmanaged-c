@@ -4,6 +4,27 @@
 
 #define MAX_LENGTH (512)
 
+void print_error_code(error_code_t err)
+{
+    switch (err) {
+        case 1:
+            fprintf(stderr, "ERROR_CODE_WRONG_ARGUMENTS_NUMBER\n");
+            break;
+        case 2:
+            fprintf(stderr, "ERROR_CODE_INVALID_FLAG\n");
+            break;
+        case 3:
+            fprintf(stderr, "ERROR_CODE_INVALID_FORMAT\n");
+            break;
+        case 4:
+            fprintf(stderr, "ERROR_CODE_ARGUMENT_TOO_LONG\n");
+            break;
+        case 5:
+            fprintf(stderr, "ERROR_CODE_INVALID_RANGE\n");
+            break;
+    }
+}
+
 void trim_argv(char* set1, char* set2)
 {
     char* target_ptr1 = NULL;
@@ -121,7 +142,7 @@ void substitute_cap(char* ptr_tr, char* set1, char* set2)
     }
 }
 
-void escape_sequence(char* set1)
+int escape_sequence(char* set1)
 {
     char* ptr = set1;
     while (*ptr != '\0') {
@@ -159,8 +180,7 @@ void escape_sequence(char* set1)
                 *ptr = '\x22';
                 break;
             default:
-                fprintf(stderr, "ERROR_CODE_INVALID_FORMAT\n");
-                /************** 매듭짓는 방안 다시 확인할 것 */
+                return FALSE;
             }
             ++ptr;
 
@@ -173,9 +193,10 @@ void escape_sequence(char* set1)
         }
         ++ptr;
     }
+    return TRUE;
 }
 
-void set_range(char* set1)
+int set_range(char* set1)
 {
     char* ptr = set1;
     char temp[MAX_LENGTH];
@@ -198,38 +219,58 @@ void set_range(char* set1)
                 }
                 strcpy(ptr, temp);
             } else {
-                fprintf(stderr, "ERROR_CODE_INVALID_RANGE\n");
-                break;
-                /************** 매듭짓는 방안 다시 확인할 것 */
+                return FALSE;
             }
         }
         ++ptr;
     }
+    return TRUE;
 }
-
 
 int translate(int argc, const char** argv)
 {
     int i = 0;
+    int j = 0;
+    int format = 0;
+    int range = 0;
     char buf[512];
     char set1[MAX_LENGTH] = { '\0', };
     char set2[MAX_LENGTH] = { '\0', };
     char* ptr_tr;
-
-    /*
-    ERROR_CODE_WRONG_ARGUMENTS_NUMBER: translate 프로그램을 호출할 때 전달 된 인자 수가 틀림
-    ERROR_CODE_INVALID_FLAG: 지원하지 않는 플래그가 지정됨
-    ERROR_CODE_INVALID_FORMAT: 인자들의 포맷이 틀림
-    ERROR_CODE_ARGUMENT_TOO_LONG: 너무 긴 인자가 존재
-    ERROR_CODE_INVALID_RANGE: 올바르지 않은 문자열 범위를 사용함
-    */
+    error_code_t err;
 
     /* 플래그 판별을 위한 조건식 : if (*argv[1] == '-') 로 첫 시도, seg-err... */
-    if (strncmp(argv[1], "-i", 2) == 0) {
+    /* " : if (strncmp(argv[1], "-i", 2) == 0), ok */
+    /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+    if (*argv[1] == '-' && strlen(argv[1]) == 2) {
+        switch (*(argv[1] + 1)) {
+            case 'i':
+                break;
+            default:
+                err = ERROR_CODE_INVALID_FLAG;
+                print_error_code(err);
+                return err;
+        }
         ++i;
     }
 
+    /* 커맨드 라인 매개변수가 불충분할 경우 */
+    if(argc < 3 + i) {
+        err = ERROR_CODE_WRONG_ARGUMENTS_NUMBER;
+        print_error_code(err);
+        return err;
+    }
+
+    for (j = 1; j < argc; ++j) {
+        if (strlen(argv[i]) > MAX_LENGTH) {
+            err = ERROR_CODE_ARGUMENT_TOO_LONG;
+            print_error_code(err);
+            return err;
+        }
+    }
+
     /* i/o 문자열 복사 */
+    /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
     strncpy(set1, argv[1 + i], MAX_LENGTH - 1);
     strncpy(set2, argv[2 + i], MAX_LENGTH - 1);
 
@@ -239,10 +280,20 @@ int translate(int argc, const char** argv)
     }
 
     /* 이스케이프 시퀀스 처리 */
-    escape_sequence(set1);
+    format = escape_sequence(set1);
+    if (format != TRUE) {
+        err = ERROR_CODE_INVALID_FORMAT;
+        print_error_code(err);
+        return err;
+    }
 
     /* 범위 */
-    set_range(set1);
+    range = set_range(set1);
+    if (range != TRUE) {
+        err = ERROR_CODE_INVALID_RANGE;
+        print_error_code(err);
+        return err;
+    }
 
     /* 기초 동작 : argv (source, repl)의 재구성 */
     /* length of i/o string should be restricted */

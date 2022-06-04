@@ -12,6 +12,16 @@ typedef enum error_code {
     ERROR_CODE_INVALID_RANGE
 } error_code_t;
 
+/*
+    ERROR_CODE_WRONG_ARGUMENTS_NUMBER: translate 프로그램을 호출할 때 전달 된 인자 수가 틀림
+    ERROR_CODE_INVALID_FLAG: 지원하지 않는 플래그가 지정됨
+    ERROR_CODE_INVALID_FORMAT: 인자들의 포맷이 틀림
+    ERROR_CODE_ARGUMENT_TOO_LONG: 너무 긴 인자가 존재
+    ERROR_CODE_INVALID_RANGE: 올바르지 않은 문자열 범위를 사용함
+    */
+
+void print_error_code(error_code_t err);
+
 void trim_argv(char* set1, char* set2);
 
 void decapitalize(char* set1);
@@ -20,9 +30,9 @@ void substitute(char* ptr_tr, char* set1, char* set2);
 
 void substitute_cap(char* ptr_tr, char* set1, char* set2);
 
-void escape_sequence(char* set1);
+int escape_sequence(char* set1);
 
-void set_range(char* set1);
+int set_range(char* set1);
 
 int translate(int argc, const char** argv);
 
