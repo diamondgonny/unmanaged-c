@@ -7,21 +7,21 @@
 void print_error_code(error_code_t err)
 {
     switch (err) {
-        case 1:
-            fprintf(stderr, "ERROR_CODE_WRONG_ARGUMENTS_NUMBER\n");
-            break;
-        case 2:
-            fprintf(stderr, "ERROR_CODE_INVALID_FLAG\n");
-            break;
-        case 3:
-            fprintf(stderr, "ERROR_CODE_INVALID_FORMAT\n");
-            break;
-        case 4:
-            fprintf(stderr, "ERROR_CODE_ARGUMENT_TOO_LONG\n");
-            break;
-        case 5:
-            fprintf(stderr, "ERROR_CODE_INVALID_RANGE\n");
-            break;
+    case 1:
+        fprintf(stderr, "ERROR_CODE_WRONG_ARGUMENTS_NUMBER\n");
+        break;
+    case 2:
+        fprintf(stderr, "ERROR_CODE_INVALID_FLAG\n");
+        break;
+    case 3:
+        fprintf(stderr, "ERROR_CODE_INVALID_FORMAT\n");
+        break;
+    case 4:
+        fprintf(stderr, "ERROR_CODE_ARGUMENT_TOO_LONG\n");
+        break;
+    case 5:
+        fprintf(stderr, "ERROR_CODE_INVALID_RANGE\n");
+        break;
     }
 }
 
@@ -244,18 +244,18 @@ int translate(int argc, const char** argv)
     /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
     if (*argv[1] == '-' && strlen(argv[1]) == 2) {
         switch (*(argv[1] + 1)) {
-            case 'i':
-                break;
-            default:
-                err = ERROR_CODE_INVALID_FLAG;
-                print_error_code(err);
-                return err;
+        case 'i':
+            break;
+        default:
+            err = ERROR_CODE_INVALID_FLAG;
+            print_error_code(err);
+            return err;
         }
         ++i;
     }
 
     /* 커맨드 라인 매개변수가 불충분할 경우 */
-    if(argc < 3 + i) {
+    if (argc < 3 + i) {
         err = ERROR_CODE_WRONG_ARGUMENTS_NUMBER;
         print_error_code(err);
         return err;
