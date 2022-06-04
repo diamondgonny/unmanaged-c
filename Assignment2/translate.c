@@ -242,7 +242,7 @@ int translate(int argc, const char** argv)
     /* 플래그 판별을 위한 조건식 : if (*argv[1] == '-') 로 첫 시도, seg-err... */
     /* " : if (strncmp(argv[1], "-i", 2) == 0), ok */
     /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
-    if (*argv[1] == '-' && strlen(argv[1]) == 2) {
+    if (argc > 1 && *argv[1] == '-' && strlen(argv[1]) == 2) {
         switch (*(argv[1] + 1)) {
         case 'i':
             break;
