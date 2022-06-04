@@ -93,11 +93,13 @@ void substitute(char* ptr_tr, char* set1, char* set2)
                 *ptr_tr = *ptr2;
                 break;
             }
-        ++ptr1;
-        ++ptr2;
+            ++ptr1;
+            ++ptr2;
         }
-    ++ptr_tr;
-    /* fprintf(stderr,"%c\n", *ptr_tr); */
+        ptr1 = set1;
+        ptr2 = set2;
+        ++ptr_tr;
+        /* fprintf(stderr,"%c\n", *ptr_tr); */
     }
 }
 
@@ -107,7 +109,7 @@ void substitute_cap(char* ptr_tr, char* set1, char* set2)
     char* ptr2 = set2;
     while (*ptr_tr != '\0') {
         while (*ptr1 != '\0') {
-            if (*ptr_tr == *ptr1 || *ptr_tr == *ptr1 + 32) {
+            if (*ptr_tr == *ptr1 || *ptr_tr == *ptr1 - 32) {
                 *ptr_tr = *ptr2;
                 break;
             }
@@ -157,7 +159,7 @@ void escape_sequence(char* set1)
                 *ptr = '\x22';
                 break;
             default:
-                fprintf(stderr, "ERROR_CODE_INVALID_FORMAT");
+                fprintf(stderr, "ERROR_CODE_INVALID_FORMAT\n");
                 /************** 매듭짓는 방안 다시 확인할 것 */
             }
             ++ptr;
@@ -179,24 +181,27 @@ void set_range(char* set1)
     char temp[MAX_LENGTH];
 
     /* 이스케이프 문자 관련 일단 제외 */
-    /* 입력 가능한 선에서(33이상), 범위 알고리즘 가동... */
+    /* 입력 가능한 선에서(33이상), 범위 알고리즘 가동...(길이통제?) */
     ++ptr;
     while(*ptr != '\0') {
         if (*ptr == '-' && *(ptr - 1) > 32 && *(ptr + 1) > 32) {
+            fprintf(stderr, "%c %c %c\n",*(ptr - 1), *ptr, *(ptr + 1));
             if (*(ptr - 1) == *(ptr + 1)) {
                 strcpy(temp, ptr + 2);
-                strcat(ptr, temp);
+                strcpy(ptr, temp); /* 처음에 strcat 시도했으나, 덮어쓰는 strcpy가 맞음 */
             } else if (*(ptr - 1) < *(ptr + 1)) {
                 size_t a = *(ptr + 1) - *(ptr - 1);
                 strcpy(temp, ptr + 2);
-                while (a == 0) {
+                fprintf(stderr, "%zd\n", a);
+                while (a > 0) {
                     *ptr = *(ptr - 1) + 1;
                     ++ptr;
                     --a;
                 }
-                strcat(ptr, temp);
+                strcpy(ptr, temp);
+                fprintf(stderr, "sample : %s\n", set1);
             } else {
-                fprintf(stderr, "ERROR_CODE_INVALID_RANGE");
+                fprintf(stderr, "ERROR_CODE_INVALID_RANGE\n");
                 break;
                 /************** 매듭짓는 방안 다시 확인할 것 */
             }
@@ -238,9 +243,13 @@ int translate(int argc, const char** argv)
 
     /* 이스케이프 시퀀스 처리 */
     escape_sequence(set1);
+    fprintf(stderr, "%s\n", set1);
+    fprintf(stderr, "%zd\n", strlen(set1));
 
     /* 범위 */
     set_range(set1);
+    fprintf(stderr, "%s\n", set1);
+    fprintf(stderr, "%zd\n", strlen(set1));
 
     /* 기초 동작 : argv (source, repl)의 재구성 */
     /* length of i/o string should be restricted */
@@ -250,16 +259,19 @@ int translate(int argc, const char** argv)
     while (1) {
         ptr_tr = fgets(buf, sizeof(buf), stdin);
         if (ptr_tr == NULL) {
+            clearerr(stdin);
             break;
         }
 
         if (strncmp(argv[1], "-i", 2) != 0) {
             substitute(ptr_tr, set1, set2);
+            fprintf(stderr, "%s", ptr_tr);
         } else {    /* 대소문자 무시 플래그 (2) */
             substitute_cap(ptr_tr, set1, set2);
         }
 
         fprintf(stdout, "%s", buf);
+        /* BOF 문제없이 문자열 읽기? */
     }
 
     return 0;
