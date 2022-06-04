@@ -211,7 +211,7 @@ int set_range(char* set)
     ++ptr;
     while (*ptr != '\0') {
         if (*ptr == '-') {
-            if(*(ptr + 1) == '\0') {
+            if (*(ptr + 1) == '\0') {
                 break;
             } else if (*(ptr - 1) == *(ptr + 1)) {
                 strcpy(temp, ptr + 2);
