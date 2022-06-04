@@ -212,8 +212,8 @@ int translate(int argc, const char** argv)
 {
     int i = 0;
     char buf[512];
-    char set1[MAX_LENGTH];
-    char set2[MAX_LENGTH];
+    char set1[MAX_LENGTH] = { '\0', };
+    char set2[MAX_LENGTH] = { '\0', };
     char *ptr_tr;
 
     /*
@@ -230,8 +230,8 @@ int translate(int argc, const char** argv)
     }
 
     /* i/o 문자열 복사 */
-    strcpy(set1, argv[1 + i]);
-    strcpy(set2, argv[2 + i]);
+    strncpy(set1, argv[1 + i], MAX_LENGTH - 1);
+    strncpy(set2, argv[2 + i], MAX_LENGTH - 1);
 
     /* 대소문자 무시 플래그 (1) */
     if (strncmp(argv[1], "-i", 2) == 0) {
