@@ -4,7 +4,7 @@
 #define FOODNAME_LENGTH (25)
 #define MESSAGE_LENGTH (75)
 
-/* [FOODNAME_LENGTH + 1]은 '\0'을, [MESSAGE_LENGTH + 2]는 '\n'과 '\0' 고려 */
+/* [FOODNAME_LENGTH + 1]은 '\0'을, [MESSAGE_LENGTH + 2]는 '\n'과 '\0' 고려함 */
 static char s_foodname[FOODAMOUNT_MAX][FOODNAME_LENGTH + 1];
 static double s_foodprice[FOODAMOUNT_MAX];
 static size_t s_food_counter = 0;
