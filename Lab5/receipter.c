@@ -17,7 +17,6 @@ void my_strncpy(char* str, const char* input, size_t length)
 
     /* 매개변수의 길이제한 ? str가 선을 넘어버리는 경우 고려함 */
     /* < length - 1 ? str에 '\0' 넣을 마지막 남은 한 자리를 고려함 */
-    /*
     while (*input != '\0' && cnt < length - 1) {
         if (cnt == 50) {
             *str = '\n';
@@ -28,12 +27,6 @@ void my_strncpy(char* str, const char* input, size_t length)
         ++cnt;
         ++str;
         ++input;
-    }
-    *str = '\0';
-    */
-
-    for (; *input != '\0' && cnt < length - 1; ++cnt, ++str, ++input) {
-        cnt % 50 == 0 ? *str = '\n', ++cnt, ++str, *str = *input : (*str = *input);
     }
     *str = '\0';
 }
@@ -77,7 +70,7 @@ int print_receipt(const char* filename, time_t timestamp)
         *s_message_buffer = '\0';
         return FALSE;
     } else {
-        fp = fopen(filename, "w"); /* 파일 */
+        fp = fopen(filename, "w");
     }
 
     if (fp == NULL) {
@@ -87,12 +80,10 @@ int print_receipt(const char* filename, time_t timestamp)
         fseek(fp, 0, SEEK_SET);
     }
 
-    /* 서브토탈 */
     for (i = 0; i < s_food_counter; ++i) {
         subtotal += *(s_foodprice + i);
     }
 
-    /* 날짜-시간 (다시보기) */
     t = *gmtime(&timestamp);
 
     fprintf(fp, "Charles' Seafood\n");
