@@ -64,26 +64,25 @@ int print_receipt(const char* filename, time_t timestamp)
     struct tm t;
     size_t i;
 
-    if (s_food_counter == 0 || s_order_number > 99999) {
-        printf("no food...\n");
+    if (s_food_counter != 0 && s_order_number < 100000) {
+        fp = fopen(filename, "w");
+    } else {
         s_tip_buffer = 0;
         *s_message_buffer = '\0';
         return FALSE;
-    } else {
-        fp = fopen(filename, "w");
     }
 
-    if (fp == NULL) {
-        printf("file not opened...\n");
-        return FALSE;
-    } else {
+    if (fp != NULL) {
         fseek(fp, 0, SEEK_SET);
+    } else {
+        return FALSE;
     }
 
     for (i = 0; i < s_food_counter; ++i) {
         subtotal += *(s_foodprice + i);
     }
 
+    /* GMT 시각을 출력해주는 함수 */
     t = *gmtime(&timestamp);
 
     fprintf(fp, "Charles' Seafood\n");
@@ -123,3 +122,4 @@ int print_receipt(const char* filename, time_t timestamp)
 
     return TRUE;
 }
+
