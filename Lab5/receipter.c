@@ -15,8 +15,9 @@ void my_strncpy(char* str, const char* input, size_t length)
 {
     size_t cnt = 0;
 
-    /* 이거 길이제한 안두면, 버퍼가 선을 넘어버리는 수가 있다... */
-    /* length - 1 ? '\0' 넣을 마지막 남은 한 자리는 반복문이 안감 */
+    /* 매개변수의 길이제한 ? str가 선을 넘어버리는 경우 고려함 */
+    /* < length - 1 ? str에 '\0' 넣을 마지막 남은 한 자리를 고려함 */
+    /*
     while (*input != '\0' && cnt < length - 1) {
         if (cnt == 50) {
             *str = '\n';
@@ -29,39 +30,36 @@ void my_strncpy(char* str, const char* input, size_t length)
         ++input;
     }
     *str = '\0';
+    */
+
+    for (; *input != '\0' && cnt < length - 1; ++cnt, ++str, ++input) {
+        cnt % 50 == 0 ? *str = '\n', ++cnt, ++str, *str = *input : (*str = *input);
+    }
+    *str = '\0';
 }
 
 int add_item(const char* name, double price)
 {
     if (s_food_counter >= FOODAMOUNT_MAX) {
-        printf("maximum food amount\n");
         return FALSE;
     } else if (price > 999.99) {
-        printf("invalid price\n");
         return FALSE;
     } else {
         /* 2차원 배열에서의 포인터 : *(s_foodname + s_food_counter) */
-        /* sscanf로 시도해보니, 구분자(공백문자) 버림... */
         my_strncpy(*(s_foodname + s_food_counter), name, FOODNAME_LENGTH + 1);
         s_foodprice[s_food_counter] = price;
         ++s_food_counter;
     }
-
     return TRUE;
 }
 
 void set_tip(double tip)
 {
-    if (tip > 999.99) {
-        printf("invalid tip\n");
-    } else {
-        s_tip_buffer = tip;
-    }
+    tip > 999.99 ? printf("invalid tip\n") : (s_tip_buffer = tip);
 }
 
 void set_message(const char* message)
 {
-    /* 문자열을 복사해서 붙여넣고, 끝에 '\0'을 넣어주자. length 넘어가면 짤림) */
     my_strncpy(s_message_buffer, message, MESSAGE_LENGTH + 2);
 }
 
@@ -104,7 +102,6 @@ int print_receipt(const char* filename, time_t timestamp)
     fprintf(fp, "%05zd\n", s_order_number);
     fprintf(fp, "--------------------------------------------------\n");
     for (i = 0; i < s_food_counter; ++i) {
-        /* 배열과 포인터 다시보기 */
         fprintf(fp, "%33s", *(s_foodname + i));
         fprintf(fp, "%17.2f\n", *(s_foodprice + i));
     }
@@ -120,7 +117,6 @@ int print_receipt(const char* filename, time_t timestamp)
     fprintf(fp, "%33s", "Total");
     fprintf(fp, "%17.2f\n", subtotal + s_tip_buffer + subtotal * 0.05);
     fprintf(fp, "\n");
-    /* 메시지를 한 줄씩 쓴다는 것(~50칸)? */
     if (*s_message_buffer != '\0') {
         fprintf(fp, "%s\n", s_message_buffer);
     }
