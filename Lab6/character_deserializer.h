@@ -1,6 +1,10 @@
 #ifndef CHARACTER_DESERIALIZER_H
 #define CHARACTER_DESERIALIZER_H
 
+#include <stdio.h>
+#include <assert.h>
+#include <string.h>
+
 #define TRUE (1)
 #define FALSE (0)
 
@@ -40,6 +44,14 @@ typedef struct {
     minion_t minions[3];
 } character_v3_t;
 
+int find_word(char* str, const char* word);
+
 int get_character(const char* filename, character_v3_t* out_character);
+
+uint_t atoi(const char* str);
+
+int operate_version1(const char* token, character_v3_t* character);
+
+void version1(char* buf, character_v3_t* character);
 
 #endif /* CHARACTER_DESERIALIZER_H */
