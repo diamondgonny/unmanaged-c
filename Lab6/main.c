@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <assert.h>
+#include <string.h>
 #include "character_deserializer.h"
 
 int main(void)
@@ -25,10 +28,9 @@ int main(void)
     assert(superman_v1.elemental_resistance.cold == 1);
     assert(superman_v1.elemental_resistance.lightning == 1);
 
-
     version = get_character("Batman_v2.txt", &batman_v2);
     assert(version == 2);
-    assert(strcmp(batman_v2.name, "Batman_v2aBatman_v2aBatman_v2aBatman_v2aBatman_v2a") == 0);
+    assert(strcmp(batman_v2.name, "Batman_v2") == 0);
     assert(batman_v2.level == 25);
     assert(batman_v2.health == 130);
     assert(batman_v2.mana == 50);

@@ -82,27 +82,28 @@ int operate_version1(const char* token, character_v3_t* character)
     /* token(lvl:10) */
     char key[NAME_LEN];
     char value_c[NAME_LEN];
-    char* p;
+    char* p_dst;
+    const char* p_token = token;
     uint_t value_i = 0;
 
     /* key(lvl) */
-    p = key;
-    while (*token != ':') {
-        *p = *token;
-        ++p;
-        ++token;
+    p_dst = key;
+    while (*p_token != ':' && p_token - token < NAME_LEN) {
+        *p_dst = *p_token;
+        ++p_dst;
+        ++p_token;
     }
-    *p = '\0';
-    ++token;
+    *p_dst = '\0';
+    ++p_token;
 
     /* value_i(10) */
-    p = value_c;
-    while (*token != '\0') {
-        *p = *token;
-        ++p;
-        ++token;
+    p_dst = value_c;
+    while (*p_token != '\0' && p_token - token < NAME_LEN) {
+        *p_dst = *p_token;
+        ++p_dst;
+        ++p_token;
     }
-    *p = '\0';
+    *p_dst = '\0';
     value_i = get_atoi(value_c);
 
     /* value에 0은 없고, 규격을 준수했다고 가정 */
