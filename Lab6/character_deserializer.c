@@ -323,7 +323,8 @@ void version3(char* buf, character_v3_t* character)
     }
 
     for (i = 0; i < character->minion_count; ++i) {
-        char* q = buf;  /* strtok의 '\0' 치환으로 개행 못하는 문제, q포인터로 해결 */
+        /* strtok의 '\0' 치환으로 개행 못하는 문제, q포인터로 해결 */
+        char* q = buf;
         while (*q != '\n' && *q != '\0') {
             ++q;
         }
@@ -336,7 +337,7 @@ void version3(char* buf, character_v3_t* character)
             operate_minion_version3(token, character, i, j);
         }
 
-        if(*(q + 1) != '\0') {
+        if (*(q + 1) != '\0') {
             buf = q + 1;
         }
     }
