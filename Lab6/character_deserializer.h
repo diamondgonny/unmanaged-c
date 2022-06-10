@@ -48,7 +48,7 @@ int find_word(char* str, const char* word);
 
 int get_character(const char* filename, character_v3_t* out_character);
 
-uint_t atoi(const char* str);
+uint_t get_atoi(const char* str);
 
 int operate_version1(const char* token, character_v3_t* character);
 

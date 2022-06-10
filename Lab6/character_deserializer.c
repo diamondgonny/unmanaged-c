@@ -64,7 +64,7 @@ int get_character(const char* filename, character_v3_t* out_character)
     return version;
 }
 
-uint_t atoi(const char* str) {
+uint_t get_atoi(const char* str) {
     uint_t res = 0;  /* 초기화 안해서 애먹었었음;; */
 
     while ('0' <= *str && *str <= '9') {
@@ -96,7 +96,7 @@ int operate_version1(const char* token, character_v3_t* character) {
         ++token;
     }
     *p = '\0';
-    value_i = atoi(value_c);        /* value_i(10) */
+    value_i = get_atoi(value_c);        /* value_i(10) */
 
     if (value_i == 0) {             /* value에 0은 없고, 규격을 준수했다고 가정 */
         return FALSE;
@@ -147,7 +147,7 @@ void version1(char* buf, character_v3_t* character) {
 }
 
 int operate_num_version2(const char* token, character_v3_t* character, uint_t stat) {
-    uint_t value_i = atoi(token);
+    uint_t value_i = get_atoi(token);
 
     switch (stat) {
     case 1:
@@ -209,7 +209,7 @@ void version2(char* buf, character_v3_t* character) {
 }
 
 int operate_num_version3(const char* token, character_v3_t* character, uint_t stat) {
-    uint_t value_i = atoi(token);
+    uint_t value_i = get_atoi(token);
 
     switch (stat) {
     case 1:
@@ -259,7 +259,7 @@ int operate_num_version3(const char* token, character_v3_t* character, uint_t st
 }
 
 int operate_minion_version3(const char* token, character_v3_t* character, uint_t minion_num, uint_t stat_order) {
-    uint_t value_i = atoi(token);
+    uint_t value_i = get_atoi(token);
 
     switch (stat_order) {
     case 1:
