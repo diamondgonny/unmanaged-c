@@ -40,8 +40,9 @@ int get_character(const char* filename, character_v3_t* out_character)
     }
 
     /* 버퍼에 대입 : p_buf - character_buf < BUF_LEN - 1 ? */
+    /* 파일에서 문자들 싹 가져옴 */
     do {
-        *p_buf = fgetc(stream);    /* 파일에서 문자들 싹 가져옴 */
+        *p_buf = fgetc(stream);
     } while (*p_buf++ != EOF && p_buf - character_buf < BUF_LEN - 1);
     *--p_buf = '\0';
 
@@ -64,8 +65,10 @@ int get_character(const char* filename, character_v3_t* out_character)
     return version;
 }
 
-uint_t get_atoi(const char* str) {
-    uint_t res = 0;  /* 초기화 안해서 애먹었었음;; */
+uint_t get_atoi(const char* str)
+{
+    /* 초기화 안해서 애먹었었음;; */
+    uint_t res = 0;
 
     while ('0' <= *str && *str <= '9') {
         res = (res * 10) + (*str - '0');
@@ -74,21 +77,25 @@ uint_t get_atoi(const char* str) {
     return res;
 }
 
-int operate_version1(const char* token, character_v3_t* character) {
+int operate_version1(const char* token, character_v3_t* character)
+{
+    /* token(lvl:10) */
     char key[NAME_LEN];
     char value_c[NAME_LEN];
     char* p;
     uint_t value_i = 0;
 
+    /* key(lvl) */
     p = key;
-    while (*token != ':') {         /* token(lvl:10) */
+    while (*token != ':') {
         *p = *token;
         ++p;
         ++token;
     }
-    *p = '\0';                      /* key(lvl) */
+    *p = '\0';
     ++token;
 
+    /* value_i(10) */
     p = value_c;
     while (*token != '\0') {
         *p = *token;
@@ -96,9 +103,10 @@ int operate_version1(const char* token, character_v3_t* character) {
         ++token;
     }
     *p = '\0';
-    value_i = get_atoi(value_c);        /* value_i(10) */
+    value_i = get_atoi(value_c);
 
-    if (value_i == 0) {             /* value에 0은 없고, 규격을 준수했다고 가정 */
+    /* value에 0은 없고, 규격을 준수했다고 가정 */
+    if (value_i == 0) {
         return FALSE;
     }
 
@@ -132,7 +140,8 @@ int operate_version1(const char* token, character_v3_t* character) {
     return TRUE;
 }
 
-void version1(char* buf, character_v3_t* character) {
+void version1(char* buf, character_v3_t* character)
+{
     char* token = strtok(buf, ","); /* e.g. lvl:10 */
     operate_version1(token, character);
 
@@ -146,7 +155,8 @@ void version1(char* buf, character_v3_t* character) {
     }
 }
 
-int operate_num_version2(const char* token, character_v3_t* character, uint_t stat) {
+int operate_num_version2(const char* token, character_v3_t* character, uint_t stat)
+{
     uint_t value_i = get_atoi(token);
 
     switch (stat) {
@@ -187,11 +197,12 @@ int operate_num_version2(const char* token, character_v3_t* character, uint_t st
     return TRUE;
 }
 
-void version2(char* buf, character_v3_t* character) {
+void version2(char* buf, character_v3_t* character)
+{
     char* token;
     uint_t stat_order = 0;
 
-    while(*buf++ != '\n') {
+    while (*buf++ != '\n') {
     }
 
     token = strtok(buf, ","); /* e.g. Batman_v2 */
@@ -208,7 +219,8 @@ void version2(char* buf, character_v3_t* character) {
     }
 }
 
-int operate_num_version3(const char* token, character_v3_t* character, uint_t stat) {
+int operate_num_version3(const char* token, character_v3_t* character, uint_t stat)
+{
     uint_t value_i = get_atoi(token);
 
     switch (stat) {
@@ -258,7 +270,8 @@ int operate_num_version3(const char* token, character_v3_t* character, uint_t st
     return TRUE;
 }
 
-int operate_minion_version3(const char* token, character_v3_t* character, uint_t minion_num, uint_t stat_order) {
+int operate_minion_version3(const char* token, character_v3_t* character, uint_t minion_num, uint_t stat_order)
+{
     uint_t value_i = get_atoi(token);
 
     switch (stat_order) {
@@ -278,13 +291,14 @@ int operate_minion_version3(const char* token, character_v3_t* character, uint_t
     return TRUE;
 }
 
-void version3(char* buf, character_v3_t* character) {
+void version3(char* buf, character_v3_t* character)
+{
     char* token;
     uint_t stat_order = 0;
     uint_t i;
     uint_t j;
 
-    while(*buf++ != '\n') {
+    while (*buf++ != '\n') {
     }
 
     token = strtok(buf, " |"); /* e.g. Wonderwoman_v3 */
@@ -302,9 +316,9 @@ void version3(char* buf, character_v3_t* character) {
     if (character->minion_count == 0) {
         return;
     } else {
-        while(*buf++ != '\n') {
+        while (*buf++ != '\n') {
         }
-        while(*buf++ != '\n') {
+        while (*buf++ != '\n') {
         }
     }
 
