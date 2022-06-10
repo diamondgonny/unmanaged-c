@@ -54,4 +54,14 @@ int operate_version1(const char* token, character_v3_t* character);
 
 void version1(char* buf, character_v3_t* character);
 
+int operate_num_version2(const char* token, character_v3_t* character, uint_t stat);
+
+void version2(char* buf, character_v3_t* character);
+
+int operate_num_version3(const char* token, character_v3_t* character, uint_t stat);
+
+int operate_minion_version3(const char* token, character_v3_t* character, uint_t minion_num, uint_t stat_order);
+
+void version3(char* buf, character_v3_t* character);
+
 #endif /* CHARACTER_DESERIALIZER_H */

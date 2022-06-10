@@ -34,8 +34,7 @@ int get_character(const char* filename, character_v3_t* out_character)
 
     /* 오류 처리 */
     stream = fopen(filename, "r");
-    if (stream == NULL)
-    {
+    if (stream == NULL) {
         printf("File not opened...\n");
         return FALSE;
     }
@@ -50,11 +49,13 @@ int get_character(const char* filename, character_v3_t* out_character)
     /* read_num = fread(names, sizeof(names[0]), NUM_NAMES, stream); */
     if (find_word(character_buf, "|") == TRUE) {
         version = 3;
+        version3(character_buf, out_character);
     } else if (find_word(character_buf, "id") == TRUE) {
         version = 1;
         version1(character_buf, out_character);
     } else if (find_word(character_buf, "name") == TRUE) {
         version = 2;
+        version2(character_buf, out_character);
     } else {
         return FALSE;
     }
@@ -65,7 +66,8 @@ int get_character(const char* filename, character_v3_t* out_character)
 
 uint_t atoi(const char* str) {
     uint_t res = 0;  /* 초기화 안해서 애먹었었음;; */
-    while (str != '\0' && '0' <= *str && *str <= '9') {
+
+    while ('0' <= *str && *str <= '9') {
         res = (res * 10) + (*str - '0');
         str++;
     }
@@ -74,12 +76,12 @@ uint_t atoi(const char* str) {
 
 int operate_version1(const char* token, character_v3_t* character) {
     char key[6];
-    char value_c[4];
+    char value_c[NAME_LEN];
     char* p;
     uint_t value_i = 0;
 
     p = key;
-    while (*token != ':') {          /* token(lvl:10) */
+    while (*token != ':') {         /* token(lvl:10) */
         *p = *token;
         ++p;
         ++token;
@@ -96,10 +98,14 @@ int operate_version1(const char* token, character_v3_t* character) {
     *p = '\0';
     value_i = atoi(value_c);        /* value_i(10) */
 
+    if (value_i == 0) {             /* value에 0은 없고, 규격을 준수했다고 가정 */
+        return FALSE;
+    }
+
     if (strcmp(key, "id") == 0) {
         strcpy(character->name, "player_");
-        strcat(character->name, value_c);
-        /* '\0' */
+        strncat(character->name, value_c, NAME_LEN - 7);
+        character->name[NAME_LEN] = '\0';
         character->minion_count = 0;
     } else if (strcmp(key, "lvl") == 0) {
         character->level = value_i;
@@ -137,5 +143,183 @@ void version1(char* buf, character_v3_t* character) {
         } else {
             break;
         }
+    }
+}
+
+int operate_num_version2(const char* token, character_v3_t* character, uint_t stat) {
+    uint_t value_i = atoi(token);
+
+    switch (stat) {
+    case 1:
+        character->level = value_i;
+        character->leadership = value_i / 10;
+        break;
+    case 2:
+        character->strength = value_i;
+        break;
+    case 3:
+        character->dexterity = value_i;
+        break;
+    case 4:
+        character->intelligence = value_i;
+        break;
+    case 5:
+        character->armour = value_i;
+        break;
+    case 6:
+        character->evasion = value_i;
+        break;
+    case 7:
+        character->elemental_resistance.fire = value_i / 3;
+        character->elemental_resistance.cold = value_i / 3;
+        character->elemental_resistance.lightning = value_i / 3;
+        break;
+    case 8:
+        character->health = value_i;
+        break;
+    case 9:
+        character->mana = value_i;
+        break;
+    default:
+        assert(0);
+        break;
+    }
+    return TRUE;
+}
+
+void version2(char* buf, character_v3_t* character) {
+    char* token;
+    uint_t stat_order = 0;
+
+    while(*buf++ != '\n') {
+    }
+
+    token = strtok(buf, ","); /* e.g. Batman_v2 */
+    strncpy(character->name, token, NAME_LEN);
+    /* name이 영문자 혹은 _이 아닌 경우? */
+    character->name[NAME_LEN] = '\0';
+    character->minion_count = 0;
+    ++stat_order;
+
+    while (stat_order < 10) {
+        token = strtok(NULL, ","); /* Ver2의 규격을 준수하고, 빠짐없이 채웠다고 가정 */
+        operate_num_version2(token, character, stat_order);
+        ++stat_order;
+    }
+}
+
+int operate_num_version3(const char* token, character_v3_t* character, uint_t stat) {
+    uint_t value_i = atoi(token);
+
+    switch (stat) {
+    case 1:
+        character->level = value_i;
+        break;
+    case 2:
+        character->health = value_i;
+        break;
+    case 3:
+        character->mana = value_i;
+        break;
+    case 4:
+        character->strength = value_i;
+        break;
+    case 5:
+        character->dexterity = value_i;
+        break;
+    case 6:
+        character->intelligence = value_i;
+        break;
+    case 7:
+        character->armour = value_i;
+        break;
+    case 8:
+        character->evasion = value_i;
+        break;
+    case 9:
+        character->elemental_resistance.fire = value_i;
+        break;
+    case 10:
+        character->elemental_resistance.cold = value_i;
+        break;
+    case 11:
+        character->elemental_resistance.lightning = value_i;
+        break;
+    case 12:
+        character->leadership = value_i;
+        break;
+    case 13:
+        character->minion_count = value_i;
+        break;
+    default:
+        assert(0);
+        break;
+    }
+    return TRUE;
+}
+
+int operate_minion_version3(const char* token, character_v3_t* character, uint_t minion_num, uint_t stat_order) {
+    uint_t value_i = atoi(token);
+
+    switch (stat_order) {
+    case 1:
+        character->minions[minion_num].health = value_i;
+        break;
+    case 2:
+        character->minions[minion_num].strength = value_i;
+        break;
+    case 3:
+        character->minions[minion_num].defence = value_i;
+        break;
+    default:
+        assert(0);
+        break;
+    }
+    return TRUE;
+}
+
+void version3(char* buf, character_v3_t* character) {
+    char* token;
+    uint_t stat_order = 0;
+    uint_t i;
+    uint_t j;
+
+    while(*buf++ != '\n') {
+    }
+
+    token = strtok(buf, " |"); /* e.g. Wonderwoman_v3 */
+    /* name이 영문자 혹은 _이 아닌 경우? */
+    strncpy(character->name, token, NAME_LEN);
+    character->name[NAME_LEN] = '\0';
+    ++stat_order;
+
+    while (stat_order < 14) {
+        token = strtok(NULL, " |"); /* Ver3의 규격을 준수하고, 빠짐없이 채웠다고 가정 */
+        operate_num_version3(token, character, stat_order);
+        ++stat_order;
+    }
+
+    if (character->minion_count == 0) {
+        return;
+    } else {
+        while(*buf++ != '\n') {
+        }
+        while(*buf++ != '\n') {
+        }
+    }
+
+    for (i = 0; i < character->minion_count; ++i) {
+        char* q = buf;
+        while (*q++ != '\n') {
+        }
+        token = strtok(buf, " |");
+        strncpy(character->minions[i].name, token, NAME_LEN);
+        character->minions[i].name[NAME_LEN] = '\0';
+
+        for (j = 1; j < 4; ++j) {
+            token = strtok(NULL, " |\n");
+            operate_minion_version3(token, character, i, j);
+        }
+        buf = q;
     }
 }
