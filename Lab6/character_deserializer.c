@@ -75,7 +75,7 @@ uint_t get_atoi(const char* str) {
 }
 
 int operate_version1(const char* token, character_v3_t* character) {
-    char key[6];
+    char key[NAME_LEN];
     char value_c[NAME_LEN];
     char* p;
     uint_t value_i = 0;
@@ -309,8 +309,9 @@ void version3(char* buf, character_v3_t* character) {
     }
 
     for (i = 0; i < character->minion_count; ++i) {
-        char* q = buf;
-        while (*q++ != '\n') {
+        char* q = buf;  /* strtok의 '\0' 치환으로 개행 못하는 문제, q포인터로 해결 */
+        while (*q != '\n' && *q != '\0') {
+            ++q;
         }
         token = strtok(buf, " |");
         strncpy(character->minions[i].name, token, NAME_LEN);
@@ -320,6 +321,9 @@ void version3(char* buf, character_v3_t* character) {
             token = strtok(NULL, " |\n");
             operate_minion_version3(token, character, i, j);
         }
-        buf = q;
+
+        if(*(q + 1) != '\0') {
+            buf = q + 1;
+        }
     }
 }
