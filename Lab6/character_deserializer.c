@@ -14,17 +14,15 @@ uint_t get_atoi(const char* str)
 
 int find_file_ver(char* str, const char* word)
 {
-    char* p = str;
-    int i = 0;
-
-    while (*p != '\0') {
-        while (*(word + i) == *(p + i) && *(p + i) != '\0') {
+    while (*str != '\0') {
+        int i = 0;
+        while (*(word + i) == *(str + i) && *(str + i) != '\0') {
             ++i;
             if (*(word + i) == '\0') {
                 return TRUE;
             }
         }
-        ++p;
+        ++str;
     }
     return FALSE;
 }
