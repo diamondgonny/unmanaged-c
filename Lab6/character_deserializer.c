@@ -8,6 +8,18 @@ character_v3_t 구조체의 포인터: character_v3_t* out_character
 filename 파일에 저장되어 있는 캐릭터 정보를 out_character로 역직렬화할 것
 */
 
+uint_t get_atoi(const char* str)
+{
+    /* 초기화 안해서 애먹었었음;; */
+    uint_t res = 0;
+
+    while ('0' <= *str && *str <= '9') {
+        res = (res * 10) + (*str - '0');
+        str++;
+    }
+    return res;
+}
+
 int find_word(char* str, const char* word)
 {
     char* p = str;
@@ -41,22 +53,26 @@ int get_character(const char* filename, character_v3_t* out_character)
 
     /* 버퍼에 대입 : p_buf - character_buf < BUF_LEN - 1 ? */
     /* 파일에서 문자들 싹 가져옴 */
+    /*
     do {
         *p_buf = fgetc(stream);
-    } while (*p_buf++ != EOF && p_buf - character_buf < BUF_LEN - 1);
+    } while (*p_buf++ != '\n' && *p_buf++ != EOF && p_buf - character_buf < BUF_LEN - 1);
     *--p_buf = '\0';
+    */
+
+    p_buf = fgets(character_buf, BUF_LEN, stream);
 
     /* 내용 : v1형식? v2형식? v3형식? 함수포인터! */
     /* read_num = fread(names, sizeof(names[0]), NUM_NAMES, stream); */
     if (find_word(character_buf, "|") == TRUE) {
         version = 3;
-        version3(character_buf, out_character);
+        version3(stream, character_buf, out_character);
     } else if (find_word(character_buf, ":") == TRUE) {
         version = 1;
         version1(character_buf, out_character);
-    } else if (find_word(character_buf, "magic") == TRUE) {
+    } else if (find_word(character_buf, "name") == TRUE) {
         version = 2;
-        version2(character_buf, out_character);
+        version2(stream, character_buf, out_character);
     } else {
         return FALSE;
     }
@@ -65,17 +81,6 @@ int get_character(const char* filename, character_v3_t* out_character)
     return version;
 }
 
-uint_t get_atoi(const char* str)
-{
-    /* 초기화 안해서 애먹었었음;; */
-    uint_t res = 0;
-
-    while ('0' <= *str && *str <= '9') {
-        res = (res * 10) + (*str - '0');
-        str++;
-    }
-    return res;
-}
 
 int operate_version1(const char* key, const char* value_c, character_v3_t* character)
 {
@@ -200,13 +205,11 @@ int operate_num_version2(const char* token, character_v3_t* character, uint_t st
     return TRUE;
 }
 
-void version2(char* buf, character_v3_t* character)
+void version2(FILE* stream, char* buf, character_v3_t* character)
 {
     char* token;
     uint_t stat_order = 0;
-
-    while (*buf++ != '\n') {
-    }
+    fgets(buf, BUF_LEN, stream);
 
     token = strtok(buf, ","); /* e.g. Batman_v2 */
     strncpy(character->name, token, NAME_LEN);
@@ -293,15 +296,14 @@ int operate_minion_version3(const char* token, character_v3_t* character, uint_t
     return TRUE;
 }
 
-void version3(char* buf, character_v3_t* character)
+void version3(FILE* stream, char* buf, character_v3_t* character)
 {
     char* token;
     uint_t stat_order = 0;
     uint_t i;
     uint_t j;
 
-    while (*buf++ != '\n') {
-    }
+    fgets(buf, BUF_LEN, stream);
 
     token = strtok(buf, " |"); /* e.g. Wonderwoman_v3 */
     /* name이 영문자 혹은 _이 아닌 경우? */
@@ -318,15 +320,13 @@ void version3(char* buf, character_v3_t* character)
     if (character->minion_count == 0) {
         return;
     } else {
-        while (*buf++ != '\n') {
-        }
-        while (*buf++ != '\n') {
-        }
+        fgets(buf, BUF_LEN, stream);
     }
 
     for (i = 0; i < character->minion_count; ++i) {
         /* strtok의 '\0' 치환으로 개행 못하는 문제, q포인터로 해결 */
         char* q = buf;
+        fgets(buf, BUF_LEN, stream);
         while (*q != '\n' && *q != '\0') {
             ++q;
         }
