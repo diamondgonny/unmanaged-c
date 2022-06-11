@@ -50,7 +50,7 @@ int get_character(const char* filename, character_v3_t* out_character);
 
 uint_t get_atoi(const char* str);
 
-int operate_version1(const char* token, character_v3_t* character);
+int operate_version1(const char* key, const char* value_c, character_v3_t* character);
 
 void version1(char* buf, character_v3_t* character);
 

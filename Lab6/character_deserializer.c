@@ -77,15 +77,16 @@ uint_t get_atoi(const char* str)
     return res;
 }
 
-int operate_version1(const char* token, character_v3_t* character)
+int operate_version1(const char* key, const char* value_c, character_v3_t* character)
 {
-    /* token(lvl:10) */
+    /* token(lvl:10)
     char key[NAME_LEN];
     char value_c[NAME_LEN];
-    char* p;
+    char* p; */
     uint_t value_i = 0;
+    value_i = get_atoi(value_c);
 
-    /* key(lvl) */
+    /* key(lvl)
     p = key;
     while (*token != ':') {
         *p = *token;
@@ -93,9 +94,9 @@ int operate_version1(const char* token, character_v3_t* character)
         ++token;
     }
     *p = '\0';
-    ++token;
+    ++token; */
 
-    /* value_i(10) */
+    /* value_i(10)
     p = value_c;
     while (*token != '\0') {
         *p = *token;
@@ -103,7 +104,7 @@ int operate_version1(const char* token, character_v3_t* character)
         ++token;
     }
     *p = '\0';
-    value_i = get_atoi(value_c);
+    value_i = get_atoi(value_c); */
 
     /* value에 0은 없고, 규격을 준수했다고 가정 */
     if (value_i == 0) {
@@ -142,13 +143,15 @@ int operate_version1(const char* token, character_v3_t* character)
 
 void version1(char* buf, character_v3_t* character)
 {
-    char* token = strtok(buf, ","); /* e.g. lvl:10 */
-    operate_version1(token, character);
+    char* key = strtok(buf, ":"); /* e.g. lvl:10 */
+    char* value_c = strtok(NULL, ",");
+    operate_version1(key, value_c, character);
 
     while (1) {
-        token = strtok(NULL, ","); /* 바로 뒤에 조건 달지 않으면, seg err */
-        if (token != NULL) {
-            operate_version1(token, character);
+        key = strtok(NULL, ":"); /* 바로 뒤에 조건 달지 않으면, seg err */
+        value_c = strtok(NULL, ",");
+        if (key != NULL && value_c != NULL) {
+            operate_version1(key, value_c, character);
         } else {
             break;
         }
