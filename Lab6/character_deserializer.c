@@ -54,7 +54,7 @@ int get_character(const char* filename, character_v3_t* out_character)
     } else if (find_word(character_buf, ":") == TRUE) {
         version = 1;
         version1(character_buf, out_character);
-    } else if (find_word(character_buf, "name") == TRUE) {
+    } else if (find_word(character_buf, "magic") == TRUE) {
         version = 2;
         version2(character_buf, out_character);
     } else {
