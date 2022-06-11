@@ -14,8 +14,10 @@ uint_t get_atoi(const char* str)
 
 int find_file_ver(char* str, const char* word)
 {
+    /* str에서 word 찾기 */
+    int i = 0;
+
     while (*str != '\0') {
-        int i = 0;
         while (*(word + i) == *(str + i) && *(str + i) != '\0') {
             ++i;
             if (*(word + i) == '\0') {
@@ -30,38 +32,28 @@ int find_file_ver(char* str, const char* word)
 int get_character(const char* filename, character_v3_t* out_character)
 {
     FILE* stream;
-    char character_buf[LENGTH_BUF] = { 0, };
+    char buffer[LENGTH_BUF] = { 0, };
     int version = 0;
 
-    /* 오류 처리 */
     stream = fopen(filename, "r");
     if (stream == NULL) {
         printf("File not opened...\n");
         return FALSE;
     }
 
-    /* 버퍼에 대입 : p_buf - character_buf < LENGTH_BUF - 1 ? */
-    /* 파일에서 문자들 싹 가져옴 */
-    /*
-    do {
-        *p_buf = fgetc(stream);
-    } while (*p_buf++ != '\n' && *p_buf++ != EOF && p_buf - character_buf < LENGTH_BUF - 1);
-    *--p_buf = '\0';
-    */
+    /* 파일의 첫 줄을 buffer로 가져옴 */
+    fgets(buffer, LENGTH_BUF, stream);
 
-    fgets(character_buf, LENGTH_BUF, stream);
-
-    /* 내용 : v1형식? v2형식? v3형식? 함수포인터! */
-    /* read_num = fread(names, sizeof(names[0]), NUM_NAMES, stream); */
-    if (find_file_ver(character_buf, "|") == TRUE) {
+    /* 파일 : v1형식? v2형식? v3형식? (feat. 함수포인터) */
+    if (find_file_ver(buffer, "|") == TRUE) {
         version = 3;
-        version3(stream, character_buf, out_character);
-    } else if (find_file_ver(character_buf, ":") == TRUE) {
+        version3(stream, buffer, out_character);
+    } else if (find_file_ver(buffer, ":") == TRUE) {
         version = 1;
-        version1(character_buf, out_character);
-    } else if (find_file_ver(character_buf, "name") == TRUE) {
+        version1(buffer, out_character);
+    } else if (find_file_ver(buffer, "name") == TRUE) {
         version = 2;
-        version2(stream, character_buf, out_character);
+        version2(stream, buffer, out_character);
     } else {
         return FALSE;
     }
@@ -73,37 +65,10 @@ int get_character(const char* filename, character_v3_t* out_character)
 
 int operate_version1(const char* key, const char* value_c, character_v3_t* character)
 {
-    /* token(lvl:10)
-    char key[LENGTH_NAME];
-    char value_c[LENGTH_NAME];
-    char* p; */
     uint_t value_i = 0;
+
+    /* ver1(파일)에 입력된 값에 0은 없고, 규격을 준수했다고 가정 */
     value_i = get_atoi(value_c);
-
-    /* key(lvl)
-    p = key;
-    while (*token != ':') {
-        *p = *token;
-        ++p;
-        ++token;
-    }
-    *p = '\0';
-    ++token; */
-
-    /* value_i(10)
-    p = value_c;
-    while (*token != '\0') {
-        *p = *token;
-        ++p;
-        ++token;
-    }
-    *p = '\0';
-    value_i = get_atoi(value_c); */
-
-    /* value에 0은 없고, 규격을 준수했다고 가정 */
-    if (value_i == 0) {
-        return FALSE;
-    }
 
     if (strcmp(key, "id") == 0) {
         strcpy(character->name, "player_");
@@ -137,13 +102,15 @@ int operate_version1(const char* key, const char* value_c, character_v3_t* chara
 
 void version1(char* buf, character_v3_t* character)
 {
-    char* key = strtok(buf, ":"); /* e.g. lvl:10 */
+     /* e.g. lvl:10, */
+    char* key = strtok(buf, ":");
     char* value_c = strtok(NULL, ",");
     operate_version1(key, value_c, character);
 
     while (1) {
-        key = strtok(NULL, ":"); /* 바로 뒤에 조건 달지 않으면, seg err */
+        key = strtok(NULL, ":");
         value_c = strtok(NULL, ",");
+        /* 아래와 같은 제약조건 달지 않으면, 세그멘테이션 오류 (선넘네...) */
         if (key != NULL && value_c != NULL) {
             operate_version1(key, value_c, character);
         } else {
@@ -200,14 +167,16 @@ void version2(FILE* stream, char* buf, character_v3_t* character)
     uint_t stat_order = 0;
     fgets(buf, LENGTH_BUF, stream);
 
-    token = strtok(buf, ","); /* e.g. Batman_v2 */
+    /* 순차적, name부터 시작함 (e.g. Batman_v2) */
+    token = strtok(buf, ",");
     strncpy(character->name, token, LENGTH_NAME);
     character->name[LENGTH_NAME] = '\0';
     character->minion_count = 0;
     ++stat_order;
 
+    /* ver2의 규격을 준수하고, 빠짐없이 채웠다고 가정 */
     while (stat_order < 10) {
-        token = strtok(NULL, ","); /* Ver2의 규격을 준수하고, 빠짐없이 채웠다고 가정 */
+        token = strtok(NULL, ",");
         operate_num_version2(token, character, stat_order);
         ++stat_order;
     }
