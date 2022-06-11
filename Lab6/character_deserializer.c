@@ -64,7 +64,7 @@ int get_character(const char* filename, character_v3_t* out_character)
 
 void version1(char* buf, character_v3_t* character)
 {
-    /* e.g. lvl:10, */
+    /* key와 value쌍을 맞춰보면서 역직렬화 (e.g. lvl:10,) */
     char* key = strtok(buf, ":");
     char* value_c = strtok(NULL, ",");
     operate_version1(key, value_c, character);
@@ -84,8 +84,6 @@ void version1(char* buf, character_v3_t* character)
 void operate_version1(const char* key, const char* value_c, character_v3_t* character)
 {
     uint_t value_i = 0;
-
-    /* ver1(파일)에 입력된 값에 0은 없고, 규격을 준수했다고 가정 */
     value_i = get_atoi(value_c);
 
     if (strcmp(key, "id") == 0) {
@@ -136,11 +134,11 @@ void version2(FILE* stream, char* buf, character_v3_t* character)
     }
 }
 
-void operate_num_version2(const char* token, character_v3_t* character, uint_t stat)
+void operate_num_version2(const char* token, character_v3_t* character, uint_t stat_order)
 {
     uint_t value_i = get_atoi(token);
 
-    switch (stat) {
+    switch (stat_order) {
     case 1:
         character->level = value_i;
         character->leadership = value_i / 10;
@@ -183,54 +181,61 @@ void version3(FILE* stream, char* buf, character_v3_t* character)
     uint_t stat_order = 0;
     uint_t i;
     uint_t j;
-
     fgets(buf, LENGTH_BUF, stream);
 
-    token = strtok(buf, " |"); /* e.g. Wonderwoman_v3 */
-    /* name이 영문자 혹은 _이 아닌 경우? */
+    /* 순차적, name부터 시작함 (e.g. Wonderwoman_v3 | ) */
+    token = strtok(buf, " |");
     strncpy(character->name, token, LENGTH_NAME);
     character->name[LENGTH_NAME] = '\0';
     ++stat_order;
 
+    /* ver3의 규격을 준수하고, 빠짐없이 채웠다고 가정 */
     while (stat_order < 14) {
-        token = strtok(NULL, " |"); /* Ver3의 규격을 준수하고, 빠짐없이 채웠다고 가정 */
+        token = strtok(NULL, " |");
         operate_num_version3(token, character, stat_order);
         ++stat_order;
     }
 
+    /* 미니언 없으면 여기서 끝내고, 있으면 (속성 나열된) 한 줄 건너뛸 것 */
     if (character->minion_count == 0) {
         return;
     } else {
         fgets(buf, LENGTH_BUF, stream);
     }
 
+    /* strtok함수가 지나간 구분자 자리는, '\0'으로 씌워버림... */
+    /* (1)미리 포인터 p를 줄의 맨 끝에 대기시켜주면, (2)차질없이 개행/끝내기가 가능함 */
     for (i = 0; i < character->minion_count; ++i) {
-        /* strtok의 '\0' 치환으로 개행 못하는 문제, q포인터로 해결 */
-        char* q = buf;
+        char* p = buf;
         fgets(buf, LENGTH_BUF, stream);
-        while (*q != '\n' && *q != '\0') {
-            ++q;
+
+        /* (1) */
+        while (*p != '\n' && *p != '\0') {
+            ++p;
         }
+
         token = strtok(buf, " |");
         strncpy(character->minions[i].name, token, LENGTH_NAME);
         character->minions[i].name[LENGTH_NAME] = '\0';
 
+        /* case 구분을 위해 1부터 지정함 (0은 name) */
         for (j = 1; j < 4; ++j) {
             token = strtok(NULL, " |\n");
             operate_minion_version3(token, character, i, j);
         }
 
-        if (*(q + 1) != '\0') {
-            buf = q + 1;
+        /* (2) */
+        if (*(p + 1) != '\0') {
+            buf = p + 1;
         }
     }
 }
 
-void operate_num_version3(const char* token, character_v3_t* character, uint_t stat)
+void operate_num_version3(const char* token, character_v3_t* character, uint_t stat_order)
 {
     uint_t value_i = get_atoi(token);
 
-    switch (stat) {
+    switch (stat_order) {
     case 1:
         character->level = value_i;
         break;

@@ -57,11 +57,11 @@ void operate_version1(const char* key, const char* value_c, character_v3_t* char
 
 void version2(FILE* stream, char* buf, character_v3_t* character);
 
-void operate_num_version2(const char* token, character_v3_t* character, uint_t stat);
+void operate_num_version2(const char* token, character_v3_t* character, uint_t stat_order);
 
 void version3(FILE* stream, char* buf, character_v3_t* character);
 
-void operate_num_version3(const char* token, character_v3_t* character, uint_t stat);
+void operate_num_version3(const char* token, character_v3_t* character, uint_t stat_order);
 
 void operate_minion_version3(const char* token, character_v3_t* character, uint_t minion_num, uint_t stat_order);
 
