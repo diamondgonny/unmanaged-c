@@ -209,8 +209,7 @@ void version2(char* buf, character_v3_t* character)
     }
 
     token = strtok(buf, ","); /* e.g. Batman_v2 */
-    strncpy(character->name, token, NAME_LEN);
-    /* name이 영문자 혹은 _이 아닌 경우? */
+    strncpy(character->name, token, NAME_LEN + 1);
     character->name[NAME_LEN] = '\0';
     character->minion_count = 0;
     ++stat_order;
