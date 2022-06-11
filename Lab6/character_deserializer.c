@@ -206,13 +206,14 @@ void version3(FILE* stream, char* buf, character_v3_t* character)
     /* strtok함수가 지나간 구분자 자리는, '\0'으로 씌워버림... */
     /* (1)미리 포인터 p를 줄의 맨 끝에 대기시켜주면, (2)차질없이 개행/끝내기가 가능함 */
     for (i = 0; i < character->minion_count; ++i) {
-        char* p = buf;
+        /* char* p = buf; */
         fgets(buf, LENGTH_BUF, stream);
 
-        /* (1) */
+        /* (1)
         while (*p != '\n' && *p != '\0') {
             ++p;
         }
+        */
 
         token = strtok(buf, " |");
         strncpy(character->minions[i].name, token, LENGTH_NAME);
@@ -224,10 +225,11 @@ void version3(FILE* stream, char* buf, character_v3_t* character)
             operate_minion_version3(token, character, i, j);
         }
 
-        /* (2) */
+        /* (2)
         if (*(p + 1) != '\0') {
             buf = p + 1;
         }
+        */
     }
 }
 
