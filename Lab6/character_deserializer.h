@@ -12,7 +12,7 @@ typedef unsigned int uint_t;
 
 enum {
     NAME_LEN = 50,
-    BUF_LEN = 2048
+    BUF_LEN = 4096
 }; /* #define보다 이게 더 나은가? why? */
 
 typedef struct {
@@ -41,7 +41,7 @@ typedef struct {
     uint_t leadership;
     uint_t minion_count;
     elemental_resistance_t elemental_resistance;
-    minion_t minions[3];
+    minion_t minions[128];
 } character_v3_t;
 
 int find_word(char* str, const char* word);
