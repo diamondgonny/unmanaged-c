@@ -202,7 +202,6 @@ int operate_num_version2(const char* token, character_v3_t* character, uint_t st
 
 void version2(char* buf, character_v3_t* character)
 {
-    char str[NAME_LEN + 1];
     char* token;
     uint_t stat_order = 0;
 
@@ -210,11 +209,7 @@ void version2(char* buf, character_v3_t* character)
     }
 
     token = strtok(buf, ","); /* e.g. Batman_v2 */
-
-    strncpy(str, token, NAME_LEN);
-    str[NAME_LEN] = '\0';
-
-    strcpy(character->name, str);
+    strncpy(character->name, token, NAME_LEN);
     character->name[NAME_LEN] = '\0';
     character->minion_count = 0;
     ++stat_order;
