@@ -1,16 +1,8 @@
 #include "character_deserializer.h"
 
-/*
-반환값: int(version)
-캐릭터 파일명: const char* filename
-character_v3_t 구조체의 포인터: character_v3_t* out_character
-ㅡ
-filename 파일에 저장되어 있는 캐릭터 정보를 out_character로 역직렬화할 것
-*/
-
 uint_t get_atoi(const char* str)
 {
-    /* 초기화 안해서 애먹었었음;; */
+    /* 초기화 안해서 애먹었었음... */
     uint_t res = 0;
 
     while ('0' <= *str && *str <= '9') {
@@ -20,7 +12,7 @@ uint_t get_atoi(const char* str)
     return res;
 }
 
-int find_word(char* str, const char* word)
+int find_file_ver(char* str, const char* word)
 {
     char* p = str;
     int i = 0;
@@ -40,7 +32,7 @@ int find_word(char* str, const char* word)
 int get_character(const char* filename, character_v3_t* out_character)
 {
     FILE* stream;
-    char character_buf[BUF_LEN] = { 0, };
+    char character_buf[LENGTH_BUF] = { 0, };
     int version = 0;
 
     /* 오류 처리 */
@@ -50,26 +42,26 @@ int get_character(const char* filename, character_v3_t* out_character)
         return FALSE;
     }
 
-    /* 버퍼에 대입 : p_buf - character_buf < BUF_LEN - 1 ? */
+    /* 버퍼에 대입 : p_buf - character_buf < LENGTH_BUF - 1 ? */
     /* 파일에서 문자들 싹 가져옴 */
     /*
     do {
         *p_buf = fgetc(stream);
-    } while (*p_buf++ != '\n' && *p_buf++ != EOF && p_buf - character_buf < BUF_LEN - 1);
+    } while (*p_buf++ != '\n' && *p_buf++ != EOF && p_buf - character_buf < LENGTH_BUF - 1);
     *--p_buf = '\0';
     */
 
-    fgets(character_buf, BUF_LEN, stream);
+    fgets(character_buf, LENGTH_BUF, stream);
 
     /* 내용 : v1형식? v2형식? v3형식? 함수포인터! */
     /* read_num = fread(names, sizeof(names[0]), NUM_NAMES, stream); */
-    if (find_word(character_buf, "|") == TRUE) {
+    if (find_file_ver(character_buf, "|") == TRUE) {
         version = 3;
         version3(stream, character_buf, out_character);
-    } else if (find_word(character_buf, ":") == TRUE) {
+    } else if (find_file_ver(character_buf, ":") == TRUE) {
         version = 1;
         version1(character_buf, out_character);
-    } else if (find_word(character_buf, "name") == TRUE) {
+    } else if (find_file_ver(character_buf, "name") == TRUE) {
         version = 2;
         version2(stream, character_buf, out_character);
     } else {
@@ -84,8 +76,8 @@ int get_character(const char* filename, character_v3_t* out_character)
 int operate_version1(const char* key, const char* value_c, character_v3_t* character)
 {
     /* token(lvl:10)
-    char key[NAME_LEN];
-    char value_c[NAME_LEN];
+    char key[LENGTH_NAME];
+    char value_c[LENGTH_NAME];
     char* p; */
     uint_t value_i = 0;
     value_i = get_atoi(value_c);
@@ -117,8 +109,8 @@ int operate_version1(const char* key, const char* value_c, character_v3_t* chara
 
     if (strcmp(key, "id") == 0) {
         strcpy(character->name, "player_");
-        strncat(character->name, value_c, NAME_LEN - 7);
-        character->name[NAME_LEN] = '\0';
+        strncat(character->name, value_c, LENGTH_NAME - 7);
+        character->name[LENGTH_NAME] = '\0';
         character->minion_count = 0;
     } else if (strcmp(key, "lvl") == 0) {
         character->level = value_i;
@@ -208,11 +200,11 @@ void version2(FILE* stream, char* buf, character_v3_t* character)
 {
     char* token;
     uint_t stat_order = 0;
-    fgets(buf, BUF_LEN, stream);
+    fgets(buf, LENGTH_BUF, stream);
 
     token = strtok(buf, ","); /* e.g. Batman_v2 */
-    strncpy(character->name, token, NAME_LEN);
-    character->name[NAME_LEN] = '\0';
+    strncpy(character->name, token, LENGTH_NAME);
+    character->name[LENGTH_NAME] = '\0';
     character->minion_count = 0;
     ++stat_order;
 
@@ -302,12 +294,12 @@ void version3(FILE* stream, char* buf, character_v3_t* character)
     uint_t i;
     uint_t j;
 
-    fgets(buf, BUF_LEN, stream);
+    fgets(buf, LENGTH_BUF, stream);
 
     token = strtok(buf, " |"); /* e.g. Wonderwoman_v3 */
     /* name이 영문자 혹은 _이 아닌 경우? */
-    strncpy(character->name, token, NAME_LEN);
-    character->name[NAME_LEN] = '\0';
+    strncpy(character->name, token, LENGTH_NAME);
+    character->name[LENGTH_NAME] = '\0';
     ++stat_order;
 
     while (stat_order < 14) {
@@ -319,19 +311,19 @@ void version3(FILE* stream, char* buf, character_v3_t* character)
     if (character->minion_count == 0) {
         return;
     } else {
-        fgets(buf, BUF_LEN, stream);
+        fgets(buf, LENGTH_BUF, stream);
     }
 
     for (i = 0; i < character->minion_count; ++i) {
         /* strtok의 '\0' 치환으로 개행 못하는 문제, q포인터로 해결 */
         char* q = buf;
-        fgets(buf, BUF_LEN, stream);
+        fgets(buf, LENGTH_BUF, stream);
         while (*q != '\n' && *q != '\0') {
             ++q;
         }
         token = strtok(buf, " |");
-        strncpy(character->minions[i].name, token, NAME_LEN);
-        character->minions[i].name[NAME_LEN] = '\0';
+        strncpy(character->minions[i].name, token, LENGTH_NAME);
+        character->minions[i].name[LENGTH_NAME] = '\0';
 
         for (j = 1; j < 4; ++j) {
             token = strtok(NULL, " |\n");

@@ -8,12 +8,13 @@
 #define TRUE (1)
 #define FALSE (0)
 
-typedef unsigned int uint_t;
+/* #define보다 이게 더 나은가...? 명시적 타입 때문인가? */
+enum length {
+    LENGTH_NAME = 50,
+    LENGTH_BUF = 1024
+};
 
-enum {
-    NAME_LEN = 50,
-    BUF_LEN = 1024
-}; /* #define보다 이게 더 나은가? why? */
+typedef unsigned int uint_t;
 
 typedef struct {
     char name[NAME_LEN + 1];
@@ -46,7 +47,7 @@ typedef struct {
 
 uint_t get_atoi(const char* str);
 
-int find_word(char* str, const char* word);
+int find_file_ver(char* str, const char* word);
 
 int get_character(const char* filename, character_v3_t* out_character);
 
