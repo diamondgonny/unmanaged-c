@@ -62,8 +62,26 @@ int get_character(const char* filename, character_v3_t* out_character)
     return version;
 }
 
+void version1(char* buf, character_v3_t* character)
+{
+    /* e.g. lvl:10, */
+    char* key = strtok(buf, ":");
+    char* value_c = strtok(NULL, ",");
+    operate_version1(key, value_c, character);
 
-int operate_version1(const char* key, const char* value_c, character_v3_t* character)
+    while (1) {
+        key = strtok(NULL, ":");
+        value_c = strtok(NULL, ",");
+        /* 아래와 같은 제약조건 달지 않으면, 세그멘테이션 오류 (선넘네...) */
+        if (key != NULL && value_c != NULL) {
+            operate_version1(key, value_c, character);
+        } else {
+            break;
+        }
+    }
+}
+
+void operate_version1(const char* key, const char* value_c, character_v3_t* character)
 {
     uint_t value_i = 0;
 
@@ -94,32 +112,31 @@ int operate_version1(const char* key, const char* value_c, character_v3_t* chara
         character->elemental_resistance.fire = (value_i / 4) / 3;
         character->elemental_resistance.cold = (value_i / 4) / 3;
         character->elemental_resistance.lightning = (value_i / 4) / 3;
-    } else {
-        return FALSE;
     }
-    return TRUE;
 }
 
-void version1(char* buf, character_v3_t* character)
+void version2(FILE* stream, char* buf, character_v3_t* character)
 {
-     /* e.g. lvl:10, */
-    char* key = strtok(buf, ":");
-    char* value_c = strtok(NULL, ",");
-    operate_version1(key, value_c, character);
+    char* token;
+    uint_t stat_order = 0;
+    fgets(buf, LENGTH_BUF, stream);
 
-    while (1) {
-        key = strtok(NULL, ":");
-        value_c = strtok(NULL, ",");
-        /* 아래와 같은 제약조건 달지 않으면, 세그멘테이션 오류 (선넘네...) */
-        if (key != NULL && value_c != NULL) {
-            operate_version1(key, value_c, character);
-        } else {
-            break;
-        }
+    /* 순차적, name부터 시작함 (e.g. Batman_v2,) */
+    token = strtok(buf, ",");
+    strncpy(character->name, token, LENGTH_NAME);
+    character->name[LENGTH_NAME] = '\0';
+    character->minion_count = 0;
+    ++stat_order;
+
+    /* ver2의 규격을 준수하고, 빠짐없이 채웠다고 가정 */
+    while (stat_order < 10) {
+        token = strtok(NULL, ",");
+        operate_num_version2(token, character, stat_order);
+        ++stat_order;
     }
 }
 
-int operate_num_version2(const char* token, character_v3_t* character, uint_t stat)
+void operate_num_version2(const char* token, character_v3_t* character, uint_t stat)
 {
     uint_t value_i = get_atoi(token);
 
@@ -158,100 +175,6 @@ int operate_num_version2(const char* token, character_v3_t* character, uint_t st
         assert(0);
         break;
     }
-    return TRUE;
-}
-
-void version2(FILE* stream, char* buf, character_v3_t* character)
-{
-    char* token;
-    uint_t stat_order = 0;
-    fgets(buf, LENGTH_BUF, stream);
-
-    /* 순차적, name부터 시작함 (e.g. Batman_v2) */
-    token = strtok(buf, ",");
-    strncpy(character->name, token, LENGTH_NAME);
-    character->name[LENGTH_NAME] = '\0';
-    character->minion_count = 0;
-    ++stat_order;
-
-    /* ver2의 규격을 준수하고, 빠짐없이 채웠다고 가정 */
-    while (stat_order < 10) {
-        token = strtok(NULL, ",");
-        operate_num_version2(token, character, stat_order);
-        ++stat_order;
-    }
-}
-
-int operate_num_version3(const char* token, character_v3_t* character, uint_t stat)
-{
-    uint_t value_i = get_atoi(token);
-
-    switch (stat) {
-    case 1:
-        character->level = value_i;
-        break;
-    case 2:
-        character->health = value_i;
-        break;
-    case 3:
-        character->mana = value_i;
-        break;
-    case 4:
-        character->strength = value_i;
-        break;
-    case 5:
-        character->dexterity = value_i;
-        break;
-    case 6:
-        character->intelligence = value_i;
-        break;
-    case 7:
-        character->armour = value_i;
-        break;
-    case 8:
-        character->evasion = value_i;
-        break;
-    case 9:
-        character->elemental_resistance.fire = value_i;
-        break;
-    case 10:
-        character->elemental_resistance.cold = value_i;
-        break;
-    case 11:
-        character->elemental_resistance.lightning = value_i;
-        break;
-    case 12:
-        character->leadership = value_i;
-        break;
-    case 13:
-        character->minion_count = value_i;
-        break;
-    default:
-        assert(0);
-        break;
-    }
-    return TRUE;
-}
-
-int operate_minion_version3(const char* token, character_v3_t* character, uint_t minion_num, uint_t stat_order)
-{
-    uint_t value_i = get_atoi(token);
-
-    switch (stat_order) {
-    case 1:
-        character->minions[minion_num].health = value_i;
-        break;
-    case 2:
-        character->minions[minion_num].strength = value_i;
-        break;
-    case 3:
-        character->minions[minion_num].defence = value_i;
-        break;
-    default:
-        assert(0);
-        break;
-    }
-    return TRUE;
 }
 
 void version3(FILE* stream, char* buf, character_v3_t* character)
@@ -300,5 +223,75 @@ void version3(FILE* stream, char* buf, character_v3_t* character)
         if (*(q + 1) != '\0') {
             buf = q + 1;
         }
+    }
+}
+
+void operate_num_version3(const char* token, character_v3_t* character, uint_t stat)
+{
+    uint_t value_i = get_atoi(token);
+
+    switch (stat) {
+    case 1:
+        character->level = value_i;
+        break;
+    case 2:
+        character->health = value_i;
+        break;
+    case 3:
+        character->mana = value_i;
+        break;
+    case 4:
+        character->strength = value_i;
+        break;
+    case 5:
+        character->dexterity = value_i;
+        break;
+    case 6:
+        character->intelligence = value_i;
+        break;
+    case 7:
+        character->armour = value_i;
+        break;
+    case 8:
+        character->evasion = value_i;
+        break;
+    case 9:
+        character->elemental_resistance.fire = value_i;
+        break;
+    case 10:
+        character->elemental_resistance.cold = value_i;
+        break;
+    case 11:
+        character->elemental_resistance.lightning = value_i;
+        break;
+    case 12:
+        character->leadership = value_i;
+        break;
+    case 13:
+        character->minion_count = value_i;
+        break;
+    default:
+        assert(0);
+        break;
+    }
+}
+
+void operate_minion_version3(const char* token, character_v3_t* character, uint_t minion_num, uint_t stat_order)
+{
+    uint_t value_i = get_atoi(token);
+
+    switch (stat_order) {
+    case 1:
+        character->minions[minion_num].health = value_i;
+        break;
+    case 2:
+        character->minions[minion_num].strength = value_i;
+        break;
+    case 3:
+        character->minions[minion_num].defence = value_i;
+        break;
+    default:
+        assert(0);
+        break;
     }
 }
