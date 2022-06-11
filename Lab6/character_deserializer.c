@@ -209,8 +209,8 @@ void version2(char* buf, character_v3_t* character)
     }
 
     token = strtok(buf, ","); /* e.g. Batman_v2 */
-    strncpy(character->name, token, NAME_LEN + 1);
-    character->name[NAME_LEN] = '\0';
+    strncpy(character->name, token, NAME_LEN - 1);
+    character->name[NAME_LEN - 1] = '\0';
     character->minion_count = 0;
     ++stat_order;
 
