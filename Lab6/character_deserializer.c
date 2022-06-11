@@ -41,7 +41,6 @@ int get_character(const char* filename, character_v3_t* out_character)
 {
     FILE* stream;
     char character_buf[BUF_LEN] = { 0, };
-    char* p_buf = character_buf;
     int version = 0;
 
     /* 오류 처리 */
@@ -60,7 +59,7 @@ int get_character(const char* filename, character_v3_t* out_character)
     *--p_buf = '\0';
     */
 
-    p_buf = fgets(character_buf, BUF_LEN, stream);
+    fgets(character_buf, BUF_LEN, stream);
 
     /* 내용 : v1형식? v2형식? v3형식? 함수포인터! */
     /* read_num = fread(names, sizeof(names[0]), NUM_NAMES, stream); */
