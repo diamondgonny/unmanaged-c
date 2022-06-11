@@ -41,7 +41,7 @@ typedef struct {
     uint_t leadership;
     uint_t minion_count;
     elemental_resistance_t elemental_resistance;
-    minion_t minions[128];
+    minion_t minions[8];
 } character_v3_t;
 
 int find_word(char* str, const char* word);
