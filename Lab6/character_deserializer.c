@@ -88,7 +88,7 @@ int operate_version1(const char* token, character_v3_t* character)
 
     /* key(lvl) */
     p_dst = key;
-    while (*p_token != ':') {
+    while (*p_token != ':' && p_token - token < NAME_LEN) {
         *p_dst = *p_token;
         ++p_dst;
         ++p_token;
@@ -98,7 +98,7 @@ int operate_version1(const char* token, character_v3_t* character)
 
     /* value_i(10) */
     p_dst = value_c;
-    while (*p_token != '\0') {
+    while (*p_token != '\0' && p_token - token < NAME_LEN) {
         *p_dst = *p_token;
         ++p_dst;
         ++p_token;
