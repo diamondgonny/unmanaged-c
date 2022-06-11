@@ -17,7 +17,7 @@ enum length {
 typedef unsigned int uint_t;
 
 typedef struct {
-    char name[NAME_LEN + 1];
+    char name[LENGTH_NAME + 1];
     uint_t health;
     uint_t strength;
     uint_t defence;
@@ -30,7 +30,7 @@ typedef struct {
 } elemental_resistance_t;
 
 typedef struct {
-    char name[NAME_LEN + 1];
+    char name[LENGTH_NAME + 1];
     uint_t level;
     uint_t health;
     uint_t mana;
