@@ -262,7 +262,7 @@ int translate(int argc, const char** argv)
     }
 
     /* 커맨드 라인 매개변수가 불충분할 경우 */
-    if (argc < 3 + i) {
+    if (argc != 3 + i) {
         err = ERROR_CODE_WRONG_ARGUMENTS_NUMBER;
         print_error_code(err);
         return err;
