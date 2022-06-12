@@ -60,7 +60,7 @@ int translate(int argc, const char** argv)
         decapitalize(set1);
     }
 
-    /* 조건식) '이스케이프 코드' 규격 검증 */
+    /* 조건식) '이스케이프 코드' 규격 검증 및 변환 */
     /* cf. format이 TRUE이려면, set1, set2 모두 검증 이상무여야함 */
     format = check_escape_seq(set1) & check_escape_seq(set2);
     if (format != TRUE) {
@@ -69,7 +69,7 @@ int translate(int argc, const char** argv)
         return err;
     }
 
-    /* 조건식) '범위' 유효성 검증 */
+    /* 조건식) '범위' 유효성 검증 및 변환 */
     range = check_range(set1) & check_range(set2);
     if (range != TRUE) {
         err = ERROR_CODE_INVALID_RANGE;
@@ -77,7 +77,7 @@ int translate(int argc, const char** argv)
         return err;
     }
 
-    /* '기초 동작' : 컴퓨터가 처리 가능하도록 인자들을 다듬음 */
+    /* '기초 동작' : 컴퓨터가 처리 가능하도록 인자들을 최종적으로 다듬음 */
     trim_set(set1, set2);
     /*
     fprintf(stderr, "%s %s\n", set1, set2);
@@ -85,13 +85,13 @@ int translate(int argc, const char** argv)
     */
 
     while (1) {
-        ptr_tr = fgets(temp, sizeof(temp), stdin);
+        ptr_tr = fgets(temp, sizeof(temp), stdin); /* 한 줄 단위 */
         if (ptr_tr == NULL) {
             clearerr(stdin);
             break;
         }
 
-        /* 실질적인 변환 알고리즘, 한 줄씩 받고 출력함 (convert, convert_cap) */
+        /* 실질적인 변환 알고리즘 (convert, convert_cap) */
         /* else : 대소문자 무시 플래그 (2단계) */
         /* e.g. abc fgh (a->f, A->f, b->g, B->g, c->h, C->h) */
         if (strncmp(argv[1], "-i", 2) != 0) {
@@ -202,7 +202,7 @@ int check_escape_seq(char* set)
 
 int check_range(char* set)
 {
-    /* 참고로, 이미 '인자 길이' 검증이 끝난 상태이므로, strcpy 사용함 */
+    /* 참고로, 이미 '인자 길이' 검증이 끝난 상태이므로, 아래에서 strcpy 사용함 */
     char* ptr = set;
     char temp[MAX_LENGTH];
 
@@ -264,23 +264,22 @@ void trim_set(char* set1, char* set2)
         *trim_ptr2 = '\0';
     }
 
-    target_ptr1 = --trim_ptr1; /* set1 문자열 마지막 글자의 위치 ('\0' 직전) */
+    target_ptr1 = --trim_ptr1; /* set1 문자열 마지막 글자의 위치로 감 ('\0' 직전) */
+    /* target_ptr가 a를 가리킨다면, 중복되는 a는 싹 소거될 것 (오른쪽에서 왼쪽 순) */
+    /* trim_ptr1 주도로 제거하고, 빈 자리는 한 칸씩 우측으로 밀어붙임 (오른쪽 정렬) */
 
     while (target_ptr1 - set1 > 0) {
-        /* target_ptr가 a를 가리킨다면, 중복되는 a는 싹 소거될 것 (오른쪽에서 왼쪽 순) */
-        /* 여기서 trim_ptr1은 소거될 a를 색출하는 역할을 함 */
-        /* e.g. abada\0 ijkbc\0 -> øøbda\0 øøjbc\0 (\0 == ø) */
+        /* e.g. abadaø ijkbcø -> øøbdaø øøjbcø (ø == \0) */
         trim_ptr1 = target_ptr1 - 1;
         while (trim_ptr1 - set1 >= 0) {
-            /* 스캔해서 중첩되는 문자 발견? 일단 제거하고, 한 칸씩 우측으로 밀어붙인다 */
             if (*trim_ptr1 == *target_ptr1 && *target_ptr1 != '\0') {
-                char* checkpoint_ptr = trim_ptr1;
-                while (trim_ptr1 - set1 > 0) { /* 첫 글자의 위치까지 가면 치환 대상이 없다 */
+                char* checkpoint_ptr = trim_ptr1; /* 제거지점 저장 */
+                while (trim_ptr1 - set1 > 0) { /* set1과 set2 문자집합을 쌍으로 움직임 */
                     *trim_ptr1 = *(trim_ptr1 - 1);
                     *(set2 + (trim_ptr1 - set1)) = *(set2 + (trim_ptr1 - set1) - 1);
                     --trim_ptr1;
                 }
-                trim_ptr1 = checkpoint_ptr;
+                trim_ptr1 = checkpoint_ptr; /* (일 마치고) 제거지점 복귀 */
                 set1[overlap_count] = '\0';
                 set2[overlap_count] = '\0';
                 ++overlap_count;
@@ -292,8 +291,8 @@ void trim_set(char* set1, char* set2)
     }
     /* fprintf(stderr, "%zd\n", overlap_count); */
 
-    /* 이제 중첩된 칸 수 만큼을 정리해 줄 시간 (좌측의 ø소거) */
-    /* e.g. øøbdaø øøjbcø -> bdaø -> jbcø (\0 == ø) */
+    /* 이제 중첩된 칸 수 만큼을 정리해 줄 시간임 (좌측의 ø소거) */
+    /* e.g. øøbdaø øøjbcø -> bdaø jbcø (ø == \0) */
     trim_ptr1 = set1;
     trim_ptr2 = set2;
 
@@ -314,7 +313,8 @@ void convert(char* ptr_tr, char* set1, char* set2)
     char* ptr1 = set1;
     char* ptr2 = set2;
 
-    /* (한 줄을 놓고) 하나 하나 한 글자씩 검사 그리고 변환 */
+    /* 참고) fgets, fputs 사용했음 (한 줄 단위의 문자열) */
+    /* 아래 while문에서 하나 하나 한 글자씩 검사, set1 -> set2 변환 */
     while (*ptr_tr != '\0') {
         while (*ptr1 != '\0') {
             if (*ptr_tr == *ptr1) {
