@@ -51,7 +51,7 @@ int find_file_ver(const char* str, const char* word);
 
 int get_character(const char* filename, character_v3_t* out_character);
 
-void version1(char* buf, character_v3_t* character);
+void version1(FILE* stream, char* buf, character_v3_t* character);
 
 void operate_version1(const char* key, const char* value_c, character_v3_t* character);
 

@@ -32,6 +32,7 @@ int find_file_ver(const char* str, const char* word)
 int get_character(const char* filename, character_v3_t* out_character)
 {
     FILE* stream;
+    void (*ver_func) (FILE*, char*, character_v3_t*);
     char buffer[LENGTH_BUF] = { 0, };
     int version = 0;
 
@@ -44,29 +45,36 @@ int get_character(const char* filename, character_v3_t* out_character)
     /* 파일의 첫 줄을 buffer로 가져옴 */
     fgets(buffer, LENGTH_BUF, stream);
 
-    /* 파일검사 -> v1형식? v2형식? v3형식? (cf. 함수포인터?) */
+    /* 파일검사 -> v1형식? v2형식? v3형식? (cf. 함수포인터 활용해봄) */
     if (find_file_ver(buffer, "|") == TRUE) {
         version = 3;
-        version3(stream, buffer, out_character);
+        ver_func = version3;
     } else if (find_file_ver(buffer, ":") == TRUE) {
         version = 1;
-        version1(buffer, out_character);
+        ver_func = version1;
     } else if (find_file_ver(buffer, "name") == TRUE) {
         version = 2;
-        version2(stream, buffer, out_character);
+        ver_func = version2;
     } else {
         return FALSE;
     }
+    ver_func(stream, buffer, out_character);
 
     fclose(stream);
     return version;
 }
 
-void version1(char* buf, character_v3_t* character)
+void version1(FILE* stream, char* buf, character_v3_t* character)
 {
+    char* key;
+    char* value_c;
+
+    fseek(stream, 0, SEEK_SET);
+    fgets(buf, LENGTH_BUF, stream);
+
     /* key와 value쌍을 맞춰보면서 역직렬화 (e.g. lvl:10,) */
-    char* key = strtok(buf, ":");
-    char* value_c = strtok(NULL, ",");
+    key = strtok(buf, ":");
+    value_c = strtok(NULL, ",");
     operate_version1(key, value_c, character);
 
     while (1) {
@@ -84,8 +92,7 @@ void version1(char* buf, character_v3_t* character)
 
 void operate_version1(const char* key, const char* value_c, character_v3_t* character)
 {
-    uint_t value_i = 0;
-    value_i = get_atoi(value_c);
+    uint_t value_i = get_atoi(value_c);
 
     if (strcmp(key, "id") == 0) {
         strcpy(character->name, "player_");
