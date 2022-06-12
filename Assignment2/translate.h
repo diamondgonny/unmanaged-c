@@ -18,7 +18,7 @@ typedef enum error_code {
     ERROR_CODE_INVALID_FORMAT: 인자들의 포맷이 틀림
     ERROR_CODE_ARGUMENT_TOO_LONG: 너무 긴 인자가 존재
     ERROR_CODE_INVALID_RANGE: 올바르지 않은 문자열 범위를 사용함
-    */
+*/
 
 void print_error_code(error_code_t err);
 
