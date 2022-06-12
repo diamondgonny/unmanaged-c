@@ -187,7 +187,7 @@ int check_escape_seq(char* set)
             }
             ++ptr;
 
-            /* 이스케이프 문자 기준, 이후의 'set'문자열 전부 좌측 한 칸씩 이동 */
+            /* 이스케이프 문자 변환, 빈 칸 메우기 (뒤의 문자들 전부 앞으로 한 칸씩 당김) */
             while (*ptr != '\0' && ptr - set < MAX_LENGTH - 1) {
                 *ptr = *(ptr + 1);
                 ++ptr;
@@ -245,7 +245,7 @@ void trim_set(char* set1, char* set2)
     size_t overlap_count = 0u;
 
     /* 문자 집합 갯수 맞춰주기 (기초 동작) */
-    while(*trim_ptr1 != '\0' && *trim_ptr2 != '\0'){
+    while (*trim_ptr1 != '\0' && *trim_ptr2 != '\0') {
         ++trim_ptr1;
         ++trim_ptr2;
     }
@@ -269,7 +269,7 @@ void trim_set(char* set1, char* set2)
     while (target_ptr1 - set1 > 0) {
         /* target_ptr가 a를 가리킨다면, 중복되는 a는 싹 소거될 것 (오른쪽에서 왼쪽 순) */
         /* 여기서 trim_ptr1은 소거될 a를 색출하는 역할을 함 */
-         /* e.g. abada\0 ijkbc\0 -> øøbda\0 øøjbc\0 (\0 == ø) */
+        /* e.g. abada\0 ijkbc\0 -> øøbda\0 øøjbc\0 (\0 == ø) */
         trim_ptr1 = target_ptr1 - 1;
         while (trim_ptr1 - set1 >= 0) {
             /* 스캔해서 중첩되는 문자 발견? 일단 제거하고, 한 칸씩 우측으로 밀어붙인다 */
