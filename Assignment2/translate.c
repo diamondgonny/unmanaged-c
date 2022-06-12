@@ -327,7 +327,6 @@ int translate(int argc, const char** argv)
         fprintf(stdout, "%s", buf);
     }
 
-/* =========================================================== */
     /* str계열 함수는 for문을 사용, 최대한 효율적으로 코드 개선할 것 */
     /* strncpy -> strcpy */
     return 0;
