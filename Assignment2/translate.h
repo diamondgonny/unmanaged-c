@@ -30,7 +30,7 @@ int check_escape_seq(char* set);
 
 int check_range(char* set);
 
-void trim_argv(char* set1, char* set2);
+void trim_set(char* set1, char* set2);
 
 void convert(char* ptr_tr, char* set1, char* set2);
 

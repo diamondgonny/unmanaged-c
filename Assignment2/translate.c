@@ -78,7 +78,7 @@ int translate(int argc, const char** argv)
     }
 
     /* '기초 동작' : 컴퓨터가 처리 가능하도록 인자들을 다듬음 */
-    trim_argv(set1, set2);
+    trim_set(set1, set2);
     /*
     fprintf(stderr, "%s %s\n", set1, set2);
     fprintf(stderr, "%zd %zd\n", strlen(set1), strlen(set2));
@@ -237,7 +237,7 @@ int check_range(char* set)
     return TRUE;
 }
 
-void trim_argv(char* set1, char* set2)
+void trim_set(char* set1, char* set2)
 {
     char* target_ptr1 = NULL;
     char* trim_ptr1 = set1;
