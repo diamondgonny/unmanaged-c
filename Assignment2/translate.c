@@ -309,6 +309,8 @@ void convert(char* ptr_tr, char* set1, char* set2)
 {
     char* ptr1 = set1;
     char* ptr2 = set2;
+
+    /* (한 줄을 놓고) 하나 하나 한 글자씩 검사 그리고 변환 */
     while (*ptr_tr != '\0') {
         while (*ptr1 != '\0') {
             if (*ptr_tr == *ptr1) {
@@ -329,6 +331,8 @@ void convert_cap(char* ptr_tr, char* set1, char* set2)
 {
     char* ptr1 = set1;
     char* ptr2 = set2;
+
+    /* 대소문자 관련 내용을 제외하면, 위와 동일 */
     while (*ptr_tr != '\0') {
         while (*ptr1 != '\0') {
             if (*ptr_tr == *ptr1 || *ptr_tr == *ptr1 - 32) {
@@ -338,6 +342,8 @@ void convert_cap(char* ptr_tr, char* set1, char* set2)
             ++ptr1;
             ++ptr2;
         }
+        ptr1 = set1;
+        ptr2 = set2;
         ++ptr_tr;
         /* fprintf(stderr,"%c\n", *ptr_tr); */
     }
