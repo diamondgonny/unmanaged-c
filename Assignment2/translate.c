@@ -265,22 +265,24 @@ void trim_argv(char* set1, char* set2)
         *trim_ptr2 = '\0';
     }
 
-    /* '\0'으로부터 좌측 한 칸, 즉 문자열의 마지막 글자의 위치로 이동한다 */
-    /* 그리고 오른쪽에서 왼쪽 순으로 중첩되는 문자 정리를 한다 */
+    /* '\0' 위치로부터 왼쪽 한 칸, 즉 문자열의 마지막 글자의 위치로 이동 */
     target_ptr1 = --trim_ptr1;
 
-    while (target_ptr1 - set1 > 0) { /* 첫 글자의 위치까지 가면 비교 대상이 없다 */
+    while (target_ptr1 - set1 > 0) {
+        /* target_ptr가 a를 가리킨다면, 중복되는 a는 싹 소거될 것 (오른쪽에서 왼쪽 순) */
+        /* 여기서 trim_ptr1은 소거될 a를 색출하는 역할을 함 */
+         /* e.g. abada\0 ijkbc\0 -> bda\0 jbc\0 */
         trim_ptr1 = target_ptr1 - 1;
         while (trim_ptr1 - set1 >= 0) {
-            /* 스캔해서 중첩되는 문자 발견? 일단 현 위치 기준, 한 칸씩 우측으로 밀어붙인다 */
+            /* 스캔해서 중첩되는 문자 발견? 일단 제거하고, 한 칸씩 우측으로 밀어붙인다 */
             if (*trim_ptr1 == *target_ptr1 && *target_ptr1 != '\0') {
-                char* comeback_ptr = trim_ptr1;
+                char* checkpoint_ptr = trim_ptr1;
                 while (trim_ptr1 - set1 > 0) { /* 첫 글자의 위치까지 가면 치환 대상이 없다 */
                     *trim_ptr1 = *(trim_ptr1 - 1);
                     *(set2 + (trim_ptr1 - set1)) = *(set2 + (trim_ptr1 - set1) - 1);
                     --trim_ptr1;
                 }
-                trim_ptr1 = comeback_ptr;
+                trim_ptr1 = checkpoint_ptr;
                 set1[overlap_count] = '\0';
                 set2[overlap_count] = '\0';
                 ++overlap_count;
