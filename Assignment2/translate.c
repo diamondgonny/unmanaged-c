@@ -244,18 +244,21 @@ void trim_argv(char* set1, char* set2)
     char* trim_ptr2 = set2;
     size_t overlap_count = 0u;
 
-    if (strlen(set1) < strlen(set2)) {
-        while (*trim_ptr1 != '\0' && trim_ptr1 - set1 < MAX_LENGTH - 1) { /* '\0' */
-            ++trim_ptr1;
-            ++trim_ptr2;
-        }
+    /* 문자 집합 갯수 맞춰주기 (기초 동작) */
+    while(trim_ptr1 != '\0' && trim_ptr2 != '\0'){
+        ++trim_ptr1;
+        ++trim_ptr2;
+    }
+
+    if (trim_ptr1 == '\0') {
+        /* e.g. abc\0 fghijk\0 -> abc\0 fgh\0... */
         *trim_ptr2 = '\0';
     } else {
-        while (*trim_ptr1 != '\0' && trim_ptr1 - set1 < MAX_LENGTH - 1) { /* '\0' */
-            if (*trim_ptr2 == '\0') {
-                *(trim_ptr2 + 1) = *trim_ptr2;
-                *trim_ptr2 = *(trim_ptr2 - 1);
-            }
+        while (*trim_ptr1 != '\0') {
+            /* '\0'을 뒤로 한 칸 미루고, 마지막 문자를 집어넣을 것 */
+            /* e.g. abcde\0 fgh\0 -> abcde\0 fghhh\0 */
+            *(trim_ptr2 + 1) = *trim_ptr2;
+            *trim_ptr2 = *(trim_ptr2 - 1);
             ++trim_ptr1;
             ++trim_ptr2;
         }
