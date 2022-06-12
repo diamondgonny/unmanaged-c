@@ -77,12 +77,12 @@ int translate(int argc, const char** argv)
         return err;
     }
 
-    /* ----------------------------------------------------- */
-    /* 기초 동작 : argv (source, repl)의 재구성 */
-    /* length of i/o string should be restricted */
+    /* '기초 동작' : 컴퓨터가 처리 가능하도록 인자들을 다듬음 */
     trim_argv(set1, set2);
+    /*
     fprintf(stderr, "%s %s\n", set1, set2);
     fprintf(stderr, "%zd %zd\n", strlen(set1), strlen(set2));
+    */
 
     while (1) {
         ptr_tr = fgets(buf, sizeof(buf), stdin);
@@ -90,19 +90,19 @@ int translate(int argc, const char** argv)
             clearerr(stdin);
             break;
         }
+
+        /* 실질적인 변환 알고리즘 (convert, convert_cap) */
         /* else : 대소문자 무시 플래그 (2단계) */
+        /* e.g. abc fgh (a->f, A->f, b->g, B->g, c->h, C->h) */
         if (strncmp(argv[1], "-i", 2) != 0) {
-            substitute(ptr_tr, set1, set2);
+            convert(ptr_tr, set1, set2);
         } else {
-            substitute_cap(ptr_tr, set1, set2);
+            convert_cap(ptr_tr, set1, set2);
         }
 
-        /* BOF 문제없이 문자열 읽기? */
-        fprintf(stdout, "%s", buf);
+        fputs(buf, stdout);
     }
 
-    /* str계열 함수는 for문을 사용, 최대한 효율적으로 코드 개선할 것 */
-    /* strncpy -> strcpy */
     return 0;
 }
 
@@ -305,7 +305,7 @@ void trim_argv(char* set1, char* set2)
     }
 }
 
-void substitute(char* ptr_tr, char* set1, char* set2)
+void convert(char* ptr_tr, char* set1, char* set2)
 {
     char* ptr1 = set1;
     char* ptr2 = set2;
@@ -325,7 +325,7 @@ void substitute(char* ptr_tr, char* set1, char* set2)
     }
 }
 
-void substitute_cap(char* ptr_tr, char* set1, char* set2)
+void convert_cap(char* ptr_tr, char* set1, char* set2)
 {
     char* ptr1 = set1;
     char* ptr2 = set2;

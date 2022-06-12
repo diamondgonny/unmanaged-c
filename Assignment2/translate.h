@@ -32,8 +32,8 @@ int check_range(char* set);
 
 void trim_argv(char* set1, char* set2);
 
-void substitute(char* ptr_tr, char* set1, char* set2);
+void convert(char* ptr_tr, char* set1, char* set2);
 
-void substitute_cap(char* ptr_tr, char* set1, char* set2);
+void convert_cap(char* ptr_tr, char* set1, char* set2);
 
 #endif /* TRANSLATE_H */
