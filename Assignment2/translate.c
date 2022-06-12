@@ -236,6 +236,7 @@ void trim_set(char* set1, char* set2)
 {
     char* trim_ptr1 = set1;
     char* trim_ptr2 = set2;
+    char* p1 = NULL;
     size_t overlap_count = 0u;
 
     /* 문자 집합 갯수 맞춰주기 (기초 동작) */
@@ -258,15 +259,16 @@ void trim_set(char* set1, char* set2)
         *trim_ptr2 = '\0';
     }
 
-    --trim_ptr1; /* set1 문자열 마지막 글자의 위치로 감 ('\0' 직전) */
+    /* <---------------------(스캔)--------------------- 'p1' 'trim_ptr1' */
     /* trim_ptr1이 a를 가리킨다면, 중복되는 나머지 a는 싹 제거될 것 (오른쪽에서 왼쪽 순) */
     /* p1 주도로 하고, 제거하고서 빈 자리는 한 칸씩 우측으로 밀어붙임 (오른쪽 정렬) */
+    --trim_ptr1; /* set1의 문자열 마지막 글자의 위치 */
+    p1 = trim_ptr1 - 1; /* set1의 문자열 마지막에서 두 번째 글자의 위치 */
 
-    while (trim_ptr1 - set1 > 0) {
-        char* p1 = trim_ptr1 - 1;
-        if (*trim_ptr1 == *p1 && *trim_ptr1 != '\0') {
-            while (p1 - set1 > 0) {
-                /* set1과 set2 문자집합을 쌍으로 같이 다듬음 */
+    while (*trim_ptr1 != '\0' && trim_ptr1 - set1 > 0) {
+        if (*p1 == *trim_ptr1) {
+            while (*p1 != '\0' && p1 - set1 > 0) {
+                /* set1과 set2 문자집합을 쌍으로 같이 작업함 */
                 /* e.g. abadaø ijkbcø -> øøbdaø øøjbcø (ø == \0) */
                 *p1 = *(p1 - 1);
                 *(set2 + (p1 - set1)) = *(set2 + (p1 - set1) - 1);
@@ -275,8 +277,13 @@ void trim_set(char* set1, char* set2)
             set1[overlap_count] = '\0';
             set2[overlap_count] = '\0';
             ++overlap_count;
+        } else if (*p1 == '\0') {
+            --trim_ptr1;
+            p1 = trim_ptr1 - 1;
+
+        } else {
+            --p1;
         }
-        --trim_ptr1;
     }
 
     /* 이제 중첩된 칸 수 만큼을 정리해 줄 시간임 (좌측의 ø소거) */
