@@ -53,7 +53,6 @@ int translate(int argc, const char** argv)
     /* (const char형의) 문자 집합이 들어있는 인자를 set1, set2로 복사 */
     strncpy(set1, argv[1 + i], MAX_LENGTH - 1);
     strncpy(set2, argv[2 + i], MAX_LENGTH - 1);
-    /* fprintf(stderr, "%s %s\n", set1, set2); */
 
     /* 대소문자 무시 플래그 (1단계) */
     if (strncmp(argv[1], "-i", 2) == 0) {
@@ -79,10 +78,6 @@ int translate(int argc, const char** argv)
 
     /* '기초 동작' : 컴퓨터가 처리 가능하도록 인자들을 최종적으로 다듬음 */
     trim_set(set1, set2);
-    /*
-    fprintf(stderr, "%s %s\n", set1, set2);
-    fprintf(stderr, "%zd %zd\n", strlen(set1), strlen(set2));
-    */
 
     while (1) {
         ptr_tr = fgets(temp, sizeof(temp), stdin); /* 한 줄 단위 */
@@ -289,7 +284,6 @@ void trim_set(char* set1, char* set2)
         }
         --target_ptr1;
     }
-    /* fprintf(stderr, "%zd\n", overlap_count); */
 
     /* 이제 중첩된 칸 수 만큼을 정리해 줄 시간임 (좌측의 ø소거) */
     /* e.g. øøbdaø øøjbcø -> bdaø jbcø (ø == \0) */
@@ -327,7 +321,6 @@ void convert(char* ptr_tr, char* set1, char* set2)
         ptr1 = set1;
         ptr2 = set2;
         ++ptr_tr;
-        /* fprintf(stderr,"%c\n", *ptr_tr); */
     }
 }
 
@@ -349,6 +342,5 @@ void convert_cap(char* ptr_tr, char* set1, char* set2)
         ptr1 = set1;
         ptr2 = set2;
         ++ptr_tr;
-        /* fprintf(stderr,"%c\n", *ptr_tr); */
     }
 }
