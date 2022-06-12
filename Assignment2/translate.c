@@ -13,7 +13,7 @@ int translate(int argc, const char** argv)
     int range = 0;
     char set1[MAX_LENGTH] = { '\0', };
     char set2[MAX_LENGTH] = { '\0', };
-    char buf[512];
+    char temp[1024];
     char* ptr_tr;
     error_code_t err;
 
@@ -85,13 +85,13 @@ int translate(int argc, const char** argv)
     */
 
     while (1) {
-        ptr_tr = fgets(buf, sizeof(buf), stdin);
+        ptr_tr = fgets(temp, sizeof(temp), stdin);
         if (ptr_tr == NULL) {
             clearerr(stdin);
             break;
         }
 
-        /* 실질적인 변환 알고리즘 (convert, convert_cap) */
+        /* 실질적인 변환 알고리즘, 한 줄씩 받고 출력함 (convert, convert_cap) */
         /* else : 대소문자 무시 플래그 (2단계) */
         /* e.g. abc fgh (a->f, A->f, b->g, B->g, c->h, C->h) */
         if (strncmp(argv[1], "-i", 2) != 0) {
@@ -100,7 +100,7 @@ int translate(int argc, const char** argv)
             convert_cap(ptr_tr, set1, set2);
         }
 
-        fputs(buf, stdout);
+        fputs(temp, stdout);
     }
 
     return 0;
