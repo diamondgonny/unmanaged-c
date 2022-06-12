@@ -234,7 +234,6 @@ int check_range(char* set)
 
 void trim_set(char* set1, char* set2)
 {
-    char* target_ptr1 = NULL;
     char* trim_ptr1 = set1;
     char* trim_ptr2 = set2;
     size_t overlap_count = 0u;
@@ -259,30 +258,24 @@ void trim_set(char* set1, char* set2)
         *trim_ptr2 = '\0';
     }
 
-    target_ptr1 = --trim_ptr1; /* set1 문자열 마지막 글자의 위치로 감 ('\0' 직전) */
-    /* target_ptr가 a를 가리킨다면, 중복되는 a는 싹 소거될 것 (오른쪽에서 왼쪽 순) */
-    /* trim_ptr1 주도로 제거하고, 빈 자리는 한 칸씩 우측으로 밀어붙임 (오른쪽 정렬) */
+    --trim_ptr1; /* set1 문자열 마지막 글자의 위치로 감 ('\0' 직전) */
+    /* trim_ptr1이 a를 가리킨다면, 중복되는 a는 싹 소거될 것 (오른쪽에서 왼쪽 순) */
+    /* ptr 주도로 제거하고, 빈 자리는 한 칸씩 우측으로 밀어붙임 (오른쪽 정렬) */
 
-    while (target_ptr1 - set1 > 0) {
-        /* e.g. abadaø ijkbcø -> øøbdaø øøjbcø (ø == \0) */
-        trim_ptr1 = target_ptr1 - 1;
-        while (trim_ptr1 - set1 >= 0) {
-            if (*trim_ptr1 == *target_ptr1 && *target_ptr1 != '\0') {
-                char* checkpoint_ptr = trim_ptr1; /* 제거지점 저장 */
-                while (trim_ptr1 - set1 > 0) { /* set1과 set2 문자집합을 쌍으로 움직임 */
-                    *trim_ptr1 = *(trim_ptr1 - 1);
-                    *(set2 + (trim_ptr1 - set1)) = *(set2 + (trim_ptr1 - set1) - 1);
-                    --trim_ptr1;
-                }
-                trim_ptr1 = checkpoint_ptr; /* (일 마치고) 제거지점 복귀 */
-                set1[overlap_count] = '\0';
-                set2[overlap_count] = '\0';
-                ++overlap_count;
-            } else {
-                --trim_ptr1;
+    while (trim_ptr1 - set1 > 0) {
+        char* ptr = trim_ptr1 - 1;
+        if (*trim_ptr1 == *ptr && *trim_ptr1 != '\0') {
+            while (ptr - set1 > 0) {
+                *ptr = *(ptr - 1);
+                *(set2 + (ptr - set1)) = *(set2 + (ptr - set1) - 1);
+                --ptr;
             }
+            set1[overlap_count] = '\0';
+            set2[overlap_count] = '\0';
+            ++overlap_count;
+        } else {
+            --trim_ptr1;
         }
-        --target_ptr1;
     }
 
     /* 이제 중첩된 칸 수 만큼을 정리해 줄 시간임 (좌측의 ø소거) */
