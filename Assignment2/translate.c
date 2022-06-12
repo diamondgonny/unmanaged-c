@@ -146,14 +146,18 @@ void substitute_cap(char* ptr_tr, char* set1, char* set2)
     }
 }
 
-int escape_sequence(char* set)
+int check_escape_seq(char* set)
 {
+    /* ptr를 활용한 이스케이프 문자 검사 */
     char* ptr = set;
+
     while (*ptr != '\0') {
         if (*ptr == 92) {
-            char* comeback_ptr = ptr;
+            /* '\' 발견한 자리에 checkpoint_ptr를 심어두는 이유? */
+            /* 아래의 while문 처리 이후 (원래 그 자리로) ptr를 다시 복귀시키고자 함 */
+            char* checkpoint_ptr = ptr;
             switch (*(ptr + 1)) {
-            case 92: /* backslash */
+            case 92: /* backslash(\) */
                 *ptr = '\x5c';
                 break;
             case 'a':
@@ -177,46 +181,49 @@ int escape_sequence(char* set)
             case 'v':
                 *ptr = '\x0b';
                 break;
-            case 39: /* quote */
+            case 39: /* quote(') */
                 *ptr = '\x27';
                 break;
-            case 34: /* dubquotes */
+            case 34: /* dubquotes(") */
                 *ptr = '\x22';
                 break;
-            default:
+            default: /* 유효하지 않은 이스케이프 문자 */
                 return FALSE;
             }
             ++ptr;
 
+            /* 이스케이프 문자 기준, 이후의 'set'문자열 전부 좌측 한 칸씩 이동 */
             while (*ptr != '\0' && ptr - set < MAX_LENGTH - 1) {
                 *ptr = *(ptr + 1);
                 ++ptr;
             }
             *ptr = '\0';
-            ptr = comeback_ptr;
+            ptr = checkpoint_ptr;
         }
         ++ptr;
     }
     return TRUE;
 }
 
-int set_range(char* set)
+int check_range(char* set)
 {
+    /* 참고로, 이미 '인자 길이' 검증이 끝난 상태이므로, strcpy 사용함 */
     char* ptr = set;
     char temp[MAX_LENGTH];
 
-    /* 이스케이프 문자 관련 일단 제외 */
-    /* 입력 가능한 선에서(33이상), 범위 알고리즘 가동...(길이통제?) */
-    /* if (*ptr == '-' && *(ptr - 1) > 32 && *(ptr + 1) > 32), fail? */
+    /* 첫 번째 붙임표는 범위 지정자가 아니므로 pass */
     ++ptr;
     while (*ptr != '\0') {
         if (*ptr == '-') {
             if (*(ptr + 1) == '\0') {
+                /* 마지막 붙임표도 범위 지정자가 아니므로 pass */
                 break;
             } else if (*(ptr - 1) == *(ptr + 1)) {
+                /* e.g. y-y를 y로 바꿔도 결국은 같음 */
                 strcpy(temp, ptr + 2);
-                strcpy(ptr, temp); /* 처음에 strcat 시도했으나, 덮어쓰는 strcpy가 맞음 */
+                strcpy(ptr, temp);
             } else if (*(ptr - 1) < *(ptr + 1)) {
+                /* e.g. a-e는 abcde와 같음 */
                 size_t letters_count = *(ptr + 1) - *(ptr - 1);
                 strcpy(temp, ptr + 2);
                 while (letters_count > 0) {
@@ -226,6 +233,7 @@ int set_range(char* set)
                 }
                 strcpy(ptr, temp);
             } else if (*(ptr - 1) > *(ptr + 1)) {
+                /* e.g. z-a는 유효하지 않은 범위임 */
                 return FALSE;
             }
         }
@@ -240,9 +248,9 @@ int translate(int argc, const char** argv)
     int j = 0;
     int format = 0;
     int range = 0;
-    char buf[512];
     char set1[MAX_LENGTH] = { '\0', };
     char set2[MAX_LENGTH] = { '\0', };
+    char buf[512];
     char* ptr_tr;
     error_code_t err;
 
@@ -291,7 +299,7 @@ int translate(int argc, const char** argv)
 
     /* 조건식) '이스케이프 코드' 규격 검증 */
     /* cf. format이 TRUE이려면, set1, set2 모두 검증 이상무여야함 */
-    format = escape_sequence(set1) & escape_sequence(set2);
+    format = check_escape_seq(set1) & check_escape_seq(set2);
     if (format != TRUE) {
         err = ERROR_CODE_INVALID_FORMAT;
         print_error_code(err);
@@ -299,7 +307,7 @@ int translate(int argc, const char** argv)
     }
 
     /* 조건식) '범위' 유효성 검증 */
-    range = set_range(set1) & set_range(set2);
+    range = check_range(set1) & check_range(set2);
     if (range != TRUE) {
         err = ERROR_CODE_INVALID_RANGE;
         print_error_code(err);
