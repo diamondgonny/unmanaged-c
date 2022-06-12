@@ -47,7 +47,7 @@ typedef struct {
 
 uint_t get_atoi(const char* str);
 
-int find_file_ver(char* str, const char* word);
+int find_file_ver(const char* str, const char* word);
 
 int get_character(const char* filename, character_v3_t* out_character);
 

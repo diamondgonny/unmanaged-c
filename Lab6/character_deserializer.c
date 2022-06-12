@@ -12,7 +12,7 @@ uint_t get_atoi(const char* str)
     return res;
 }
 
-int find_file_ver(char* str, const char* word)
+int find_file_ver(const char* str, const char* word)
 {
     /* str에서 word 찾기 */
     int i = 0;
