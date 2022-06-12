@@ -32,7 +32,7 @@ int find_file_ver(const char* str, const char* word)
 int get_character(const char* filename, character_v3_t* out_character)
 {
     FILE* stream;
-    void (*ver_func) (FILE*, char*, character_v3_t*);
+    void (*ver_func)(FILE*, char*, character_v3_t*);
     char buffer[LENGTH_BUF] = { 0, };
     int version = 0;
 
