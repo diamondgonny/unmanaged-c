@@ -2,7 +2,7 @@
 
 uint_t get_atoi(const char* str)
 {
-    /* 초기화 안해서 애먹었었음... */
+    /* TIL) 초기화 안해서 애먹었었음... */
     uint_t res = 0;
 
     while ('0' <= *str && *str <= '9') {
@@ -44,7 +44,7 @@ int get_character(const char* filename, character_v3_t* out_character)
     /* 파일의 첫 줄을 buffer로 가져옴 */
     fgets(buffer, LENGTH_BUF, stream);
 
-    /* 파일 : v1형식? v2형식? v3형식? (feat. 함수포인터) */
+    /* 파일검사 -> v1형식? v2형식? v3형식? (cf. 함수포인터?) */
     if (find_file_ver(buffer, "|") == TRUE) {
         version = 3;
         version3(stream, buffer, out_character);
@@ -70,9 +70,10 @@ void version1(char* buf, character_v3_t* character)
     operate_version1(key, value_c, character);
 
     while (1) {
+        /* TIL) strtok 함수는 '구분자'를 '\0'으로 바꿔줌 */
         key = strtok(NULL, ":");
         value_c = strtok(NULL, ",");
-        /* 아래와 같은 제약조건 달지 않으면, 세그멘테이션 오류 (선넘네...) */
+        /* TIL) 아래와 같은 제약조건 달지 않으면, 세그멘테이션 오류 (선넘네...) */
         if (key != NULL && value_c != NULL) {
             operate_version1(key, value_c, character);
         } else {
@@ -117,6 +118,7 @@ void version2(FILE* stream, char* buf, character_v3_t* character)
 {
     char* token;
     uint_t stat_order = 0;
+
     fgets(buf, LENGTH_BUF, stream);
 
     /* 순차적, name부터 시작함 (e.g. Batman_v2,) */
@@ -181,6 +183,7 @@ void version3(FILE* stream, char* buf, character_v3_t* character)
     uint_t stat_order = 0;
     uint_t i;
     uint_t j;
+
     fgets(buf, LENGTH_BUF, stream);
 
     /* 순차적, name부터 시작함 (e.g. Wonderwoman_v3 | ) */
@@ -196,40 +199,26 @@ void version3(FILE* stream, char* buf, character_v3_t* character)
         ++stat_order;
     }
 
-    /* 미니언 없으면 여기서 끝내고, 있으면 (속성 나열된) 한 줄 건너뛸 것 */
+    /* 미니언 없으면 여기서 끝내고, 있으면 (속성 나열된) 한 줄 건너뛰고 keep going */
     if (character->minion_count == 0) {
         return;
     } else {
         fgets(buf, LENGTH_BUF, stream);
     }
 
-    /* strtok함수가 지나간 구분자 자리는, '\0'으로 씌워버림... */
-    /* (1)미리 포인터 p를 줄의 맨 끝에 대기시켜주면, (2)차질없이 개행/끝내기가 가능함 */
+    /* 미니언 개체수만큼 ㄱㄱ */
     for (i = 0; i < character->minion_count; ++i) {
-        /* char* p = buf; */
         fgets(buf, LENGTH_BUF, stream);
-
-        /* (1)
-        while (*p != '\n' && *p != '\0') {
-            ++p;
-        }
-        */
 
         token = strtok(buf, " |");
         strncpy(character->minions[i].name, token, LENGTH_NAME);
         character->minions[i].name[LENGTH_NAME] = '\0';
 
-        /* case 구분을 위해 1부터 지정함 (0은 name) */
+        /* case 구분을 위해 1부터 지정함 (0은 위에서 처리한 name) */
         for (j = 1; j < 4; ++j) {
             token = strtok(NULL, " |\n");
             operate_minion_version3(token, character, i, j);
         }
-
-        /* (2)
-        if (*(p + 1) != '\0') {
-            buf = p + 1;
-        }
-        */
     }
 }
 
