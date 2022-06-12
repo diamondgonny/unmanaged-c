@@ -20,20 +20,20 @@ typedef enum error_code {
     ERROR_CODE_INVALID_RANGE: 올바르지 않은 문자열 범위를 사용함
 */
 
+int translate(int argc, const char** argv);
+
 void print_error_code(error_code_t err);
 
-void trim_argv(char* set1, char* set2);
-
 void decapitalize(char* set1);
-
-void substitute(char* ptr_tr, char* set1, char* set2);
-
-void substitute_cap(char* ptr_tr, char* set1, char* set2);
 
 int check_escape_seq(char* set);
 
 int check_range(char* set);
 
-int translate(int argc, const char** argv);
+void trim_argv(char* set1, char* set2);
+
+void substitute(char* ptr_tr, char* set1, char* set2);
+
+void substitute_cap(char* ptr_tr, char* set1, char* set2);
 
 #endif /* TRANSLATE_H */
