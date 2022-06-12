@@ -245,17 +245,16 @@ void trim_argv(char* set1, char* set2)
     size_t overlap_count = 0u;
 
     /* 문자 집합 갯수 맞춰주기 (기초 동작) */
-    while(trim_ptr1 != '\0' && trim_ptr2 != '\0'){
+    while(*trim_ptr1 != '\0' && *trim_ptr2 != '\0'){
         ++trim_ptr1;
         ++trim_ptr2;
     }
 
-    if (trim_ptr1 == '\0') {
+    if (*trim_ptr1 == '\0') {
         /* e.g. abc\0 fghijk\0 -> abc\0 fgh\0... */
         *trim_ptr2 = '\0';
     } else {
         while (*trim_ptr1 != '\0') {
-            /* '\0'을 뒤로 한 칸 미루고, 마지막 문자를 집어넣을 것 */
             /* e.g. abcde\0 fgh\0 -> abcde\0 fghhh\0 */
             *(trim_ptr2 + 1) = *trim_ptr2;
             *trim_ptr2 = *(trim_ptr2 - 1);
@@ -265,13 +264,12 @@ void trim_argv(char* set1, char* set2)
         *trim_ptr2 = '\0';
     }
 
-    /* '\0' 위치로부터 왼쪽 한 칸, 즉 문자열의 마지막 글자의 위치로 이동 */
-    target_ptr1 = --trim_ptr1;
+    target_ptr1 = --trim_ptr1; /* set1 문자열 마지막 글자의 위치 ('\0' 직전) */
 
     while (target_ptr1 - set1 > 0) {
         /* target_ptr가 a를 가리킨다면, 중복되는 a는 싹 소거될 것 (오른쪽에서 왼쪽 순) */
         /* 여기서 trim_ptr1은 소거될 a를 색출하는 역할을 함 */
-         /* e.g. abada\0 ijkbc\0 -> bda\0 jbc\0 */
+         /* e.g. abada\0 ijkbc\0 -> øøbda\0 øøjbc\0 (\0 == ø) */
         trim_ptr1 = target_ptr1 - 1;
         while (trim_ptr1 - set1 >= 0) {
             /* 스캔해서 중첩되는 문자 발견? 일단 제거하고, 한 칸씩 우측으로 밀어붙인다 */
@@ -294,7 +292,8 @@ void trim_argv(char* set1, char* set2)
     }
     /* fprintf(stderr, "%zd\n", overlap_count); */
 
-    /* 이제 중첩된 칸 수 만큼을 정리해 줄 시간이다 */
+    /* 이제 중첩된 칸 수 만큼을 정리해 줄 시간 (좌측의 ø소거) */
+    /* e.g. øøbdaø øøjbcø -> bdaø -> jbcø (\0 == ø) */
     trim_ptr1 = set1;
     trim_ptr2 = set2;
 
