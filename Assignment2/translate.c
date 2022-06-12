@@ -266,7 +266,10 @@ void trim_set(char* set1, char* set2)
     p1 = trim_ptr1 - 1; /* set1의 문자열 마지막에서 두 번째 글자의 위치 */
 
     while (*trim_ptr1 != '\0' && trim_ptr1 - set1 > 0) {
-        if (*p1 == *trim_ptr1) {
+        if (*p1 == '\0') {
+            --trim_ptr1;
+            p1 = trim_ptr1 - 1;
+        } else if (*p1 == *trim_ptr1) {
             while (*p1 != '\0' && p1 - set1 > 0) {
                 /* set1과 set2 문자집합을 쌍으로 같이 작업함 */
                 /* e.g. abadaø ijkbcø -> øøbdaø øøjbcø (ø == \0) */
@@ -277,10 +280,6 @@ void trim_set(char* set1, char* set2)
             set1[overlap_count] = '\0';
             set2[overlap_count] = '\0';
             ++overlap_count;
-        } else if (*p1 == '\0') {
-            --trim_ptr1;
-            p1 = trim_ptr1 - 1;
-
         } else {
             --p1;
         }
