@@ -246,10 +246,11 @@ int translate(int argc, const char** argv)
     char* ptr_tr;
     error_code_t err;
 
-    /* 플래그 판별을 위한 조건식 : if (*argv[1] == '-') 로 첫 시도, seg-err... */
-    /* " : if (strncmp(argv[1], "-i", 2) == 0), ok */
-    /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+    /* 조건식) '플래그' 검증 */
+    /* 1. argv[1]는 유효한가? 2. *argv[1]는 -로 시작하는가? (3. 단일플래그?) */
+    /* cf. 복합플래그는 어떻게? strncmp? */
     if (argc > 1 && *argv[1] == '-' && strlen(argv[1]) == 2) {
+        /* e.g. "-i" */
         switch (*(argv[1] + 1)) {
         case 'i':
             break;
@@ -258,19 +259,19 @@ int translate(int argc, const char** argv)
             print_error_code(err);
             return err;
         }
+        /*플래그가 살아있을땐 인자 수를 +1로 고려하라 */
         ++i;
     }
 
-    /* 커맨드 라인 매개변수가 불충분할 경우 */
+    /* 조건식) 전달하는 '인자 수' 규격 검증 */
     if (argc != 3 + i) {
         err = ERROR_CODE_WRONG_ARGUMENTS_NUMBER;
         print_error_code(err);
         return err;
     }
 
+    /* 조건식) 각 인자들의 '인자 길이' 규격 검증 */
     for (j = 1; j < argc; ++j) {
-        /* SET1 혹은 SET2의 문자수가 최대 버퍼 크기보다 클 경우... */
-        /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
         if (strlen(argv[j]) > MAX_LENGTH - 1) {
             err = ERROR_CODE_ARGUMENT_TOO_LONG;
             print_error_code(err);
@@ -278,17 +279,18 @@ int translate(int argc, const char** argv)
         }
     }
 
-    /* i/o 문자열 복사 */
+    /* (const char형의) 문자 집합이 들어있는 인자를 set1, set2로 복사 */
     strncpy(set1, argv[1 + i], MAX_LENGTH - 1);
     strncpy(set2, argv[2 + i], MAX_LENGTH - 1);
-    fprintf(stderr, "%s %s\n", set1, set2);
+    /* fprintf(stderr, "%s %s\n", set1, set2); */
 
-    /* 대소문자 무시 플래그 (1) */
+    /* 대소문자 무시 플래그 (1단계) */
     if (strncmp(argv[1], "-i", 2) == 0) {
         decapitalize(set1);
     }
 
-    /* 이스케이프 시퀀스 처리 */
+    /* 조건식) '이스케이프 코드' 규격 검증 */
+    /* cf. format이 TRUE이려면, set1, set2 모두 검증 이상무여야함 */
     format = escape_sequence(set1) & escape_sequence(set2);
     if (format != TRUE) {
         err = ERROR_CODE_INVALID_FORMAT;
@@ -296,7 +298,7 @@ int translate(int argc, const char** argv)
         return err;
     }
 
-    /* 범위 */
+    /* 조건식) '범위' 유효성 검증 */
     range = set_range(set1) & set_range(set2);
     if (range != TRUE) {
         err = ERROR_CODE_INVALID_RANGE;
@@ -304,6 +306,7 @@ int translate(int argc, const char** argv)
         return err;
     }
 
+    /* ----------------------------------------------------- */
     /* 기초 동작 : argv (source, repl)의 재구성 */
     /* length of i/o string should be restricted */
     trim_argv(set1, set2);
@@ -316,7 +319,7 @@ int translate(int argc, const char** argv)
             clearerr(stdin);
             break;
         }
-        /* else : 대소문자 무시 플래그 (2) */
+        /* else : 대소문자 무시 플래그 (2단계) */
         if (strncmp(argv[1], "-i", 2) != 0) {
             substitute(ptr_tr, set1, set2);
         } else {
