@@ -3,7 +3,7 @@
 #include <string.h>
 #include "tokenize.h"
 
-#define INCREMENT (30)
+#define INCREMENT (2048)
 
 char** tokenize_malloc(const char* str, const char* delim)
 {
