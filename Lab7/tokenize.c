@@ -3,7 +3,7 @@
 #include <string.h>
 #include "tokenize.h"
 
-#define INCREMENT (2048)
+#define INCREMENT (100)
 
 char** tokenize_malloc(const char* str, const char* delim)
 {
@@ -11,7 +11,7 @@ char** tokenize_malloc(const char* str, const char* delim)
     size_t max_token = INCREMENT;
     char* str_tmp = malloc(strlen(str) + 1);
     char* p_str;
-    char** pa_tok = malloc(max_token);
+    char** pa_tok = malloc(max_token * sizeof(char*));
     char** pp;
 
     strcpy(str_tmp, str);
