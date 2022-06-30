@@ -47,7 +47,6 @@ char** tokenize_malloc(const char* str, const char* delim)
 
 mamuri:
     if (p_str == NULL) {
-        *pp = (char*)malloc(1);
         *pp = NULL;
     }
 
