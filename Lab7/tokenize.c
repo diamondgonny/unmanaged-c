@@ -19,17 +19,17 @@ char** tokenize_malloc(const char* str, const char* delim)
     pp = pa_tok;
 
     p_str = strtok(str_tmp, delim);
-    if (p_str == NULL) {
-        goto first_null;
+    if (p_str != NULL) {
+        *pp = (char*)malloc(strlen(p_str) + 1);
+        strcpy(*pp, p_str);
+        /* printf("%s\n", *pp); */
+        ++pp;
+        p_str = strtok(NULL, delim);
+    } else {
+        goto mamuri;
     }
-    *pp = (char*)malloc(strlen(p_str) + 1);
-    strcpy(*pp, p_str);
-    /* printf("%s\n", *pp); */
-    ++pp;
-    p_str = strtok(NULL, delim);
 
     for (i = 1; p_str != NULL; ++i, ++pp) {
-        /*
         if (i == max_token) {
             char** tmp;
             max_token += INCREMENT;
@@ -38,14 +38,14 @@ char** tokenize_malloc(const char* str, const char* delim)
             free(pa_tok);
             pa_tok = tmp;
             pp = pa_tok + i;
-        } */
+        }
         *pp = (char*)malloc(strlen(p_str) + 1);
         strcpy(*pp, p_str);
         /* printf("%s\n", *pp); */
         p_str = strtok(NULL, delim);
     }
 
-first_null:
+mamuri:
     if (p_str == NULL) {
         *pp = (char*)malloc(1);
         *pp = NULL;
