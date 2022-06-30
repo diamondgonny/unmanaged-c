@@ -45,7 +45,7 @@ char** tokenize_malloc(const char* str, const char* delim)
             max_token += INCREMENT;
             tmp = realloc(pa_tok, max_token * sizeof(char*));
             if (tmp != NULL) {
-                pa_tok = tmp;   /* realloc()의 메모리 누수 문제 */
+                pa_tok = tmp;   /* realloc의 메모리 누수 문제 */
             }
             pp = pa_tok + i;
         }
