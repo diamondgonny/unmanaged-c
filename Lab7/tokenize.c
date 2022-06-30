@@ -12,7 +12,7 @@
 /* pa_tok[0] -> ㅡㅡㅡㅡ/     */
 /* pa_tok[1] -> ㅡㅡㅡㅡㅡㅡ/  */
 /* ...                      */
-/* pa_tok[끝] -> NULL       */
+/* pa_tok[끝] -> (null)     */
 
 char** tokenize_malloc(const char* str, const char* delim)
 {
