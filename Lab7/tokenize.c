@@ -5,14 +5,14 @@
 
 #define INCREMENT (10)
 
-/* ↓p_str                                              */
-/*ㅡㅡㅡㅡ/ㅡㅡㅡㅡㅡㅡ/ㅡㅡㅡㅡ/ㅡ/ㅡㅡㅡ/ㅡㅡ'\0' (str_tmp) */
+/* ↓p_str */
+/* ㅡㅡㅡㅡ/ㅡㅡㅡㅡㅡㅡ/ㅡㅡㅡ/ㅡ/ㅡㅡㅡ/ㅡㅡ/ㅡㅡㅡㅡ'\0' (str_tmp) */
 
 /*  ↓pp                     */
 /* pa_tok[0] -> ㅡㅡㅡㅡ/     */
 /* pa_tok[1] -> ㅡㅡㅡㅡㅡㅡ/  */
-/* ...                       */
-/* pa_tok[끝] -> NULL        */
+/* ...                      */
+/* pa_tok[끝] -> NULL       */
 
 char** tokenize_malloc(const char* str, const char* delim)
 {
