@@ -27,19 +27,10 @@ char** tokenize_malloc(const char* str, const char* delim)
     p_str = str_tmp;
     pp = pa_tok;
 
-    p_str = strtok(str_tmp, delim);
-    if (p_str != NULL) {
-        *pp = (char*)malloc(strlen(p_str) + 1);
-        strcpy(*pp, p_str);
-        p_str = strtok(NULL, delim);
-        ++pp;
-    } else {
-        goto mamuri;
-    }
-
-    /* i = 1 카운트 세는 조건? strcpy 횟수. 위에서 이미 한 번 수행함 */
+    /* i = 0 카운트 세는 조건? strcpy 횟수. */
     /* i == max_token 되면? 동적메모리 재할당. INCREMENT만큼 확장함 */
-    for (i = 1; p_str != NULL; ++i, ++pp) {
+    p_str = strtok(str_tmp, delim);
+    for (i = 0; p_str != NULL; ++i, ++pp) {
         if (i == max_token) {
             char** tmp;
             max_token += INCREMENT;
@@ -54,7 +45,6 @@ char** tokenize_malloc(const char* str, const char* delim)
         p_str = strtok(NULL, delim);
     }
 
-mamuri:
     /* 여기까지 왔으면, p_str == NULL이라고 가정 */
     *pp = NULL;
     free(str_tmp);
