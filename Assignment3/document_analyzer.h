@@ -1,8 +1,9 @@
 #ifndef DOCUMENT_ANALYZER_H
 #define DOCUMENT_ANALYZER_H
 
-#define TRUE (1)
-#define FALSE (0)
+void get_text_from_file(FILE* fp);
+
+void get_doc(void);
 
 int load_document(const char* document);
 

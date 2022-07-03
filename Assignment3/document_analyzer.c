@@ -3,26 +3,100 @@
 #include <string.h>
 #include "document_analyzer.h"
 
-#define LINE_LENGTH (1024)
 #define TRUE (1)
 #define FALSE (0)
 
-/* ↓p_str */
 /* Egestas diam in arcu cursus euismod quis viverra. Nunc non blandit massa enim nec dui.\n\0 (str) */
 
-/* ↓pp                           */
-/* pa_sentence[0] -> Egestas     */
-/* pa_sentence[1] -> diam        */
+/* sent[0] -> Egestas     */
+/* sent[1] -> diam        */
 /* ...                           */
-/* pa_sentence[끝] -> (null)     */
+/* sent[끝] -> (null)     */
 
-/* ↓ppp                          */
-/* pa_paragraph[0][] -> Egestas diam in ... quis viverra. */
-/* pa_paragraph[1][] -> Nunc non blandit massa enim nec dui. */
-/* pa_paragraph[끝][] -> (null)     */
+/* para[0][] -> Egestas diam in ... quis viverra. */
+/* para[1][] -> Nunc non blandit massa enim nec dui. */
+/* para[끝][] -> (null)     */
 
 static char* text;
 static char**** doc;
+
+/* Source: https://dojang.io/mod/page/view.php?id=617 */
+void get_text_from_file(FILE* fp) {
+    int size;
+
+    fseek(fp, 0, SEEK_END);
+    size = ftell(fp);
+
+    text = malloc(size + 1);
+    memset(text, 0, size + 1);
+
+    fseek(fp, 0, SEEK_SET);
+    fread(text, size, 1, fp);
+}
+
+/* Source: https://github.com/engineeringwitharavind/hackerrank/blob/master/HackerRank%20C%20Solutions/021.%20Querying%20the%20Document.c */
+void get_doc(void)
+{
+    size_t para = 0;
+    size_t sent = 0;
+    size_t word = 0;
+    size_t i;
+
+    doc = (char****)malloc(sizeof(char***));
+    doc[para] = (char***)malloc(sizeof(char**));
+    doc[para][sent] = (char**)malloc(sizeof(char*));
+    doc[para][sent][word] = text;
+
+    for(i = 0; text[i + 1] != '\0'; ++i)
+    {
+        if (text[i + 1] == '\n') {
+            text[i++] = '\0';
+        }
+
+        if (test[i] == ',' && text[i + 1] == ' ') {
+            test[i++] = '\0';
+        }
+
+        switch(text[i]) {
+        case '\n':
+            doc[para][++sent] = NULL;
+            ++para;
+            sent = 0;
+            word = 0;
+            doc = (char****)realloc(doc, (para + 1) * sizeof(char***));
+            doc[para] = (char***)realloc(doc[para], (sent + 1) * sizeof(char**));
+            doc[para][sent] = (char**)realloc(doc[para][sent], (word + 1) * sizeof(char*));
+            doc[para][sent][word] = &text[i + 1];
+            text[i] = '\0';
+            break;
+        case '.':
+            /* intentional fallthrough */
+        case '!':
+            /* intentional fallthrough */
+        case '?':
+            doc[para][sent][++word] = NULL;
+            ++sent;
+            word = 0;
+            doc[para] = (char***)realloc(doc[para], (sent + 1) * sizeof(char**));
+            doc[para][sent] = (char**)realloc(doc[para][sent], (word + 1) * sizeof(char*));
+            doc[para][sent][word] = &text[i + 1];
+            text[i] = '\0';
+            break;
+        case ' ':
+            /* intentional fallthrough */
+        case ',':
+            ++word;
+            doc[para][sent] = (char**)realloc(doc[para][sent], (word + 1) * sizeof(char*));
+            doc[para][sent][word] = &text[i + 1];
+            text[i] = '\0';
+            break;
+        default:
+            break;
+        }
+    }
+    doc[para] = NULL;
+    text[i] = '\0';
+}
 
 int load_document(const char* document)
 {
@@ -38,64 +112,6 @@ int load_document(const char* document)
 
     fclose(fp);
     return TRUE;
-}
-
-/* Source : https://dojang.io/mod/page/view.php?id=617 */
-void get_text_from_file(FILE* fp) {
-    int size;
-
-    fseek(fp, 0, SEEK_END);
-    size = ftell(fp);
-
-    text = malloc(size + 1);
-    memset(text, 0, size + 1);
-
-    fseek(fp, 0, SEEK_SET);
-    fread(text, size, 1, fp);
-}
-
-/* Source : https://github.com/engineeringwitharavind/hackerrank/blob/master/HackerRank%20C%20Solutions/021.%20Querying%20the%20Document.c */
-void get_doc(void)
-{
-    int para = 0;
-    int sent = 0;
-    int word = 0;
-    int i;
-
-    doc = (char****)malloc(sizeof(char***));
-    doc[para] = (char***)malloc(sizeof(char**));
-    doc[para][sent] = (char**)malloc(sizeof(char*));
-    doc[para][sent][word] = text;
-
-    for(i = 0; text[i + 1] != '\0'; ++i)
-    {
-        if (text[i + 1] == '\n'){
-            text[i++] = '\0';
-        }
-
-        switch(text[i])
-        {
-        case '\n':
-            doc = (char****)realloc(doc, ++para * sizeof(char***));
-            sent = 0;
-            /* intentional fallthrough */
-        case '.':
-        case '!':
-        case '?':
-            doc[para] = (char***)realloc(doc[para], ++sent * sizeof(char**));
-            word = 0;
-            /* intentional fallthrough */
-        case ' ':
-        case ',':
-            doc[para][sent] = (char**)realloc(doc[para][sent], ++word * sizeof(char*));
-            doc[para][sent][word] = &text[i + 1];
-            text[i] = '\0';
-            break;
-        default:
-            break;
-        }
-    }
-    text[i] = '\0';
 }
 
 void dispose(void) {
@@ -121,12 +137,42 @@ unsigned int get_total_word_count(void)
     size_t i;
     size_t j;
     size_t k;
+    unsigned int count = 0;
 
+    for (i = 0; doc[i] != NULL; ++i) {
+        for (j = 0; doc[i][j] != NULL; ++j) {
+            for (k = 0; doc[i][j][k] != NULL; ++k) {
+                ++count;
+            }
+        }
+    }
+    return count;
 }
 
-unsigned int get_total_sentence_count(void);
+unsigned int get_total_sentence_count(void)
+{
+    size_t i;
+    size_t j;
+    unsigned int count = 0;
 
-unsigned int get_total_paragraph_count(void);
+    for (i = 0; doc[i] != NULL; ++i) {
+        for (j = 0; doc[i][j] != NULL; ++j) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+unsigned int get_total_paragraph_count(void)
+{
+    size_t i;
+    unsigned int count = 0;
+
+    for (i = 0; doc[i] != NULL; ++i) {
+        ++count;
+    }
+    return count;
+}
 
 const char*** get_paragraph_or_null(const unsigned int paragraph_index);
 
