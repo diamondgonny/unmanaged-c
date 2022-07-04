@@ -3,9 +3,6 @@
 #include <string.h>
 #include "document_analyzer.h"
 
-#define TRUE (1)
-#define FALSE (0)
-
 /* Egestas diam in arcu cursus euismod quis viverra. Nunc non blandit massa enim nec dui.\n\0 (str) */
 
 /* sent[0] -> Egestas     */
@@ -42,30 +39,24 @@ void get_doc(void)
     size_t word = 0;
     size_t i;
 
-    doc = (char****)malloc(sizeof(char***));
-    doc[para] = (char***)malloc(sizeof(char**));
-    doc[para][sent] = (char**)malloc(sizeof(char*));
+    doc = (char****)malloc(2 * sizeof(char***));
+    doc[para] = (char***)malloc(2 * sizeof(char**));
+    doc[para][sent] = (char**)malloc(2 * sizeof(char*));
     doc[para][sent][word] = text;
 
-    for(i = 0; text[i + 1] != '\0'; ++i)
-    {
-        if (text[i + 1] == '\n') {
-            text[i++] = '\0';
-        }
-
-        if (test[i] == ',' && text[i + 1] == ' ') {
-            test[i++] = '\0';
-        }
-
+    for(i = 0; text[i + 1] != '\0'; ++i) {
         switch(text[i]) {
         case '\n':
+            if (text[i + 1] == '\n') {
+                text[i++] = '\0';
+            }
             doc[para][++sent] = NULL;
             ++para;
             sent = 0;
             word = 0;
-            doc = (char****)realloc(doc, (para + 1) * sizeof(char***));
-            doc[para] = (char***)realloc(doc[para], (sent + 1) * sizeof(char**));
-            doc[para][sent] = (char**)realloc(doc[para][sent], (word + 1) * sizeof(char*));
+            doc = (char****)realloc(doc, (para + 2) * sizeof(char***));
+            doc[para] = (char***)malloc(2 * sizeof(char**));
+            doc[para][sent] = (char**)malloc(2 * sizeof(char*));
             doc[para][sent][word] = &text[i + 1];
             text[i] = '\0';
             break;
@@ -74,19 +65,28 @@ void get_doc(void)
         case '!':
             /* intentional fallthrough */
         case '?':
+            if (text[i + 1] == '\n') {
+                text[i] = '\0';
+                break;
+            } else if (text[i + 1] == ' ') {
+                text[i++] = '\0';
+            }
             doc[para][sent][++word] = NULL;
             ++sent;
             word = 0;
-            doc[para] = (char***)realloc(doc[para], (sent + 1) * sizeof(char**));
-            doc[para][sent] = (char**)realloc(doc[para][sent], (word + 1) * sizeof(char*));
+            doc[para] = (char***)realloc(doc[para], (sent + 2) * sizeof(char**));
+            doc[para][sent] = (char**)malloc(2 * sizeof(char*));
             doc[para][sent][word] = &text[i + 1];
             text[i] = '\0';
             break;
         case ' ':
             /* intentional fallthrough */
         case ',':
+            if (text[i + 1] == ' ') {
+                text[i++] = '\0';
+            }
             ++word;
-            doc[para][sent] = (char**)realloc(doc[para][sent], (word + 1) * sizeof(char*));
+            doc[para][sent] = (char**)realloc(doc[para][sent], (word + 2) * sizeof(char*));
             doc[para][sent][word] = &text[i + 1];
             text[i] = '\0';
             break;
@@ -94,7 +94,7 @@ void get_doc(void)
             break;
         }
     }
-    doc[para] = NULL;
+    doc[++para] = NULL;
     text[i] = '\0';
 }
 
@@ -115,20 +115,22 @@ int load_document(const char* document)
 }
 
 void dispose(void) {
-    char** eraser_word = doc[0][0];
-    char*** eraser_sent = doc[0];
-    char**** eraser_para = doc;
+
+    size_t i;
+    size_t j;
 
     free(text);
-    while (*eraser_word != NULL) {
-        free(*eraser_word++);
+
+    for (i = 0; doc[i] != NULL; ++i) {
+        for (j = 0; doc[i][j] != NULL; ++j) {
+            free(doc[i][j]);
+        }
     }
-    while (*eraser_sent != NULL) {
-        free(*eraser_sent++);
+
+    for (i = 0; doc[i] != NULL; ++i) {
+        free(doc[i]);
     }
-    while (*eraser_para != NULL) {
-        free(*eraser_para++);
-    }
+
     free(doc);
 }
 
@@ -174,14 +176,81 @@ unsigned int get_total_paragraph_count(void)
     return count;
 }
 
-const char*** get_paragraph_or_null(const unsigned int paragraph_index);
+const char*** get_paragraph_or_null(const unsigned int paragraph_index)
+{
+    const char*** paragraph = doc[paragraph_index];
 
-unsigned int get_paragraph_word_count(const char*** paragraph);
+    return paragraph;
+}
 
-unsigned int get_paragraph_sentence_count(const char*** paragraph);
+unsigned int get_paragraph_word_count(const char*** paragraph)
+{
+    size_t i;
+    size_t j;
+    unsigned int count = 0;
 
-const char** get_sentence_or_null(const unsigned int paragraph_index, const unsigned int sentence_index);
+    for (i = 0; paragraph[i] != NULL; ++i) {
+        for (j = 0; paragraph[i][j] != NULL; ++j) {
+            ++count;
+        }
+    }
+    return count;
+}
 
-unsigned int get_sentence_word_count(const char** sentence);
+unsigned int get_paragraph_sentence_count(const char*** paragraph)
+{
+    size_t i;
+    unsigned int count = 0;
 
-int print_as_tree(const char* filename);
+    for (i = 0; paragraph[i] != NULL; ++i) {
+        ++count;
+    }
+    return count;
+}
+
+const char** get_sentence_or_null(const unsigned int paragraph_index, const unsigned int sentence_index)
+{
+    const char** sentence = doc[paragraph_index][sentence_index];
+
+    return sentence;
+}
+
+unsigned int get_sentence_word_count(const char** sentence)
+{
+    size_t i;
+    unsigned int count = 0;
+
+    for (i = 0; sentence[i] != NULL; ++i) {
+        ++count;
+    }
+    return count;
+}
+
+int print_as_tree(const char* filename)
+{
+    FILE* fp = fopen(filename, "w");
+    size_t i;
+    size_t j;
+    size_t k;
+
+    if (fp == NULL) {
+        fprintf(stderr, "No txt file\n");
+        return FALSE;
+    }
+
+    for (i = 0; doc[i] != NULL; ++i) {
+        fprintf(fp, "Paragraph %lu:\n", i);
+        for (j = 0; doc[i][j] != NULL; ++j) {
+            fprintf(fp, "    Sentence %lu:\n", j);
+            for (k = 0; doc[i][j][k] != NULL; ++k) {
+                fprintf(fp, "        %s:\n", doc[i][j][k]);
+            }
+        }
+        if (doc[i + 1] != NULL) {
+            fprintf(fp, "\n");
+        }
+    }
+
+    fclose(fp);
+    return TRUE;
+}

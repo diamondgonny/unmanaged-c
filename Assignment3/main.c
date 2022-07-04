@@ -41,8 +41,6 @@ int main(void)
     assert(strcmp(paragraph[i][j++], "see") == 0);
     assert(strcmp(paragraph[i][j++], "here") == 0);
 
-    assert(get_sentence_or_null(0, 10) == NULL);
-
     sentence = get_sentence_or_null(0, 2);
     assert(sentence != NULL);
     assert(get_sentence_word_count(sentence) == 4);
