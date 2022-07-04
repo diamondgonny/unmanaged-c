@@ -178,7 +178,7 @@ unsigned int get_total_paragraph_count(void)
 
 const char*** get_paragraph_or_null(const unsigned int paragraph_index)
 {
-    const char*** paragraph = doc[paragraph_index];
+    const char*** paragraph = (const char***)doc[paragraph_index];
 
     return paragraph;
 }
@@ -210,7 +210,7 @@ unsigned int get_paragraph_sentence_count(const char*** paragraph)
 
 const char** get_sentence_or_null(const unsigned int paragraph_index, const unsigned int sentence_index)
 {
-    const char** sentence = doc[paragraph_index][sentence_index];
+    const char** sentence = (const char**)doc[paragraph_index][sentence_index];
 
     return sentence;
 }
@@ -243,9 +243,10 @@ int print_as_tree(const char* filename)
         for (j = 0; doc[i][j] != NULL; ++j) {
             fprintf(fp, "    Sentence %lu:\n", j);
             for (k = 0; doc[i][j][k] != NULL; ++k) {
-                fprintf(fp, "        %s:\n", doc[i][j][k]);
+                fprintf(fp, "        %s\n", doc[i][j][k]);
             }
         }
+
         if (doc[i + 1] != NULL) {
             fprintf(fp, "\n");
         }
