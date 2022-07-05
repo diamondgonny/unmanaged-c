@@ -6,7 +6,7 @@
 #define TRUE (1)
 #define FALSE (0)
 
-void get_text_from_file(FILE* fp);
+int get_text_from_file(FILE* fp);
 
 void get_doc(void);
 
