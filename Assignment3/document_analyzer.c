@@ -146,27 +146,11 @@ void get_doc(void)
     s_text[i] = '\0';
 }
 
-/*
-void show_doc(void)
-{
-    size_t i;
-    size_t j;
-    size_t k;
-    size_t count = 0;
-
-    for (i = 0; s_doc[i] != NULL; ++i) {
-        for (j = 0; s_doc[i][j] != NULL; ++j) {
-            for (k = 0; s_doc[i][j][k] != NULL; ++k) {
-                ++count;
-                printf("s_doc[%lu][%lu][%lu] : %lu\n", i, j, k, count);
-            }
-        }
-    }
-}
-*/
-
 int load_document(const char* document)
 {
+
+    /* 두 파일을 로딩했을 때, 메모리 문제를 일으키진 않는지 확인 */
+
     FILE* fp = fopen(document, "rb");
 
     if (fp == NULL) {
@@ -178,7 +162,6 @@ int load_document(const char* document)
         return FALSE;
     }
     get_doc();
-    show_doc();
 
     fclose(fp);
     return TRUE;
@@ -359,3 +342,22 @@ int print_as_tree(const char* filename)
     fclose(fp);
     return TRUE;
 }
+
+/* addon into 'load_document' for check
+void show_doc(void)
+{
+    size_t i;
+    size_t j;
+    size_t k;
+    size_t count = 0;
+
+    for (i = 0; s_doc[i] != NULL; ++i) {
+        for (j = 0; s_doc[i][j] != NULL; ++j) {
+            for (k = 0; s_doc[i][j][k] != NULL; ++k) {
+                ++count;
+                printf("s_doc[%lu][%lu][%lu] : %lu\n", i, j, k, count);
+            }
+        }
+    }
+}
+*/
