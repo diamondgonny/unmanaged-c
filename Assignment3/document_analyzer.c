@@ -37,6 +37,7 @@ void get_doc(void)
     size_t sent = 0;
     size_t word = 0;
     size_t i;
+    void* tmp;
 
     s_doc = (char****)malloc(sizeof(char***));
     s_doc[0] = (char***)malloc(sizeof(char**));
@@ -56,7 +57,10 @@ void get_doc(void)
                 s_text[i++] = '\0';
             }
             ++word;
-            s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+            tmp = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+            if (tmp != NULL) {
+                s_doc[para][sent] = tmp;
+            }
             s_doc[para][sent][word] = &s_text[i + 1];
             s_text[i] = '\0';
             break;
@@ -69,11 +73,17 @@ void get_doc(void)
                 s_text[i++] = '\0';
             }
             ++word;
-            s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+            tmp = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+            if (tmp != NULL) {
+                s_doc[para][sent] = tmp;
+            }
             s_doc[para][sent][word] = NULL;
             ++sent;
             word = 0;
-            s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
+            tmp = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
+            if (tmp != NULL) {
+                s_doc[para] = tmp;
+            }
             s_doc[para][sent] = (char **)malloc(sizeof(char *));
             s_doc[para][sent][word] = &s_text[i + 1];
             s_text[i] = '\0';
@@ -83,12 +93,18 @@ void get_doc(void)
                 s_text[i] = '\0';
                 break;
             }
-            s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
+            tmp = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
+            if (tmp != NULL) {
+                s_doc[para] = tmp;
+            }
             s_doc[para][sent] = NULL;
             ++para;
             sent = 0;
             word = 0;
-            s_doc = (char ****)realloc(s_doc, (para + 1) * sizeof(char ***));
+            tmp = (char****)realloc(s_doc, (para + 1) * sizeof(char ***));
+            if (tmp != NULL) {
+                s_doc = tmp;
+            }
             s_doc[para] = (char***)malloc(sizeof(char**));
             s_doc[para][sent] = (char**)malloc(sizeof(char*));
             s_doc[para][sent][word] = &s_text[i + 1];
@@ -101,17 +117,26 @@ void get_doc(void)
 
     if (s_text[i] == '.' || s_text[i] == '!' || s_text[i] == '?') {
         ++word;
-        s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+            tmp = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+            if (tmp != NULL) {
+                s_doc[para][sent] = tmp;
+            }
         s_doc[para][sent][word] = NULL;
         ++sent;
         word = 0;
     }
-    s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
+    tmp = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
+    if (tmp != NULL) {
+        s_doc[para] = tmp;
+    }
     s_doc[para][sent] = NULL;
     ++para;
     sent = 0;
     word = 0;
-    s_doc = (char****)realloc(s_doc, (para + 1) * sizeof(char ***));
+    tmp = (char****)realloc(s_doc, (para + 1) * sizeof(char ***));
+    if (tmp != NULL) {
+        s_doc = tmp;
+    }
     s_doc[para] = NULL;
     s_text[i] = '\0';
 }
