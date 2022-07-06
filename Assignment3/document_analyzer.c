@@ -4,19 +4,8 @@
 #include <assert.h>
 #include "document_analyzer.h"
 
-/* Egestas diam in arcu cursus euismod quis viverra. Nunc non blandit massa enim nec dui.\n\0 (str) */
-
-/* sent[0] -> Egestas     */
-/* sent[1] -> diam        */
-/* ...                           */
-/* sent[끝] -> (null)     */
-
-/* para[0][] -> Egestas diam in ... quis viverra. */
-/* para[1][] -> Nunc non blandit massa enim nec dui. */
-/* para[끝][] -> (null)     */
-
-static char* s_text;
-static char**** s_doc;
+static char* s_text = NULL;
+static char**** s_doc = NULL;
 
 /* Source: https://dojang.io/mod/page/view.php?id=617 */
 int get_text_from_file(FILE* fp) {
@@ -25,10 +14,6 @@ int get_text_from_file(FILE* fp) {
 
     fseek(fp, 0, SEEK_END);
     size = ftell(fp);
-
-    if (size == 0) {
-        return FALSE;
-    }
 
     tmp = (char*)malloc(size + 1);
     if (tmp != NULL) {
@@ -41,7 +26,6 @@ int get_text_from_file(FILE* fp) {
     fseek(fp, 0, SEEK_SET);
     fread(s_text, size, 1, fp);
     s_text[size] = '\0';
-    /* printf("%c\n", s_text[size - 1]); */
 
     return TRUE;
 }
@@ -58,6 +42,10 @@ void get_doc(void)
     s_doc[0] = (char***)malloc(sizeof(char**));
     s_doc[0][0] = (char**)malloc(sizeof(char*));
     s_doc[0][0][0] = s_text;
+
+    if (*s_doc[0][0][0] == '\0') {
+        return;
+    }
 
     for(i = 0; s_text[i + 1] != '\0'; ++i) {
         switch(s_text[i]) {
@@ -92,7 +80,8 @@ void get_doc(void)
             break;
         case '\n':
             if(s_text[i + 1] == '\n') {
-                s_text[i++] = '\0';
+                s_text[i] = '\0';
+                break;
             }
             s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
             s_doc[para][sent] = NULL;
@@ -109,11 +98,14 @@ void get_doc(void)
             break;
         }
     }
-    ++word;
-    s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
-    s_doc[para][sent][word] = NULL;
-    ++sent;
-    word = 0;
+
+    if (s_text[i] == '.' || s_text[i] == '!' || s_text[i] == '?') {
+        ++word;
+        s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+        s_doc[para][sent][word] = NULL;
+        ++sent;
+        word = 0;
+    }
     s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
     s_doc[para][sent] = NULL;
     ++para;
@@ -126,19 +118,16 @@ void get_doc(void)
 
 int load_document(const char* document)
 {
-
-    /* 두 파일을 로딩했을 때, 메모리 문제를 일으키진 않는지 확인 */
-
     FILE* fp = fopen(document, "rb");
 
     if (fp == NULL) {
-        fprintf(stderr, "No file\n");
         return FALSE;
     }
 
-    if (get_text_from_file(fp) != TRUE) {
+    if (get_text_from_file(fp) == FALSE) {
         return FALSE;
     }
+
     get_doc();
 
     fclose(fp);
@@ -149,9 +138,36 @@ void dispose(void) {
 
     size_t i;
     size_t j;
-    char**** del_doc = s_doc;
+
+    if (*s_doc[0][0][0] == '\0') {
+        free(s_text);
+        s_text = NULL;
+        free(s_doc[0][0]);
+        free(s_doc[0]);
+        free(s_doc);
+        s_doc = NULL;
+        return;
+    }
 
     free(s_text);
+    s_text = NULL;
+
+    for (i = 0; s_doc[i] != NULL; ++i) {
+        for (j = 0; s_doc[i][j] != NULL; ++j) {
+            free(s_doc[i][j]);
+        }
+    }
+
+    for (i = 0; s_doc[i] != NULL; ++i) {
+        free(s_doc[i]);
+    }
+
+    free(s_doc);
+    s_doc = NULL;
+
+/*
+    free(s_text);
+    s_text = NULL;
 
     for (i = 0; *(del_doc + i) != NULL; ++i) {
         for (j = 0; *(*(del_doc + i) + j) != NULL; ++j) {
@@ -165,18 +181,9 @@ void dispose(void) {
         free(*(del_doc + i));
     }
 
-/*
-    for (i = 0; s_doc[i] != NULL; ++i) {
-        for (j = 0; s_doc[i][j] != NULL; ++j) {
-            free(s_doc[i][j]);
-        }
-    }
-
-    for (i = 0; s_doc[i] != NULL; ++i) {
-        free(s_doc[i]);
-    }
-*/
     free(s_doc);
+    s_doc = NULL;
+*/
 }
 
 unsigned int get_total_word_count(void)
@@ -186,10 +193,19 @@ unsigned int get_total_word_count(void)
     size_t k;
     unsigned int count = 0;
 
+    if (s_doc == NULL) {
+        return 0;
+    }
+
+    if (*s_doc[0][0][0] == '\0') {
+        return 0;
+    }
+
     for (i = 0; s_doc[i] != NULL; ++i) {
         for (j = 0; s_doc[i][j] != NULL; ++j) {
             for (k = 0; s_doc[i][j][k] != NULL; ++k) {
                 ++count;
+                /* printf("print[%lu][%lu][%lu] : %s\n", i, j, k, s_doc[i][j][k]); */
             }
         }
     }
@@ -201,6 +217,14 @@ unsigned int get_total_sentence_count(void)
     size_t i;
     size_t j;
     unsigned int count = 0;
+
+    if (s_doc == NULL) {
+        return 0;
+    }
+
+    if (*s_doc[0][0][0] == '\0') {
+        return 0;
+    }
 
     for (i = 0; s_doc[i] != NULL; ++i) {
         for (j = 0; s_doc[i][j] != NULL; ++j) {
@@ -215,6 +239,14 @@ unsigned int get_total_paragraph_count(void)
     size_t i;
     unsigned int count = 0;
 
+    if (s_doc == NULL) {
+        return 0;
+    }
+
+    if (*s_doc[0][0][0] == '\0') {
+        return 0;
+    }
+
     for (i = 0; s_doc[i] != NULL; ++i) {
         ++count;
     }
@@ -224,11 +256,17 @@ unsigned int get_total_paragraph_count(void)
 const char*** get_paragraph_or_null(const unsigned int paragraph_index)
 {
     size_t i;
-    const char*** paragraph = (const char***)s_doc[paragraph_index];
+    const char*** paragraph;
+
+    if (s_doc == NULL) {
+        return NULL;
+    }
+
+    paragraph = (const char***)s_doc[paragraph_index];
 
     for (i = 0; s_doc[i] != NULL; ++i) {
     }
-    if (paragraph_index >= i){
+    if (paragraph_index >= i) {
         return NULL;
     }
 
@@ -264,7 +302,13 @@ const char** get_sentence_or_null(const unsigned int paragraph_index, const unsi
 {
     size_t i;
     size_t j;
-    const char** sentence = (const char**)s_doc[paragraph_index][sentence_index];
+    const char** sentence;
+
+    if (s_doc == NULL) {
+        return NULL;
+    }
+
+    sentence = (const char**)s_doc[paragraph_index][sentence_index];
 
     for (i = 0; s_doc[i] != NULL; ++i) {
     }
@@ -300,7 +344,14 @@ int print_as_tree(const char* filename)
     size_t k;
 
     if (fp == NULL) {
-        fprintf(stderr, "No txt file\n");
+        return FALSE;
+    }
+
+    if (s_doc == NULL) {
+        return FALSE;
+    }
+
+    if (*s_doc[0][0][0] == '\0') {
         return FALSE;
     }
 
