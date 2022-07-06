@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "document_analyzer.h"
 
 /* Egestas diam in arcu cursus euismod quis viverra. Nunc non blandit massa enim nec dui.\n\0 (str) */
@@ -45,104 +46,81 @@ int get_text_from_file(FILE* fp) {
     return TRUE;
 }
 
-/* Source: https://github.com/engineeringwitharavind/hackerrank/blob/master/HackerRank%20C%20Solutions/021.%20Querying%20the%20Document.c */
 void get_doc(void)
 {
-    void* tmp;
+    /* the numbers of indexes, not counts (count == index + 1) */
     size_t para = 0;
     size_t sent = 0;
     size_t word = 0;
     size_t i;
 
-    s_doc = (char****)malloc(2 * sizeof(char***));
-    s_doc[para] = (char***)malloc(2 * sizeof(char**));
-    s_doc[para][sent] = (char**)malloc(2 * sizeof(char*));
-    s_doc[para][sent][word] = s_text;
+    s_doc = (char****)malloc(sizeof(char***));
+    s_doc[0] = (char***)malloc(sizeof(char**));
+    s_doc[0][0] = (char**)malloc(sizeof(char*));
+    s_doc[0][0][0] = s_text;
 
-    for (i = 0; s_text[i + 1] != '\0'; ++i) {
-        switch (s_text[i]) {
-        case '\n':
-            if (s_text[i + 1] == '\n') {
-                s_text[i] = '\0';
-                break;
+    for(i = 0; s_text[i + 1] != '\0'; ++i) {
+        switch(s_text[i]) {
+        case ',':
+        /* intentional fallthrough */
+        case ' ':
+            if (s_text[i + 1] == ' ') {
+                s_text[i++] = '\0';
             }
-
-            s_doc[para][sent] = NULL;
-            ++para;
-            sent = 0;
-            word = 0;
-
-            tmp = (char****)realloc(s_doc, (para + 2) * sizeof(char***));
-            if (tmp != NULL) {
-                s_doc = tmp;
-            }
-            s_doc[para] = (char***)malloc(2 * sizeof(char**));
-            s_doc[para][sent] = (char**)malloc(2 * sizeof(char*));
+            ++word;
+            s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
             s_doc[para][sent][word] = &s_text[i + 1];
             s_text[i] = '\0';
             break;
-
         case '.':
-            /* intentional fallthrough */
+        /* intentional fallthrough */
         case '!':
-            /* intentional fallthrough */
+        /* intentional fallthrough */
         case '?':
             if (s_text[i + 1] == ' ') {
                 s_text[i++] = '\0';
             }
-
-            /* printf("S:print[%lu][%lu][%lu] : %s\n", para, sent, word, s_doc[para][sent][word]); */
-            s_doc[para][sent][++word] = NULL;
+            ++word;
+            s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+            s_doc[para][sent][word] = NULL;
             ++sent;
             word = 0;
-
-            tmp = (char***)realloc(s_doc[para], (sent + 2) * sizeof(char**));
-            if (tmp != NULL) {
-                s_doc[para] = tmp;
-            }
-            s_doc[para][sent] = (char**)malloc(2 * sizeof(char*));
+            s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
+            s_doc[para][sent] = (char **)malloc(sizeof(char *));
             s_doc[para][sent][word] = &s_text[i + 1];
             s_text[i] = '\0';
             break;
-
-        case ' ':
-            /* intentional fallthrough */
-        case ',':
-            if (s_text[i + 1] == ' ') {
+        case '\n':
+            if(s_text[i + 1] == '\n') {
                 s_text[i++] = '\0';
             }
-
-            ++word;
-
-            tmp = (char**)realloc(s_doc[para][sent], (word + 2) * sizeof(char*));
-            if (tmp != NULL) {
-                s_doc[para][sent] = tmp;
-            }
+            s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
+            s_doc[para][sent] = NULL;
+            ++para;
+            sent = 0;
+            word = 0;
+            s_doc = (char ****)realloc(s_doc, (para + 1) * sizeof(char ***));
+            s_doc[para] = (char***)malloc(sizeof(char**));
+            s_doc[para][sent] = (char**)malloc(sizeof(char*));
             s_doc[para][sent][word] = &s_text[i + 1];
             s_text[i] = '\0';
-            /* printf("w:print[%lu][%lu][%lu] : %s\n", para, sent, word-1, s_doc[para][sent][word-1]); */
             break;
-
         default:
             break;
-
         }
     }
-    tmp = (char**)realloc(s_doc[para][sent], (word + 3) * sizeof(char*));
-    if (tmp != NULL) {
-        s_doc[para][sent] = tmp;
-    }
-    tmp = (char***)realloc(s_doc[para], (sent + 3) * sizeof(char**));
-    if (tmp != NULL) {
-        s_doc[para] = tmp;
-    }
-    tmp = (char****)realloc(s_doc, (para + 3) * sizeof(char***));
-    if (tmp != NULL) {
-        s_doc = tmp;
-    }
-    s_doc[para][sent][++word] = NULL;
-    s_doc[para][++sent] = NULL;
-    s_doc[++para] = NULL;
+    ++word;
+    s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+    s_doc[para][sent][word] = NULL;
+    ++sent;
+    word = 0;
+    s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
+    s_doc[para][sent] = NULL;
+    ++para;
+    sent = 0;
+    word = 0;
+    s_doc = (char****)realloc(s_doc, (para + 1) * sizeof(char ***));
+    s_doc[para] = NULL;
     s_text[i] = '\0';
 }
 
