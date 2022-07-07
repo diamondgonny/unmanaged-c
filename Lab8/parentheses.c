@@ -29,7 +29,7 @@ size_t enqueue_parentheses(ringbuffer_t* ringbuffer, const char* str, const char
     char lparen;
     size_t paren_matcher = 0;
 
-    /* note : function works as if only ')}]>' have accepted, and ASCII code was referred  */
+    /* note : the function works as if only ')}]>' have accepted, and ASCII code was referred  */
     *p_rparen == ')' ? lparen = rparen - 1 : (lparen = rparen - 2);
 
     for (; p >= str; --p) {
@@ -64,5 +64,5 @@ size_t enqueue_parentheses(ringbuffer_t* ringbuffer, const char* str, const char
 /*  ( ( ( ] { { { < > < > < > [ m o r e } } { } } ) '\0'  */
 
 /* 'ring buffer'                      */
-/* (parentheses[ring_index])           */
+/* (parentheses[ring_index])         */
 /*  V V V ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ  */
