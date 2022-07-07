@@ -3,12 +3,12 @@
 
 size_t find_matching_parentheses(ringbuffer_t* ringbuffer, const char* str)
 {
-    const char* p_str = str;
+    const char* p_str_start = str;
     size_t len = 0;
 
-    while (*p_str != '\0') {
-        len = enqueue_parentheses(ringbuffer, str, p_str, len);
-        ++p_str;
+    while (*p_str_start != '\0') {
+        len = enqueue_parentheses(ringbuffer, str, p_str_start, len);
+        ++p_str_start;
     }
 
     if (len > ringbuffer->max_size) {
@@ -20,13 +20,12 @@ size_t find_matching_parentheses(ringbuffer_t* ringbuffer, const char* str)
     return len;
 }
 
-size_t enqueue_parentheses(ringbuffer_t* ringbuffer, const char* str, const char* p_str, size_t len)
+size_t enqueue_parentheses(ringbuffer_t* ringbuffer, const char* str, const char* p_str_start, size_t len)
 {
-    const char* p_str_start = p_str;
-    char right_pair = *p_str;
+    const char* p_str = p_str_start;
+    char right_pair = *p_str_start;
     char left_pair;
-    /* 0이 되면 Queue에 값 저장, 반복문 진입시 자기 자신을 1 더하고 시작 */
-    int paren_matcher = -1;
+    size_t paren_matcher = 0;
 
     if (*p_str == ')') {
         left_pair = *p_str - 1;
@@ -37,6 +36,9 @@ size_t enqueue_parentheses(ringbuffer_t* ringbuffer, const char* str, const char
     }
 
     for (; p_str >= str; --p_str) {
+        if (p_str == p_str_start) {
+            continue;
+        }
         if (*p_str == right_pair) {
             ++paren_matcher;
         }
@@ -55,3 +57,10 @@ size_t enqueue_parentheses(ringbuffer_t* ringbuffer, const char* str, const char
 
     return len;
 }
+
+/* how the function 'enqueue parentheses' works on */
+/*(str)    <------ ↓p_str --------    (↓p_str_start)    */
+/* ( ( ( ] { { { < > < > < > [ m o r e } } { } } ) '\0' */
+
+/*(parentheses[ring_index]) */
+/* V V V ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
