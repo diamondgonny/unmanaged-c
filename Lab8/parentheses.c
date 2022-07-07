@@ -57,7 +57,6 @@ size_t enqueue_parentheses(ringbuffer_t* ringbuffer, const char* str, const char
 
     return len;
 }
-
 /* how the function 'enqueue parentheses' works on */
 /*(str)    <------ ↓p_str --------    (↓p_str_start)    */
 /* ( ( ( ] { { { < > < > < > [ m o r e } } { } } ) '\0' */
