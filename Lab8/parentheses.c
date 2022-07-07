@@ -6,9 +6,8 @@ size_t find_matching_parentheses(ringbuffer_t* ringbuffer, const char* str)
     const char* p_str_start = str;
     size_t len = 0;
 
-    while (*p_str_start != '\0') {
+    while (*p_str_start++ != '\0') {
         len = enqueue_parentheses(ringbuffer, str, p_str_start, len);
-        ++p_str_start;
     }
 
     if (len > ringbuffer->max_size) {
@@ -27,10 +26,11 @@ size_t enqueue_parentheses(ringbuffer_t* ringbuffer, const char* str, const char
     char left_pair;
     size_t paren_matcher = 0;
 
+    /* note : ASCII code */
     if (*p_str == ')') {
-        left_pair = *p_str - 1;
+        left_pair = right_pair - 1;
     } else if (*p_str == '}' || *p_str == ']' || *p_str == '>') {
-        left_pair = *p_str - 2;
+        left_pair = right_pair - 2;
     } else {
         return len;
     }
