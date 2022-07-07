@@ -16,4 +16,6 @@ typedef struct {
 
 size_t find_matching_parentheses(ringbuffer_t* ringbuffer, const char* str);
 
+size_t enqueue_parentheses(ringbuffer_t* ringbuffer, const char* str, const char* p_str, size_t len);
+
 #endif /* PARENTHESES_H */
