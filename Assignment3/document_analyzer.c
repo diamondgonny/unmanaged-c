@@ -164,8 +164,7 @@ void dispose(void) {
     size_t i;
     size_t j;
 
-    if (*s_doc[0][0][0] == '\0' && sizeof(s_doc[0][0])/sizeof(s_doc[0][0][0])) {
-        printf("%lu\n", sizeof(s_doc[0][0]));
+    if (*s_doc[0][0][0] == '\0' && sizeof(s_doc[0][0])/sizeof(s_doc[0][0][0]) == 1) {
         free(s_text);
         s_text = NULL;
         free(s_doc[0][0]);
