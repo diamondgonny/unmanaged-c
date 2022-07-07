@@ -32,6 +32,7 @@ size_t enqueue_parentheses(ringbuffer_t* ringbuffer, const char* str, const char
     /* note : the function works as if only ')}]>' have accepted, and ASCII code was referred  */
     *p_rparen == ')' ? lparen = rparen - 1 : (lparen = rparen - 2);
 
+    /* note : actually enqueues parentheses, since proper lparen was found by paren_matcher */
     for (; p >= str; --p) {
         if (p == p_rparen) {
             continue;
