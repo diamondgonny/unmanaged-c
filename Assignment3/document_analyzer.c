@@ -205,11 +205,7 @@ unsigned int get_total_word_count(void)
     size_t k;
     unsigned int count = 0;
 
-    if (s_doc == NULL) {
-        return 0;
-    }
-
-    if (*s_doc[0][0][0] == '\0') {
+    if (s_doc == NULL || *s_doc[0][0][0] == '\0') {
         return 0;
     }
 
@@ -230,11 +226,7 @@ unsigned int get_total_sentence_count(void)
     size_t j;
     unsigned int count = 0;
 
-    if (s_doc == NULL) {
-        return 0;
-    }
-
-    if (*s_doc[0][0][0] == '\0') {
+    if (s_doc == NULL || *s_doc[0][0][0] == '\0') {
         return 0;
     }
 
@@ -251,11 +243,7 @@ unsigned int get_total_paragraph_count(void)
     size_t i;
     unsigned int count = 0;
 
-    if (s_doc == NULL) {
-        return 0;
-    }
-
-    if (*s_doc[0][0][0] == '\0') {
+    if (s_doc == NULL || *s_doc[0][0][0] == '\0') {
         return 0;
     }
 
@@ -270,11 +258,7 @@ const char*** get_paragraph_or_null(const unsigned int paragraph_index)
     size_t i;
     const char*** paragraph;
 
-    if (s_doc == NULL) {
-        return NULL;
-    }
-
-    if (*s_doc[0][0][0] == '\0') {
+    if (s_doc == NULL || *s_doc[0][0][0] == '\0') {
         return NULL;
     }
 
@@ -320,11 +304,7 @@ const char** get_sentence_or_null(const unsigned int paragraph_index, const unsi
     size_t j;
     const char** sentence;
 
-    if (s_doc == NULL) {
-        return NULL;
-    }
-
-    if (*s_doc[0][0][0] == '\0') {
+    if (s_doc == NULL || *s_doc[0][0][0] == '\0') {
         return NULL;
     }
 
