@@ -6,9 +6,9 @@
 #define TRUE (1)
 #define FALSE (0)
 
-void get_doc(void);
-
 int load_document(const char* document);
+
+void get_doc(void);
 
 void dispose(void);
 
