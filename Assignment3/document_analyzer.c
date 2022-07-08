@@ -238,6 +238,10 @@ const char*** get_paragraph_or_null(const unsigned int paragraph_index)
     size_t i;
     const char*** paragraph;
 
+    if (s_text[0] == '\0') {
+        return NULL;
+    }
+
     if (s_doc == NULL) {
         return NULL;
     }
@@ -283,6 +287,10 @@ const char** get_sentence_or_null(const unsigned int paragraph_index, const unsi
     size_t i;
     size_t j;
     const char** sentence;
+
+    if (s_text[0] == '\0') {
+        return NULL;
+    }
 
     if (s_doc == NULL) {
         return NULL;
