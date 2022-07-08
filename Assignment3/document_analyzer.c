@@ -104,7 +104,7 @@ void get_doc(void)
 
 int load_document(const char* document)
 {
-    FILE* fp = fopen(document, "rb");
+    FILE* fp = fopen(document, "r");
     size_t size;
 
     if (fp == NULL) {
@@ -124,6 +124,7 @@ int load_document(const char* document)
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
 
     get_doc();
+    /* printf("size + 1: %zu(%c)\n", size + 1, *s_doc[0][0][0]); */
 
     fclose(fp);
     return TRUE;
