@@ -131,10 +131,12 @@ int load_document(const char* document)
     FILE* fp = fopen(document, "rb");
 
     if (fp == NULL) {
+        fclose(fp);
         return FALSE;
     }
 
     if (get_text_from_file(fp) == FALSE) {
+        fclose(fp);
         return FALSE;
     }
 
