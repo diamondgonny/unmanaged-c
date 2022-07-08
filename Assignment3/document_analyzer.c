@@ -8,19 +8,14 @@ static char* s_text = NULL;
 static char**** s_doc = NULL;
 
 /* Source: https://dojang.io/mod/page/view.php?id=617 */
-int get_text_from_file(FILE* fp) {
-    void* tmp;
+int get_text_from_file(FILE* fp)
+{
     size_t size;
 
     fseek(fp, 0, SEEK_END);
     size = ftell(fp);
 
-    tmp = (char*)malloc(size + 1);
-    if (tmp != NULL) {
-        s_text = tmp;
-    } else {
-        return FALSE;
-    }
+    s_text = (char*)malloc(size + 1);
     memset(s_text, 0, size + 1);
 
     fseek(fp, 0, SEEK_SET);
@@ -37,30 +32,24 @@ void get_doc(void)
     size_t sent = 0;
     size_t word = 0;
     size_t i;
-    void* tmp;
 
     s_doc = (char****)malloc(sizeof(char***));
     s_doc[0] = (char***)malloc(sizeof(char**));
     s_doc[0][0] = (char**)malloc(sizeof(char*));
     s_doc[0][0][0] = s_text;
 
-    if (*s_doc[0][0][0] == '\0') {
+    if (s_text[0] == '\0') {
         return;
     }
 
     for(i = 0; s_text[i + 1] != '\0'; ++i) {
         switch(s_text[i]) {
         case ',':
+            s_text[i++] = '\0';
         /* intentional fallthrough */
         case ' ':
-            if (s_text[i + 1] == ' ') {
-                s_text[i++] = '\0';
-            }
             ++word;
-            tmp = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
-            if (tmp != NULL) {
-                s_doc[para][sent] = tmp;
-            }
+            s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
             s_doc[para][sent][word] = &s_text[i + 1];
             s_text[i] = '\0';
             break;
@@ -72,18 +61,16 @@ void get_doc(void)
             if (s_text[i + 1] == ' ') {
                 s_text[i++] = '\0';
             }
-            ++word;
-            tmp = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
-            if (tmp != NULL) {
-                s_doc[para][sent] = tmp;
+            if (s_text[i + 1] == '\n') {
+                s_text[i++] = '\0';
+                break;
             }
+            ++word;
+            s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
             s_doc[para][sent][word] = NULL;
             ++sent;
             word = 0;
-            tmp = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
-            if (tmp != NULL) {
-                s_doc[para] = tmp;
-            }
+            s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
             s_doc[para][sent] = (char **)malloc(sizeof(char *));
             s_doc[para][sent][word] = &s_text[i + 1];
             s_text[i] = '\0';
@@ -93,18 +80,17 @@ void get_doc(void)
                 s_text[i] = '\0';
                 break;
             }
-            tmp = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
-            if (tmp != NULL) {
-                s_doc[para] = tmp;
-            }
+            ++word;
+            s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+            s_doc[para][sent][word] = NULL;
+            ++sent;
+            word = 0;
+            s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
             s_doc[para][sent] = NULL;
             ++para;
             sent = 0;
             word = 0;
-            tmp = (char****)realloc(s_doc, (para + 1) * sizeof(char ***));
-            if (tmp != NULL) {
-                s_doc = tmp;
-            }
+            s_doc = (char****)realloc(s_doc, (para + 1) * sizeof(char ***));
             s_doc[para] = (char***)malloc(sizeof(char**));
             s_doc[para][sent] = (char**)malloc(sizeof(char*));
             s_doc[para][sent][word] = &s_text[i + 1];
@@ -115,28 +101,17 @@ void get_doc(void)
         }
     }
 
-    if (s_text[i] == '.' || s_text[i] == '!' || s_text[i] == '?') {
-        ++word;
-            tmp = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
-            if (tmp != NULL) {
-                s_doc[para][sent] = tmp;
-            }
-        s_doc[para][sent][word] = NULL;
-        ++sent;
-        word = 0;
-    }
-    tmp = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
-    if (tmp != NULL) {
-        s_doc[para] = tmp;
-    }
+    ++word;
+    s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+    s_doc[para][sent][word] = NULL;
+    ++sent;
+    word = 0;
+    s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
     s_doc[para][sent] = NULL;
     ++para;
     sent = 0;
     word = 0;
-    tmp = (char****)realloc(s_doc, (para + 1) * sizeof(char ***));
-    if (tmp != NULL) {
-        s_doc = tmp;
-    }
+    s_doc = (char****)realloc(s_doc, (para + 1) * sizeof(char ***));
     s_doc[para] = NULL;
     s_text[i] = '\0';
 }
@@ -159,8 +134,8 @@ int load_document(const char* document)
     return TRUE;
 }
 
-void dispose(void) {
-
+void dispose(void)
+{
     size_t i;
     size_t j;
 
@@ -230,7 +205,7 @@ unsigned int get_total_word_count(void)
         for (j = 0; s_doc[i][j] != NULL; ++j) {
             for (k = 0; s_doc[i][j][k] != NULL; ++k) {
                 ++count;
-                /* printf("print[%lu][%lu][%lu] : %s\n", i, j, k, s_doc[i][j][k]); */
+                /* printf("print[%lu][%lu][%lu] : %s (%u)\n", i, j, k, s_doc[i][j][k], count); */
             }
         }
     }
