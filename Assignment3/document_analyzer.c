@@ -50,14 +50,14 @@ void get_doc(void)
         return;
     }
 
-    for(i = 0; s_text[i + 1] != '\0'; ++i) {
-        switch(s_text[i]) {
+    for (i = 0; s_text[i + 1] != '\0'; ++i) {
+        switch (s_text[i]) {
         case ',':
             s_text[i++] = '\0';
         /* intentional fallthrough */
         case ' ':
             ++word;
-            s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+            s_doc[para][sent] = (char**)realloc(s_doc[para][sent], (word + 1) * sizeof(char*));
             s_doc[para][sent][word] = &s_text[i + 1];
             s_text[i] = '\0';
             break;
@@ -74,33 +74,33 @@ void get_doc(void)
                 break;
             }
             ++word;
-            s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+            s_doc[para][sent] = (char**)realloc(s_doc[para][sent], (word + 1) * sizeof(char*));
             s_doc[para][sent][word] = NULL;
             ++sent;
             word = 0;
-            s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
-            s_doc[para][sent] = (char **)malloc(sizeof(char *));
+            s_doc[para] = (char***)realloc(s_doc[para], (sent + 1) * sizeof(char**));
+            s_doc[para][sent] = (char**)malloc(sizeof(char*));
             s_doc[para][sent][word] = &s_text[i + 1];
             s_text[i] = '\0';
             break;
         case '\r':
         /* intentional fallthrough */
         case '\n':
-            if(s_text[i + 1] == '\r' || s_text[i + 1] == '\n') {
+            if (s_text[i + 1] == '\r' || s_text[i + 1] == '\n') {
                 s_text[i] = '\0';
                 break;
             }
             ++word;
-            s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+            s_doc[para][sent] = (char**)realloc(s_doc[para][sent], (word + 1) * sizeof(char*));
             s_doc[para][sent][word] = NULL;
             ++sent;
             word = 0;
-            s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
+            s_doc[para] = (char***)realloc(s_doc[para], (sent + 1) * sizeof(char**));
             s_doc[para][sent] = NULL;
             ++para;
             sent = 0;
             word = 0;
-            s_doc = (char****)realloc(s_doc, (para + 1) * sizeof(char ***));
+            s_doc = (char****)realloc(s_doc, (para + 1) * sizeof(char***));
             s_doc[para] = (char***)malloc(sizeof(char**));
             s_doc[para][sent] = (char**)malloc(sizeof(char*));
             s_doc[para][sent][word] = &s_text[i + 1];
@@ -112,16 +112,16 @@ void get_doc(void)
     }
 
     ++word;
-    s_doc[para][sent] = (char **)realloc(s_doc[para][sent], (word + 1) * sizeof(char *));
+    s_doc[para][sent] = (char**)realloc(s_doc[para][sent], (word + 1) * sizeof(char*));
     s_doc[para][sent][word] = NULL;
     ++sent;
     word = 0;
-    s_doc[para] = (char ***)realloc(s_doc[para], (sent + 1) * sizeof(char **));
+    s_doc[para] = (char***)realloc(s_doc[para], (sent + 1) * sizeof(char**));
     s_doc[para][sent] = NULL;
     ++para;
     sent = 0;
     word = 0;
-    s_doc = (char****)realloc(s_doc, (para + 1) * sizeof(char ***));
+    s_doc = (char****)realloc(s_doc, (para + 1) * sizeof(char***));
     s_doc[para] = NULL;
     s_text[i] = '\0';
 }
@@ -175,7 +175,7 @@ void dispose(void)
     free(s_doc);
     s_doc = NULL;
 
-/*
+    /*
     free(s_text);
     s_text = NULL;
 
@@ -193,7 +193,7 @@ void dispose(void)
 
     free(s_doc);
     s_doc = NULL;
-*/
+    */
 }
 
 unsigned int get_total_word_count(void)
@@ -323,7 +323,7 @@ const char** get_sentence_or_null(const unsigned int paragraph_index, const unsi
     }
 
     if (*s_doc[0][0][0] == '\0') {
-        return 0;
+        return NULL;
     }
 
     sentence = (const char**)s_doc[paragraph_index][sentence_index];
