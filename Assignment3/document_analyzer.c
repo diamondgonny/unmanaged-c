@@ -11,8 +11,14 @@ static char**** s_doc = NULL;
 
 int load_document(const char* document)
 {
-    FILE* fp = fopen(document, "r");
+    FILE* fp;
     size_t size;
+
+    if (s_doc != NULL) {
+        return FALSE;
+    }
+
+    fp = fopen(document, "r");
 
     if (fp == NULL) {
         return FALSE;
@@ -114,7 +120,6 @@ void get_doc(void)
             break;
         }
     }
-
     ++word;
     s_doc[para][sent] = (char**)realloc(s_doc[para][sent], (word + 1) * sizeof(char*));
     s_doc[para][sent][word] = NULL;
@@ -135,10 +140,14 @@ void dispose(void)
     size_t i;
     size_t j;
 
-    if (s_text[0] == '\0') {
-        free(s_text);
-        s_text = NULL;
-        return;
+    if (s_doc == NULL) {
+        if (s_text == NULL) {
+            return;
+        } else if (s_text[0] == '\0') {
+            free(s_text);
+            s_text = NULL;
+            return;
+        }
     }
 
     free(s_text);
