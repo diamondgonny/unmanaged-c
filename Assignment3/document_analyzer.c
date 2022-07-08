@@ -322,9 +322,7 @@ int print_as_tree(const char* filename)
         return FALSE;
     }
 
-    /* printf("entered write mode, %c\n", *s_doc[0][0][0]); */
-
-    for (i = 0; s_doc[i] != NULL; ++i) {
+    for (i = 0; s_doc[i + 1] != NULL; ++i) {
         fprintf(fp, "Paragraph %zu:\n", i);
         for (j = 0; s_doc[i][j] != NULL; ++j) {
             fprintf(fp, "    Sentence %zu:\n", j);
@@ -332,8 +330,16 @@ int print_as_tree(const char* filename)
                 fprintf(fp, "        %s\n", s_doc[i][j][k]);
             }
         }
-        if (s_doc[i + 1] != NULL) {
-            fprintf(fp, "\n");
+        fprintf(fp, "\n");
+    }
+
+    for (; s_doc[i] != NULL; ++i) {
+        fprintf(fp, "\nParagraph %zu:", i);
+        for (j = 0; s_doc[i][j] != NULL; ++j) {
+            fprintf(fp, "\n    Sentence %zu:", j);
+            for (k = 0; s_doc[i][j][k] != NULL; ++k) {
+                fprintf(fp, "\n        %s", s_doc[i][j][k]);
+            }
         }
     }
 
