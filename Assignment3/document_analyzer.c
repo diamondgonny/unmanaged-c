@@ -34,10 +34,9 @@ int load_document(const char* document)
     fseek(fp, 0, SEEK_SET);
     fread(s_text, size, 1, fp);
     s_text[size] = '\0';
-    /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
+    /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
 
     get_doc();
-    /* printf("size + 1: %zu(%c)\n", size + 1, *s_doc[0][0][0]); */
 
     fclose(fp);
     return TRUE;
@@ -182,10 +181,10 @@ unsigned int get_total_word_count(void)
         for (j = 0; s_doc[i][j] != NULL; ++j) {
             for (k = 0; s_doc[i][j][k] != NULL; ++k) {
                 ++count;
-                /* printf("print[%lu][%lu][%lu] : %s (%u)\n", i, j, k, s_doc[i][j][k], count); */
             }
         }
     }
+
     return count;
 }
 
@@ -204,6 +203,7 @@ unsigned int get_total_sentence_count(void)
             ++count;
         }
     }
+
     return count;
 }
 
@@ -219,6 +219,7 @@ unsigned int get_total_paragraph_count(void)
     for (i = 0; s_doc[i] != NULL; ++i) {
         ++count;
     }
+
     return count;
 }
 
@@ -253,6 +254,7 @@ unsigned int get_paragraph_word_count(const char*** paragraph)
             ++count;
         }
     }
+
     return count;
 }
 
@@ -264,6 +266,7 @@ unsigned int get_paragraph_sentence_count(const char*** paragraph)
     for (i = 0; paragraph[i] != NULL; ++i) {
         ++count;
     }
+
     return count;
 }
 
@@ -302,6 +305,7 @@ unsigned int get_sentence_word_count(const char** sentence)
     for (i = 0; sentence[i] != NULL; ++i) {
         ++count;
     }
+
     return count;
 }
 
