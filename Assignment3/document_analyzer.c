@@ -261,13 +261,13 @@ const char*** get_paragraph_or_null(const unsigned int paragraph_index)
         return NULL;
     }
 
-    paragraph = (const char***)s_doc[paragraph_index];
-
     for (i = 0; s_doc[i] != NULL; ++i) {
     }
     if (paragraph_index >= i) {
         return NULL;
     }
+
+    paragraph = (const char***)s_doc[paragraph_index];
 
     return paragraph;
 }
@@ -307,8 +307,6 @@ const char** get_sentence_or_null(const unsigned int paragraph_index, const unsi
         return NULL;
     }
 
-    sentence = (const char**)s_doc[paragraph_index][sentence_index];
-
     for (i = 0; s_doc[i] != NULL; ++i) {
     }
     if (paragraph_index >= i) {
@@ -320,6 +318,8 @@ const char** get_sentence_or_null(const unsigned int paragraph_index, const unsi
     if (sentence_index >= j) {
         return NULL;
     }
+
+    sentence = (const char**)s_doc[paragraph_index][sentence_index];
 
     return sentence;
 }
