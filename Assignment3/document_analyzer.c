@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +14,12 @@ int get_text_from_file(FILE* fp)
 {
     size_t size;
 
+    /*
+    int c = fgetc(fp);
+    while (c != EOF) {
+        c = fgetc(fp);
+    }
+    */
     fseek(fp, 0, SEEK_END);
     size = ftell(fp);
 
@@ -61,7 +69,7 @@ void get_doc(void)
             if (s_text[i + 1] == ' ') {
                 s_text[i++] = '\0';
             }
-            if (s_text[i + 1] == '\n') {
+            if (s_text[i + 1] == '\r' || s_text[i + 1] == '\n') {
                 s_text[i++] = '\0';
                 break;
             }
@@ -75,8 +83,10 @@ void get_doc(void)
             s_doc[para][sent][word] = &s_text[i + 1];
             s_text[i] = '\0';
             break;
+        case '\r':
+        /* intentional fallthrough */
         case '\n':
-            if(s_text[i + 1] == '\n') {
+            if(s_text[i + 1] == '\r' || s_text[i + 1] == '\n') {
                 s_text[i] = '\0';
                 break;
             }
@@ -139,7 +149,7 @@ void dispose(void)
     size_t i;
     size_t j;
 
-    if (*s_doc[0][0][0] == '\0' && sizeof(s_doc[0][0])/sizeof(s_doc[0][0][0]) == 1) {
+    if (*s_doc[0][0][0] == '\0') {
         free(s_text);
         s_text = NULL;
         free(s_doc[0][0]);
@@ -338,27 +348,33 @@ unsigned int get_sentence_word_count(const char** sentence)
 
 int print_as_tree(const char* filename)
 {
-    FILE* fp = fopen(filename, "w");
+    FILE* fp;
     size_t i;
     size_t j;
     size_t k;
-
-    if (fp == NULL) {
-        return FALSE;
-    }
 
     if (s_doc == NULL) {
         return FALSE;
     }
 
-    if (*s_doc[0][0][0] == '\0') {
+    fp = fopen(filename, "w");
+
+    if (fp == NULL) {
+        fclose(fp);
         return FALSE;
     }
 
+    if (*s_doc[0][0][0] == '\0') {
+        fclose(fp);
+        return FALSE;
+    }
+
+    /* printf("entered write mode, %c\n", *s_doc[0][0][0]); */
+
     for (i = 0; s_doc[i] != NULL; ++i) {
-        fprintf(fp, "Paragraph %lu:\n", i);
+        fprintf(fp, "Paragraph %zu:\n", i);
         for (j = 0; s_doc[i][j] != NULL; ++j) {
-            fprintf(fp, "    Sentence %lu:\n", j);
+            fprintf(fp, "    Sentence %zu:\n", j);
             for (k = 0; s_doc[i][j][k] != NULL; ++k) {
                 fprintf(fp, "        %s\n", s_doc[i][j][k]);
             }
