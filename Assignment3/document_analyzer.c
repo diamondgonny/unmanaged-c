@@ -334,7 +334,9 @@ int print_as_tree(const char* filename)
                 fprintf(fp, "        %s\n", s_doc[i][j][k]);
             }
         }
-        fprintf(fp, "\n");
+        if (s_doc[(i + 1) + 1] != NULL) {
+            fprintf(fp, "\n");
+        }
     }
 
     for (; s_doc[i] != NULL; ++i) {
