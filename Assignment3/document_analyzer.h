@@ -6,8 +6,6 @@
 #define TRUE (1)
 #define FALSE (0)
 
-int get_text_from_file(FILE* fp);
-
 void get_doc(void);
 
 int load_document(const char* document);

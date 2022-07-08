@@ -9,30 +9,6 @@
 static char* s_text = NULL;
 static char**** s_doc = NULL;
 
-/* Source: https://dojang.io/mod/page/view.php?id=617 */
-int get_text_from_file(FILE* fp)
-{
-    size_t size;
-
-    /*
-    int c = fgetc(fp);
-    while (c != EOF) {
-        c = fgetc(fp);
-    }
-    */
-    fseek(fp, 0, SEEK_END);
-    size = ftell(fp);
-
-    s_text = (char*)malloc(size + 1);
-    memset(s_text, 0, size + 1);
-
-    fseek(fp, 0, SEEK_SET);
-    fread(s_text, size, 1, fp);
-    s_text[size] = '\0';
-
-    return TRUE;
-}
-
 void get_doc(void)
 {
     /* the numbers of indexes, not counts (count == index + 1) */
@@ -129,15 +105,23 @@ void get_doc(void)
 int load_document(const char* document)
 {
     FILE* fp = fopen(document, "rb");
+    size_t size;
 
     if (fp == NULL) {
         return FALSE;
     }
 
-    if (get_text_from_file(fp) == FALSE) {
-        fclose(fp);
-        return FALSE;
-    }
+    /* Source: https://dojang.io/mod/page/view.php?id=617 */
+    fseek(fp, 0, SEEK_END);
+    size = ftell(fp);
+
+    s_text = (char*)malloc(size + 1);
+    memset(s_text, 0, size + 1);
+
+    fseek(fp, 0, SEEK_SET);
+    fread(s_text, size, 1, fp);
+    s_text[size] = '\0';
+    /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
 
     get_doc();
 
