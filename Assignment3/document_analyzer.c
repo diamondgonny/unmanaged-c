@@ -131,7 +131,6 @@ int load_document(const char* document)
     FILE* fp = fopen(document, "rb");
 
     if (fp == NULL) {
-        fclose(fp);
         return FALSE;
     }
 
@@ -350,7 +349,6 @@ int print_as_tree(const char* filename)
     fp = fopen(filename, "w");
 
     if (fp == NULL) {
-        fclose(fp);
         return FALSE;
     }
 
