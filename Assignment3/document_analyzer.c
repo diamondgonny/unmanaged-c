@@ -17,14 +17,14 @@ void get_doc(void)
     size_t word = 0;
     size_t i;
 
+    if (s_text[0] == '\0') {
+        return;
+    }
+
     s_doc = (char****)malloc(sizeof(char***));
     s_doc[0] = (char***)malloc(sizeof(char**));
     s_doc[0][0] = (char**)malloc(sizeof(char*));
     s_doc[0][0][0] = s_text;
-
-    if (s_text[0] == '\0') {
-        return;
-    }
 
     for (i = 0; s_text[i + 1] != '\0'; ++i) {
         switch (s_text[i]) {
@@ -135,13 +135,9 @@ void dispose(void)
     size_t i;
     size_t j;
 
-    if (*s_doc[0][0][0] == '\0') {
+    if (s_text[0] == '\0') {
         free(s_text);
         s_text = NULL;
-        free(s_doc[0][0]);
-        free(s_doc[0]);
-        free(s_doc);
-        s_doc = NULL;
         return;
     }
 
@@ -189,7 +185,7 @@ unsigned int get_total_word_count(void)
     size_t k;
     unsigned int count = 0;
 
-    if (s_doc == NULL || *s_doc[0][0][0] == '\0') {
+    if (s_doc == NULL) {
         return 0;
     }
 
@@ -210,7 +206,7 @@ unsigned int get_total_sentence_count(void)
     size_t j;
     unsigned int count = 0;
 
-    if (s_doc == NULL || *s_doc[0][0][0] == '\0') {
+    if (s_doc == NULL) {
         return 0;
     }
 
@@ -227,7 +223,7 @@ unsigned int get_total_paragraph_count(void)
     size_t i;
     unsigned int count = 0;
 
-    if (s_doc == NULL || *s_doc[0][0][0] == '\0') {
+    if (s_doc == NULL) {
         return 0;
     }
 
@@ -242,7 +238,7 @@ const char*** get_paragraph_or_null(const unsigned int paragraph_index)
     size_t i;
     const char*** paragraph;
 
-    if (s_doc == NULL || *s_doc[0][0][0] == '\0') {
+    if (s_doc == NULL) {
         return NULL;
     }
 
@@ -288,7 +284,7 @@ const char** get_sentence_or_null(const unsigned int paragraph_index, const unsi
     size_t j;
     const char** sentence;
 
-    if (s_doc == NULL || *s_doc[0][0][0] == '\0') {
+    if (s_doc == NULL) {
         return NULL;
     }
 
@@ -334,11 +330,6 @@ int print_as_tree(const char* filename)
     fp = fopen(filename, "w");
 
     if (fp == NULL) {
-        return FALSE;
-    }
-
-    if (*s_doc[0][0][0] == '\0') {
-        fclose(fp);
         return FALSE;
     }
 
