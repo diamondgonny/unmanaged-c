@@ -44,7 +44,6 @@ int load_document(const char* document)
 
 void get_doc(void)
 {
-    /* the numbers of indexes, not counts (count == index + 1) */
     size_t para = 0;
     size_t sent = 0;
     size_t word = 0;
