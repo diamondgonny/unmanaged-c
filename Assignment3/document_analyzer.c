@@ -6,6 +6,8 @@
 #include <assert.h>
 #include "document_analyzer.h"
 
+/* save entire texts to 's_text(string)' from .txt file */
+/* nested structure, named 's_doc' */
 static char* s_text = NULL;
 static char**** s_doc = NULL;
 
@@ -146,23 +148,23 @@ void dispose(void)
             s_text = NULL;
             return;
         }
-    }
+    } else {
+        free(s_text);
+        s_text = NULL;
 
-    free(s_text);
-    s_text = NULL;
-
-    for (i = 0; s_doc[i] != NULL; ++i) {
-        for (j = 0; s_doc[i][j] != NULL; ++j) {
-            free(s_doc[i][j]);
+        for (i = 0; s_doc[i] != NULL; ++i) {
+            for (j = 0; s_doc[i][j] != NULL; ++j) {
+                free(s_doc[i][j]);
+            }
         }
-    }
 
-    for (i = 0; s_doc[i] != NULL; ++i) {
-        free(s_doc[i]);
-    }
+        for (i = 0; s_doc[i] != NULL; ++i) {
+            free(s_doc[i]);
+        }
 
-    free(s_doc);
-    s_doc = NULL;
+        free(s_doc);
+        s_doc = NULL;
+    }
 }
 
 unsigned int get_total_word_count(void)
