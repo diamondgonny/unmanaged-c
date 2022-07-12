@@ -11,9 +11,10 @@
 
 #define RANGE_DESC(curr, max, min) for (curr = max; curr >= min; curr--) \
 
-#define SET(ary, start, count, value) i = 0; \
-for (i = start; i < start + count; i++) { \
-ary[i] = value; \
+#define SET(ary, start, count, value) { \
+int set_i; \
+for (set_i = start; set_i < start + count; set_i++) { \
+    *(ary + set_i) = value; \
+} \
 }
-
 #endif /* MACROS_H */
