@@ -16,7 +16,7 @@
 #define SET(ary, start, count, value)   do { \
                                             size_t set_i; \
                                             for ((set_i) = (start); (set_i) < ((start) + (count)); (set_i)++) { \
-                                                ary[(set_i)] = (value); \
+                                                *((ary) + (set_i)) = (value); \
                                             } \
                                         } while (0) \
 
