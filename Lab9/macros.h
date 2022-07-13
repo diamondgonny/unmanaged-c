@@ -14,10 +14,9 @@
 #define RANGE_DESC(curr, max, min) for ((curr) = (max); (curr) >= (min); (curr)--)
 
 #define SET(ary, start, count, value)   do { \
-                                            size_t set_i = 0; \
-                                            while ((set_i) < (count)) { \
-                                                ary[((set_i) + (start))] = (value); \
-                                                ++(set_i); \
+                                            size_t set_i; \
+                                            for ((set_i) = (start); (set_i) < ((start) + (count)); (set_i)++) { \
+                                                ary[(set_i)] = (value); \
                                             } \
                                         } while (0) \
 
