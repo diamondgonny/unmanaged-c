@@ -12,7 +12,7 @@
 #define RANGE_DESC(curr, max, min) for ((curr) = (max); (curr) >= (min); (curr)--)
 
 #define SET(ary, start, count, value)   do { \
-                                            int set_i; \
+                                            unsigned int set_i; \
                                             for ((set_i) = (start); (set_i) < ((start) + (count)); (set_i)++) { \
                                                 ary[(set_i)] = (value); \
                                             } \
