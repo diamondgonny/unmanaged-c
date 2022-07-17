@@ -12,6 +12,8 @@ typedef struct hashmap {
     size_t length;
 } hashmap_t;
 
+/* void my_dump(hashmap_t* hashmap); */
+
 hashmap_t* init_hashmap_malloc(size_t length, size_t (*p_hash_func)(const char* key));
 
 int add_key(hashmap_t* hashmap, const char* key, const int value);

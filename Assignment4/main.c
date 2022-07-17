@@ -13,7 +13,6 @@ int main(void)
     hashmap_t* hashmap = NULL;
 
     hashmap = init_hashmap_malloc(DEFAULT_ARRAY_LENGTH, hash_function);
-
     for (i = 0; i < 100; i++) {
         char key[100];
         int value = (int)i;
@@ -32,6 +31,8 @@ int main(void)
         c = get_value(hashmap, key);
         assert(c == value);
     }
+
+    /* my_dump(hashmap); */
 
     for (i = 0; i < 100; i++) {
         char key[100];
