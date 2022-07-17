@@ -1,6 +1,7 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
+#include <stddef.h>
 #include "node.h"
 
 #define TRUE (1)
@@ -11,8 +12,6 @@ typedef struct hashmap {
     node_t** plist;
     size_t length;
 } hashmap_t;
-
-/* void my_dump(hashmap_t* hashmap); */
 
 hashmap_t* init_hashmap_malloc(size_t length, size_t (*p_hash_func)(const char* key));
 
