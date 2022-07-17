@@ -69,7 +69,6 @@ int update_value(hashmap_t* hashmap, const char* key, const int value)
         }
         p = p->next;
     }
-    printf("nodap\n");
 
     return FALSE;
 }
