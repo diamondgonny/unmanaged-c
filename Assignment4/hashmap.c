@@ -3,23 +3,6 @@
 #include <string.h>
 #include "hashmap.h"
 
-/*
-void my_dump(hashmap_t* hashmap)
-{
-    int i;
-	for (i = 0; i < hashmap->length; i++) {
-		node_t *p = hashmap->plist[i];
-		printf("%02d ", i);
-
-		while (p != NULL) {
-			printf("→ %d :(%s) ", p->value, p->key);
-			p = p->next;
-		}
-		putchar('\n');
-	}
-}
-*/
-
 hashmap_t* init_hashmap_malloc(size_t length, size_t (*p_hash_func)(const char* key))
 {
     size_t i;
@@ -99,6 +82,7 @@ int remove_key(hashmap_t* hashmap, const char* key)
     while (p != NULL) {
         if (strcmp(p->key, key) == 0) {
             *pp = p->next;
+            free(p->key);
             free(p);
             return TRUE;
         }
