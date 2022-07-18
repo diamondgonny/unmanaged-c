@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "hashmap.h"
@@ -8,10 +7,8 @@ hashmap_t* init_hashmap_malloc(size_t length, size_t (*p_hash_func)(const char* 
     size_t i;
     hashmap_t* hashmap = (hashmap_t*)malloc(sizeof(hashmap_t));
 
-    /* malloc이 NULL을 반환하는 경우도 고려해야 하는가? */
     hashmap->hash_func = p_hash_func;
     hashmap->plist = (node_t**)malloc(length * sizeof(node_t*));
-    /* memset(hashmap->plist, 0, length * sizeof(node_t*)); */
     hashmap->length = length;
 
     for (i = 0; i < length; i++) {
@@ -27,7 +24,6 @@ int add_key(hashmap_t* hashmap, const char* key, const int value)
     node_t* tmp;
 
     while (p != NULL) {
-        /* 이미 등록된 키면 추가 실패 처리 */
         if (strcmp(p->key, key) == 0) {
             return FALSE;
         }
@@ -110,3 +106,6 @@ void destroy(hashmap_t* hashmap)
     free(hashmap->plist);
     free(hashmap);
 }
+
+/* Reference) Doit_자료구조와함께배우는알고리즘입문_C언어편_Chap11 */
+/* https://drive.google.com/file/d/1szWjGb_hAZadx2e9sH4Qlu4ykcRts8Vw/view */
