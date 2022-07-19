@@ -55,7 +55,6 @@ int main(void)
 
     assert(is_empty(&todo_list));
     assert(!complete_todo(&todo_list));
-
     finalize_todo_list(&todo_list);
 
 	return 0;
