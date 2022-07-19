@@ -19,7 +19,7 @@ typedef struct todo_list {
     node_t* node;
     index_t head;
     index_t deleted;
-	int dummy;
+    int dummy;
 } todo_list_t;
 
 index_t get_index(todo_list_t* todo_list);
