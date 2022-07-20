@@ -41,6 +41,7 @@ todo_list_t init_todo_list(size_t max_size)
     todo_list_t todo_list;
 
     todo_list.node = malloc(max_size * sizeof(node_t));
+    // 프리리스트 초기 세팅
     for (i = max_size; i != 0; --i) {
         index_t tmp = todo_list.deleted;
         todo_list.deleted = i - 1;
@@ -53,42 +54,44 @@ todo_list_t init_todo_list(size_t max_size)
     return todo_list;
 }
 
-// 공사중
 void finalize_todo_list(todo_list_t* todo_list)
 {
-    while (1) {
-        if (complete_todo(todo_list) == false) {
-            break;
-        }
+    while (complete_todo(todo_list) == true) {
     }
+
     free(todo_list->node);
 }
 
 bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task)
 {
-    index_t index = 0; // add_todo의 index
+    index_t index;
     index_t tmp = todo_list->head;
-    index_t* p = &todo_list->head; // 시작점 ~
+    index_t* p = &todo_list->head; // 첫 번째 노드를 가리킴
     index_t* next_p;
 
-    // 노드가 꽉찼을 때, 혹은 priority가 음수일 때
-    if (index == INT_MIN || priority < 0) {
+    // priority가 음수일 때
+    if (priority < 0) {
         return false;
     }
-    index = get_index(todo_list);
 
-    // 노드가 없을 때, 혹은 최고 우선순위일 때 (첫 번째 위치)
+    // 노드가 꽉찼을 때
+    index = get_index(todo_list);
+    if (index == INT_MIN) {
+        return false;
+    }
+
+    // 노드가 없을 때 혹은 최고 우선순위일 때 (첫 번째 위치에 배치)
     if (*p == INT_MIN || (&todo_list->node[*p])->order < priority) {
         todo_list->head = index;
         set_node(&todo_list->node[index], priority, task, tmp);
         ++todo_list->dummy;
         return true;
     }
-    next_p = &(&todo_list->node[*p])->next; // 1 노드일 때, INT_MIN(값)
+    // 두 번째 노드를 가리킴 (단, 노드 한 개일 때는 INT_MIN)
+    next_p = &(&todo_list->node[*p])->next;
 
-    // 오름차순 검색
+    // 내림차순 정렬된 연결리스트에 추가하기
     while (*next_p != INT_MIN) {
-
         if ((&todo_list->node[*next_p])->order < priority) {
             break;
         }
@@ -131,7 +134,6 @@ const char* peek_or_null(const todo_list_t* todo_list)
     return todo_list->node[todo_list->head].task;
 }
 
-// dummy 기능 추가
 size_t get_count(const todo_list_t* todo_list)
 {
     return (size_t)todo_list->dummy;
