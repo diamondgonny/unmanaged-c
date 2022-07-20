@@ -12,13 +12,12 @@ todo_list_t init_todo_list(size_t max_size)
     todo_list.deleted = INT_MIN;
     todo_list.dummy = 0;
 
-    // 프리리스트 세팅 (max_size > 0 이라고 가정함)
+    // 프리리스트 세팅
     for (i = max_size; i != 0; --i) {
         index_t tmp = todo_list.deleted;
         todo_list.deleted = i - 1;
         todo_list.node[i - 1].d_next = tmp;
     }
-
     return todo_list;
 }
 
@@ -26,17 +25,12 @@ void finalize_todo_list(todo_list_t* todo_list)
 {
     while (complete_todo(todo_list) == true) {
     }
-
     free(todo_list->node);
 }
 
 index_t get_index_for_add(todo_list_t* todo_list, const int32_t priority)
 {
-    if (priority < 0) {
-        return INT_MIN;
-    }
-
-    if (todo_list->deleted == INT_MIN) {
+    if (todo_list->deleted == INT_MIN || priority < 0) {
         return INT_MIN;
     } else {
         index_t index = todo_list->deleted;
@@ -60,12 +54,12 @@ bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task)
     index_t* p = &todo_list->head; // 첫 번째 노드를 가리킴 (예외 : INT_MIN)
     index_t* next_p; // 두 번째 노드를 가리킴 (예외 : INT_MIN)
 
-    // priority가 음수일 때 혹은 노드가 꽉찼을 때의 false 반환
-    if (priority < 0 || index == INT_MIN) {
+    //  노드가 꽉찼을 때 혹은 priority가 음수일 때의 false 반환
+    if (index == INT_MIN || priority < 0) {
         return false;
     }
 
-    // 노드가 없을 때 혹은 한방에 최고 priority일 때의 삽입
+    // 노드가 없을 때 혹은 한방에 최고 priority일 경우의 삽입 (최전방 노드)
     if (*p == INT_MIN || (&todo_list->node[*p])->order < priority) {
         todo_list->head = index;
         set_node_for_add(&todo_list->node[index], priority, task, tmp);
@@ -82,12 +76,10 @@ bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task)
         p = next_p;
         next_p = &(&todo_list->node[*p])->next;
     }
-
     tmp = (&todo_list->node[*p])->next;
     (&todo_list->node[*p])->next = index;
     set_node_for_add(&todo_list->node[index], priority, task, tmp);
     ++todo_list->dummy;
-
     return true;
 }
 
@@ -111,12 +103,12 @@ bool complete_todo(todo_list_t* todo_list)
         return false;
     }
 
+    // 가장 높은 priority를 가진 task 삭제 (최전방 노드)
     tmp = todo_list->node[todo_list->head].next;
     free((&todo_list->node[todo_list->head])->task);
     delete_index_for_complete(todo_list, todo_list->head);
     todo_list->head = tmp;
     --todo_list->dummy;
-
     return true;
 }
 
@@ -125,7 +117,6 @@ const char* peek_or_null(const todo_list_t* todo_list)
     if (todo_list->head == INT_MIN) {
         return NULL;
     }
-
     return todo_list->node[todo_list->head].task;
 }
 
@@ -138,3 +129,7 @@ bool is_empty(const todo_list_t* todo_list)
 {
     return todo_list->head == INT_MIN ? true : false;
 }
+
+// add_todo, complete_todo 함수의 구조체 관련하여 다 이해했는가?
+// 참고) Doit_자료구조와함께배우는알고리즘입문_C언어편_Chap09(커서로연결리스트만들기)
+// https://drive.google.com/file/d/1szWjGb_hAZadx2e9sH4Qlu4ykcRts8Vw/view
