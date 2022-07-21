@@ -54,12 +54,12 @@ bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task)
     index_t index = get_index_for_add(todo_list, priority);
     index_t tmp;
 
-    // case 1) 노드가 꽉찼을 때 혹은 priority가 음수일 때의 false 반환
+    // case 1) '할일목록'이 꽉찼을 때 혹은 priority가 음수일 때의 false 반환
     if (index == INT_MIN || priority < 0) {
         return false;
     }
 
-    // case 2) 노드가 없을 때 혹은 한방에 최고 priority일 때의 삽입 (최전방 노드)
+    // case 2) '할일목록'이 비었을 때 혹은 한방에 최고 priority일 때의 삽입 (최전방 노드)
     if (todo_list->head == INT_MIN || (todo_list->node + todo_list->head)->order < priority) {
         tmp = todo_list->head;
         todo_list->head = index;
