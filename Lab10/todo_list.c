@@ -8,6 +8,7 @@ todo_list_t init_todo_list(size_t max_size)
     todo_list_t todo_list;
 
     // todo_list.node에 '(node_t단위)배열'로 힙에 할당된 메모리 안에서, '연결리스트와 같은 구조'를 가짐
+    // (구조도는 맨 아래 링크 이미지 참조)
     todo_list.node = malloc(max_size * sizeof(node_t));
     todo_list.head = INT_MIN;
     todo_list.deleted = INT_MIN;
