@@ -134,3 +134,4 @@ bool is_empty(const todo_list_t* todo_list)
 
 // 참고) Doit_자료구조와함께배우는알고리즘입문_C언어편_Chap09(커서로연결리스트만들기)
 // https://drive.google.com/file/d/1szWjGb_hAZadx2e9sH4Qlu4ykcRts8Vw/view
+// https://velog.velcdn.com/images%2Fdkswlgus00%2Fpost%2Fda7627e1-fe27-4f28-948d-a22b66edd222%2Fimage.png
