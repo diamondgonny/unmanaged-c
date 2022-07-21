@@ -88,27 +88,20 @@ bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task)
 
 void delete_index_for_complete(todo_list_t* todo_list, index_t index)
 {
-    if (todo_list->deleted == INT_MIN) {
-        todo_list->deleted = index;
-        (todo_list->node + index)->d_next = INT_MIN;
-    } else {
-        index_t tmp = todo_list->deleted;
-        todo_list->deleted = index;
-        (todo_list->node + index)->d_next = tmp;
-    }
+    index_t tmp = todo_list->deleted;
+    todo_list->deleted = index;
+    (todo_list->node + index)->d_next = tmp;
 }
 
 bool complete_todo(todo_list_t* todo_list)
 {
-    index_t tmp;
-
     // case 1) '할일목록'이 비었을 때의 false 반환
     if (todo_list->head == INT_MIN) {
         return false;
     }
 
     // case 2) '할일목록' 중 가장 높은 priority를 가진 task 삭제 (최전방 노드)
-    tmp = (todo_list->node + todo_list->head)->next;
+    index_t tmp = (todo_list->node + todo_list->head)->next;
     free((todo_list->node + todo_list->head)->task);
     delete_index_for_complete(todo_list, todo_list->head);
     todo_list->head = tmp;
