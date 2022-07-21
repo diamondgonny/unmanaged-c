@@ -59,7 +59,7 @@ bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task)
         return false;
     }
 
-    // case 2) '할일목록'이 비었을 때 혹은 한방에 최고 priority일 때의 삽입 (최전방 노드)
+    // case 2) '할일목록'이 비었을 때 혹은 가장 높은 priority가 들어올 때의 삽입 (최전방 노드)
     if (todo_list->head == INT_MIN || (todo_list->node + todo_list->head)->priority < priority) {
         tmp = todo_list->head;
         todo_list->head = index;
@@ -102,11 +102,12 @@ bool complete_todo(todo_list_t* todo_list)
 {
     index_t tmp;
 
+    // case 1) '할일목록'이 비었을 때의 false 반환
     if (todo_list->head == INT_MIN) {
         return false;
     }
 
-    // 가장 높은 priority를 가진 task 삭제 (최전방 노드)
+    // case 2) '할일목록' 중 가장 높은 priority를 가진 task 삭제 (최전방 노드)
     tmp = (todo_list->node + todo_list->head)->next;
     free((todo_list->node + todo_list->head)->task);
     delete_index_for_complete(todo_list, todo_list->head);
