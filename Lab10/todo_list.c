@@ -53,7 +53,7 @@ bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task)
     index_t tmp = todo_list->head;
     index_t* p = &todo_list->head; // '최전방 노드 index'를 가리키는 것부터 시작 (예외 : INT_MIN)
     index_t* next_p; // '최전방 다음 노드 index'를 가리키는 것부터 시작 (예외 : INT_MIN)
-    /* Note : todo_list.node에 (node_t)배열로 할당된 메모리 안에서, 연결리스트와 같은 구조를 가짐 */
+    /* Note : todo_list.node에 (node_t단위)배열로 힙에 할당된 메모리 안에서, 연결리스트와 같은 구조를 가짐 */
 
     //  노드가 꽉찼을 때 혹은 priority가 음수일 때의 false 반환
     if (index == INT_MIN || priority < 0) {
