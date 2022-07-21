@@ -9,7 +9,7 @@
 typedef int index_t;
 
 typedef struct node {
-    int32_t order;
+    int32_t priority;
     char* task;
     index_t next;
     index_t d_next;
@@ -28,7 +28,7 @@ void finalize_todo_list(todo_list_t* todo_list);
 
 index_t get_index_for_add(todo_list_t* todo_list, const int32_t priority);
 
-void set_node_for_add(node_t* node, const int32_t priority, const char* task, index_t tmp);
+void set_node_for_add(node_t* node, const int32_t priority, const char* task, index_t next);
 
 bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task);
 

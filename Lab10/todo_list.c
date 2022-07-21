@@ -41,12 +41,12 @@ index_t get_index_for_add(todo_list_t* todo_list, const int32_t priority)
     }
 }
 
-void set_node_for_add(node_t* node, const int32_t priority, const char* task, index_t tmp)
+void set_node_for_add(node_t* node, const int32_t priority, const char* task, index_t next)
 {
-    node->order = priority;
+    node->priority = priority;
     node->task = (char*)malloc(strlen(task) + 1);
     strcpy(node->task, task);
-    node->next = tmp;
+    node->next = next;
 }
 
 bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task)
@@ -60,7 +60,7 @@ bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task)
     }
 
     // case 2) '할일목록'이 비었을 때 혹은 한방에 최고 priority일 때의 삽입 (최전방 노드)
-    if (todo_list->head == INT_MIN || (todo_list->node + todo_list->head)->order < priority) {
+    if (todo_list->head == INT_MIN || (todo_list->node + todo_list->head)->priority < priority) {
         tmp = todo_list->head;
         todo_list->head = index;
         set_node_for_add(todo_list->node + index, priority, task, tmp);
@@ -73,7 +73,7 @@ bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task)
 
     // case 3) 내림차순 검색 및 삽입
     while (*next_p != INT_MIN) {
-        if ((todo_list->node + *next_p)->order < priority) {
+        if ((todo_list->node + *next_p)->priority < priority) {
             break;
         }
         p = next_p;
