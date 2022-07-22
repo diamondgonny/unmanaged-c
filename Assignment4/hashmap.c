@@ -4,14 +4,13 @@
 
 hashmap_t* init_hashmap_malloc(size_t length, size_t (*p_hash_func)(const char* key))
 {
-    size_t i;
     hashmap_t* hashmap = (hashmap_t*)malloc(sizeof(hashmap_t));
 
     hashmap->hash_func = p_hash_func;
     hashmap->plist = (node_t**)malloc(length * sizeof(node_t*));
     hashmap->length = length;
 
-    for (i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++) {
         hashmap->plist[i] = NULL;
     }
 
@@ -21,7 +20,6 @@ hashmap_t* init_hashmap_malloc(size_t length, size_t (*p_hash_func)(const char* 
 int add_key(hashmap_t* hashmap, const char* key, const int value)
 {
     node_t* p = hashmap->plist[hashmap->hash_func(key) % hashmap->length];
-    node_t* tmp;
 
     while (p != NULL) {
         if (strcmp(p->key, key) == 0) {
@@ -30,12 +28,12 @@ int add_key(hashmap_t* hashmap, const char* key, const int value)
         p = p->next;
     }
 
-    tmp = (node_t*)malloc(sizeof(node_t));
-    tmp->key = (char*)malloc(strlen(key) + 1);
-    strcpy(tmp->key, key);
-    tmp->value = value;
-    tmp->next = hashmap->plist[hashmap->hash_func(key) % hashmap->length];
-    hashmap->plist[hashmap->hash_func(key) % hashmap->length] = tmp;
+    node_t* new_node = (node_t*)malloc(sizeof(node_t));
+    new_node->key = (char*)malloc(strlen(key) + 1);
+    strcpy(new_node->key, key);
+    new_node->value = value;
+    new_node->next = hashmap->plist[hashmap->hash_func(key) % hashmap->length];
+    hashmap->plist[hashmap->hash_func(key) % hashmap->length] = new_node;
 
     return TRUE;
 }
@@ -90,9 +88,7 @@ int remove_key(hashmap_t* hashmap, const char* key)
 
 void destroy(hashmap_t* hashmap)
 {
-    size_t i;
-
-    for (i = 0; i < hashmap->length; ++i) {
+    for (size_t i = 0; i < hashmap->length; ++i) {
         node_t* p = hashmap->plist[i];
 
         while (p != NULL) {
