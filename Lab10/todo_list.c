@@ -4,7 +4,6 @@
 
 todo_list_t init_todo_list(size_t max_size)
 {
-    size_t i;
     todo_list_t todo_list;
 
     // todo_list.node에 '(node_t단위)배열'로 힙에 할당된 메모리 안에서, '연결리스트와 같은 구조'를 가짐
@@ -15,7 +14,7 @@ todo_list_t init_todo_list(size_t max_size)
     todo_list.dummy = 0;
 
     // 프리리스트 세팅 ('활성화' '비활성화' 두 개의 연결리스트를 사용할건데, 먼저 후자에 전부 세팅하면서 시작)
-    for (i = max_size; i != 0; --i) {
+    for (size_t i = max_size; i != 0; --i) {
         index_t tmp = todo_list.deleted;
         todo_list.deleted = i - 1;
         (todo_list.node + i - 1)->d_next = tmp;
