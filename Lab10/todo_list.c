@@ -4,49 +4,44 @@
 
 todo_list_t init_todo_list(size_t max_size)
 {
+    size_t i;
     todo_list_t todo_list;
-    node_t* p;
 
+    // todo_list.node에 '(node_t단위)배열'로 힙에 할당된 메모리 안에서, '연결리스트와 같은 구조'를 가짐
+    // (구조도는 맨 아래 링크 이미지 참조)
+    todo_list.node = malloc(max_size * sizeof(node_t));
+    todo_list.head = INT_MIN;
+    todo_list.deleted = INT_MIN;
     todo_list.dummy = 0;
-    todo_list.head = NULL;
-    todo_list.del = NULL;
 
-    for (size_t i = 0; i < max_size; ++i) {
-        node_t* tmp = todo_list.del;
-        todo_list.del = p = malloc(sizeof(node_t));
-        p->d_next = tmp;
+    // 프리리스트 세팅 ('활성화' '비활성화' 두 개의 연결리스트를 사용할건데, 먼저 후자에 전부 세팅하면서 시작)
+    for (i = max_size; i != 0; --i) {
+        index_t tmp = todo_list.deleted;
+        todo_list.deleted = i - 1;
+        (todo_list.node + i - 1)->d_next = tmp;
     }
-
     return todo_list;
 }
 
-// free of init (bunch of node_ts)
 void finalize_todo_list(todo_list_t* todo_list)
 {
     while (complete_todo(todo_list) == true) {
     }
-
-    while (todo_list->del != NULL) {
-        node_t* tmp = todo_list->del->d_next;
-        free(todo_list->del);
-        todo_list->del = tmp;
-    }
+    free(todo_list->node);
 }
 
-node_t* get_node_for_add_or_null(todo_list_t* todo_list, const int32_t priority)
+index_t get_index_for_add(todo_list_t* todo_list, const int32_t priority)
 {
-    node_t* p;
-
-    if (todo_list->del == NULL || priority < 0) {
-        return NULL;
+    if (todo_list->deleted == INT_MIN || priority < 0) {
+        return INT_MIN;
     } else {
-        p = todo_list->del;
-        todo_list->del = p->d_next;
-        return p;
+        index_t index = todo_list->deleted;
+        todo_list->deleted = (todo_list->node + index)->d_next;
+        return index;
     }
 }
 
-void set_node_for_add_or_null(node_t* node, const int32_t priority, const char* task, node_t* next)
+void set_node_for_add(node_t* node, const int32_t priority, const char* task, index_t next)
 {
     node->priority = priority;
     node->task = (char*)malloc(strlen(task) + 1);
@@ -56,57 +51,59 @@ void set_node_for_add_or_null(node_t* node, const int32_t priority, const char* 
 
 bool add_todo(todo_list_t* todo_list, const int32_t priority, const char* task)
 {
-    // case 1, 2, 3;
-    node_t* p = get_node_for_add_or_null(todo_list, priority);
-    node_t* tmp;
+    index_t index = get_index_for_add(todo_list, priority);
+    index_t tmp;
 
-    if (p == NULL || priority < 0) {
+    // case 1) '할일목록'이 꽉찼을 때 혹은 priority가 음수일 때의 false 반환
+    if (index == INT_MIN || priority < 0) {
         return false;
     }
 
-    if (todo_list->head == NULL || todo_list->head->priority < priority) {
+    // case 2) '할일목록'이 비었을 때 혹은 가장 높은 priority가 들어올 때의 삽입 (최전방 노드)
+    if (todo_list->head == INT_MIN || (todo_list->node + todo_list->head)->priority < priority) {
         tmp = todo_list->head;
-        todo_list->head = p;
-        set_node_for_add_or_null(p, priority, task, tmp);
+        todo_list->head = index;
+        set_node_for_add(todo_list->node + index, priority, task, tmp);
         ++todo_list->dummy;
         return true;
     }
 
-    node_t** pp = &todo_list->head;
-    node_t** next_pp = &(*pp)->next;
+    index_t* p = &todo_list->head;
+    index_t* next_p = &(todo_list->node + *p)->next;
 
-    while (*next_pp != NULL) {
-        if ((*next_pp)->priority < priority) {
+    // case 3) 내림차순 검색 및 삽입
+    while (*next_p != INT_MIN) {
+        if ((todo_list->node + *next_p)->priority < priority) {
             break;
         }
-        pp = next_pp;
-        next_pp = &(*pp)->next;
+        p = next_p;
+        next_p = &(todo_list->node + *p)->next;
     }
-    tmp = (*pp)->next;
-    (*pp)->next = p;
-    set_node_for_add_or_null(p, priority, task, tmp);
+    tmp = (todo_list->node + *p)->next;
+    (todo_list->node + *p)->next = index;
+    set_node_for_add(todo_list->node + index, priority, task, tmp);
     ++todo_list->dummy;
     return true;
 }
 
-void delete_node_for_add(todo_list_t* todo_list, node_t* node)
+void delete_index_for_complete(todo_list_t* todo_list, index_t index)
 {
-    node_t* tmp = todo_list->del;
-    todo_list->del = node;
-    node->d_next = tmp;
+    index_t tmp = todo_list->deleted;
+    todo_list->deleted = index;
+    (todo_list->node + index)->d_next = tmp;
 }
 
-// free of set_node (string)
 bool complete_todo(todo_list_t* todo_list)
 {
-    // case 1, 2;
-    if (todo_list->head == NULL) {
+    // case 1) '할일목록'이 비었을 때의 false 반환
+    if (todo_list->head == INT_MIN) {
         return false;
     }
 
-    node_t* tmp = todo_list->head->next;
-    free(todo_list->head->task);
-    delete_node_for_add(todo_list, todo_list->head);
+    // case 2) '할일목록' 중 가장 높은 priority를 가진 task 삭제 (최전방 노드)
+    index_t tmp = (todo_list->node + todo_list->head)->next;
+    free((todo_list->node + todo_list->head)->task);
+    delete_index_for_complete(todo_list, todo_list->head);
     todo_list->head = tmp;
     --todo_list->dummy;
     return true;
@@ -114,10 +111,10 @@ bool complete_todo(todo_list_t* todo_list)
 
 const char* peek_or_null(const todo_list_t* todo_list)
 {
-    if (todo_list->head == NULL) {
+    if (todo_list->head == INT_MIN) {
         return NULL;
     }
-    return todo_list->head->task;
+    return (todo_list->node + todo_list->head)->task;
 }
 
 size_t get_count(const todo_list_t* todo_list)
@@ -127,5 +124,9 @@ size_t get_count(const todo_list_t* todo_list)
 
 bool is_empty(const todo_list_t* todo_list)
 {
-    return todo_list->head == NULL ? true : false;
+    return todo_list->head == INT_MIN ? true : false;
 }
+
+// 참고) Doit_자료구조와함께배우는알고리즘입문_C언어편_Chap09(커서로연결리스트만들기)
+// https://drive.google.com/file/d/1szWjGb_hAZadx2e9sH4Qlu4ykcRts8Vw/view
+// https://velog.velcdn.com/images%2Fdkswlgus00%2Fpost%2Fda7627e1-fe27-4f28-948d-a22b66edd222%2Fimage.png
