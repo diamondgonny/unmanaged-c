@@ -75,12 +75,11 @@ bool update_email(user_t** users_or_null, size_t id, const char* email)
             fp = fopen("log.txt", "a+");
             strcpy(old_email, (*p)->email);
             strcpy(new_email, email);
-            release_mode_for_email(old_email);
-            release_mode_for_email(new_email);
+            strcpy((*p)->email, email);
+            release_mode_for_email(old_email); // 릴리즈 모드에서만 작동
+            release_mode_for_email(new_email); // 릴리즈 모드에서만 작동
             fprintf(fp, "TRACE: User %zu updated email from \"%s\" to \"%s\"\n", id, old_email, new_email);
             fclose(fp);
-            // ------------------------
-            strcpy((*p)->email, email);
             return true;
         }
         ++p;
@@ -122,12 +121,11 @@ bool update_password(user_t** users_or_null, size_t id, const char* password)
             fp = fopen("log.txt", "a+");
             strcpy(old_password, (*p)->password);
             strcpy(new_password, password);
-            release_mode_for_password(old_password);
-            release_mode_for_password(new_password);
+            strcpy((*p)->password, password);
+            release_mode_for_password(old_password); // 릴리즈 모드에서만 작동
+            release_mode_for_password(new_password); // 릴리즈 모드에서만 작동
             fprintf(fp, "TRACE: User %zu updated password from \"%s\" to \"%s\"\n", id, old_password, new_password);
             fclose(fp);
-            // ------------------------------
-            strcpy((*p)->password, password);
             return true;
         }
         ++p;
