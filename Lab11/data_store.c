@@ -3,6 +3,9 @@
 #include "user.h"
 #include "data_store.h"
 
+static void release_mode_for_email(char* p);
+static void release_mode_for_password(char* p);
+
 user_t* get_user_by_id_or_null(user_t** users_or_null, size_t id)
 {
     user_t** p = users_or_null;
@@ -39,7 +42,7 @@ user_t* get_user_by_username_or_null(user_t** users_or_null, const char* usernam
     return NULL;
 }
 
-void release_mode_for_email(char* p)
+static void release_mode_for_email(char* p)
 {
     ++p;
     if (*p == '@') {
@@ -86,7 +89,7 @@ bool update_email(user_t** users_or_null, size_t id, const char* email)
     return false;
 }
 
-void release_mode_for_password(char* p)
+static void release_mode_for_password(char* p)
 {
     ++p;
     if (*p == '\0') {

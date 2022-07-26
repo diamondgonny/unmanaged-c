@@ -8,11 +8,7 @@ user_t* get_user_by_id_or_null(user_t** users_or_null, size_t id);
 
 user_t* get_user_by_username_or_null(user_t** users_or_null, const char* username);
 
-void release_mode_for_email(char* p);
-
 bool update_email(user_t** users_or_null, size_t id, const char* email);
-
-void release_mode_for_password(char* p);
 
 bool update_password(user_t** users_or_null, size_t id, const char* password);
 
