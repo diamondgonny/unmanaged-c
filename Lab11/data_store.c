@@ -44,6 +44,7 @@ user_t* get_user_by_username_or_null(user_t** users_or_null, const char* usernam
 
 static void release_mode_for_email(char* p)
 {
+#ifdef RELEASE
     ++p;
     if (*p == '@') {
         *(p - 1) = '*';
@@ -55,6 +56,7 @@ static void release_mode_for_email(char* p)
             ++p;
         }
     }
+#endif
 }
 
 bool update_email(user_t** users_or_null, size_t id, const char* email)
@@ -73,10 +75,8 @@ bool update_email(user_t** users_or_null, size_t id, const char* email)
             fp = fopen("log.txt", "a+");
             strcpy(old_email, (*p)->email);
             strcpy(new_email, email);
-#ifdef RELEASE
             release_mode_for_email(old_email);
             release_mode_for_email(new_email);
-#endif
             fprintf(fp, "TRACE: User %zu updated email from \"%s\" to \"%s\"\n", id, old_email, new_email);
             fclose(fp);
             // ------------------------
@@ -91,6 +91,7 @@ bool update_email(user_t** users_or_null, size_t id, const char* email)
 
 static void release_mode_for_password(char* p)
 {
+#ifdef RELEASE
     ++p;
     if (*p == '\0') {
         *(p - 1) = '*';
@@ -102,6 +103,7 @@ static void release_mode_for_password(char* p)
             ++p;
         }
     }
+#endif
 }
 
 bool update_password(user_t** users_or_null, size_t id, const char* password)
@@ -120,10 +122,8 @@ bool update_password(user_t** users_or_null, size_t id, const char* password)
             fp = fopen("log.txt", "a+");
             strcpy(old_password, (*p)->password);
             strcpy(new_password, password);
-#ifdef RELEASE
             release_mode_for_password(old_password);
             release_mode_for_password(new_password);
-#endif
             fprintf(fp, "TRACE: User %zu updated password from \"%s\" to \"%s\"\n", id, old_password, new_password);
             fclose(fp);
             // ------------------------------
